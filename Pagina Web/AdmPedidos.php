@@ -24,6 +24,18 @@
 			function irperfil(){
 				location.href="VerPerfil.php";
 			}
+			function listarPedidos(){
+				location.href="AdmPedidos.php?flag=lista";
+			}
+			function altaPedido(){
+				location.href="AdmPedidos.php?flag=alta";
+			}
+			function bajaPedido(){
+				location.href="AdmPedidos.php?flag=baja";
+			}
+			function modPedido(){
+				location.href="AdmPedidos.php?flag=mod";
+			}
 		</script>
 	</head>
 	<body>
@@ -65,7 +77,68 @@
 				</ul>
 			</div>
 			<div id='contenido'>
-				ADMINISTRAR
+					<?php
+						///CONEXIONES///						
+						ConexionServidor ($con);					
+						ConexionBaseDatos ($bd);	
+					?>
+				<div id='Admfunciones'>	
+					<ul>
+						<li><a onclick="listarPedidos()">Listar todos los Pedidos</a></li>
+						<li><a onclick="altaPedido()">Dar de alta un Pedido</a></li>
+						<li><a onclick="bajaPedido()">Dar de baja un Pedido</a></li>
+						<li><a onclick="modPedido()">Modificar un Pedido</a></li>
+					</ul>
+				</div>
+				<div id='libros'>
+					<?php	
+					if (!empty($_GET['flag']) && $_GET['flag'] == 'lista'){
+					
+						ConsultaLibros ($res);
+						if(!$res) {
+							$message= 'Consulta invalida: ' .mysql_error() ."\n";
+							die($message);
+						}		
+						echo	"<table border='1'>
+								<tr>
+									<th>ISBN</th>
+									<th>Titulo</th>
+									<th>Autor</th>
+									<th>CantidadPaginas</th>
+									<th>Precio</th>
+									<th>Idioma</th>
+									<th>Fecha</th>
+									<th>Disponibilidad</th>
+									<th>Detalles</th>
+								</tr>";
+						$ant = ' ';
+						while($row = mysql_fetch_assoc($res)) {
+							if ($row['ISBN'] != $ant){
+								echo "<tr>";
+								echo "<td>", $row['ISBN'], "</td>";
+								echo "<td>", $row['Titulo'], "</td>";
+								echo "<td>", $row['NombreApellido'], "</td>";
+								echo "<td>", $row['CantidadPaginas'], "</td>";
+								echo "<td>", $row['Precio'], "</td>";
+								echo "<td>", $row['Idioma'], "</td>";
+								echo "<td>", $row['Fecha'], "</td>";
+								echo "<td>", $row['Disponibilidad'], "</td>";
+								$cadena= ' ';
+								//ConsultarAuto ($cadena, $row['Dominio'], $row['Anio']);			
+					?>																	
+								<td><input type='button' value='Detalles' onclick='MostarDetalle()' /></td>
+					<?php
+								echo "</tr>";
+								$ant = $row['ISNB'];
+							}
+						}
+						echo "</table>";
+						mysql_free_result($res);
+					}
+						///CIERRE///
+						CerrarServidor ($con);
+					?>	
+				</div>
 			</div>
 		</div>
 		<div id='pie'>

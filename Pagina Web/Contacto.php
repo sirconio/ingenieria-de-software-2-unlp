@@ -10,19 +10,38 @@
 			}
 			<!-- RECARGA LA PAGINA CON EL FLAG EN TRUE -->
 			function salir(){
-				location.href="index.php?flag=true";
+				location.href="Contacto.php?flag=true";
 			}			
 			function registro(){
-				
+				location.href="Registrarme.php";
 			}
 			function irperfil(){
-			
+				location.href="VerPerfil.php";
+			}
+			function busqueda (bus){
+				location.href="Busqueda.php?BusRap=" + bus;
 			}
 		</script>	
 	</head>
 	<body>
+		<?php
+			if (!empty($_GET['BusRap'])){
+		?>
+				<script languaje="javascript"> 					
+					busqueda("<?=$_GET['BusRap']?>");	
+				</script>
+		<?php
+			}
+		?>
 		<div id='cabecera'>
 			<div id='imglogo'> <img src="Logo1.gif" width="85%" height="475%"> </div> 
+			<div id='barrabusqueda' action="Busqueda.php" method="GET">
+				<form>
+					<input class='contacto' size="40" type="text" name="BusRap" placeholder="Autor, Titulo, ISBN" required>
+
+					<input class='contacto' type='submit' value='Busqueda Rapida'/>
+				</form>
+			</div>
 			<div id='sesiones'>	
 				<?php
 					include 'accion.php';
@@ -72,7 +91,7 @@
 				<?php
 					if ($_SESSION['categoria'] == 'Administrador'){
 				?>
-						<li><a href="Administrador.php">Modo Administrador</a></li>';
+						<li><a href="Administrador.php">Modo Administrador</a></li>
 				<?php	
 					}
 				?>
@@ -107,7 +126,7 @@
 			</div>
 		</div>
 		<div id='pie'>
-			<samp> Dirección : Calle 30 N 416  - La Plata - Argentina | Teléfono : (0221) 411-3257 | E-mail : info@cookbook.com.ar |Resolución Óptima 1920 x 1080 | Mozilla Firefox | </samp> 
+			<samp> Dirección : Calle 30 N 416  - La Plata - Argentina | Teléfono : (0221) 411-3257 | E-mail : info@cookbook.com.ar |</br>Resolución Minima 1024 x 768 | Mozilla Firefox | </samp> 
 			<samp>Copyright © 2014 CookBook – Todos los derechos reservados.</samp>
 		</div>
 	</body>

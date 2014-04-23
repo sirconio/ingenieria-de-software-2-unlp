@@ -1,4 +1,13 @@
-<?php session_start(); ?>
+<?php session_start();
+	if(!empty($_SESSION['estado'])){
+		header ("Location: index.php");
+	}
+	else{
+		if ($_SESSION['estado'] == 'logeado'){
+			header ("Location: index.php");
+		}
+	}
+?>
 <html>
 	<head>
 		<title>CookBook</title>
@@ -10,13 +19,17 @@
 			}
 			<!-- RECARGA LA PAGINA CON EL FLAG EN TRUE -->
 			function salir(){
-				location.href="QuienesSomos.php?flag=true";
+				location.href="index.php?flag=true";
 			}			
 			function registro(){
 				location.href="Registrarme.php";
 			}
 			function irperfil(){
 				location.href="VerPerfil.php";
+			}
+			function MensajeAlta(Msj){
+				alert(Msj);
+				location.href="Registrarme.php";
 			}
 			function busqueda (bus){
 				location.href="Busqueda.php?BusRap=" + bus;
@@ -45,6 +58,9 @@
 			<div id='sesiones'>	
 				<?php
 					include 'accion.php';
+					///CONEXIONES///						
+					ConexionServidor ($con);					
+					ConexionBaseDatos ($bd);	
 					// FLAG = TRUE, INDICA QUE SE PRESIONO SOBRE EL BOTON CERRAR SESION
 					if (!empty($_GET['flag']) && $_GET['flag'] == 'true'){
 						CerrarSesion();
@@ -84,31 +100,42 @@
 		<div id='cuerpo'>
 			<div id='encabezado'>
 				<ul id='botones'>
-					<li><a href="index.php">Inicio</a></li>
-					<li><a href="Busqueda.php">Busqueda</a></li>
-					<li><a href="QuienesSomos.php">Quienes Somos?</a></li>
-					<li><a href="Contacto.php">Contacto</a></li>
-				<?php
-					if ($_SESSION['categoria'] == 'Administrador'){
-				?>
-						<li><a href="Administrador.php">Modo Administrador</a></li>
-				<?php	
-					}
-				?>
+					<li><a href="index.php">Volver al Inicio</a></li>
 				</ul>
 			</div>
-			<div id='contenidoQS'> 
-				<div id='imgquien'> <img src="imgquien.jpg" width="90%" height="90%" align="right"> </div> 
-				<div id='textquien'> 
-					<p>CookBook es un empredimiento familiar, cuya trayectoria comercial data desde 2007.</br> 
-					   A cargo del misma nos encontramos Norma y quien les escribe, Ruben. Dos experimentados cocineros retirados. </br></br>
-
-				     	Hemos definido como objetivo facilitarle a nuestros clientes sus tareas culinarias diarias.</br>
-						Para ello, contamos con una amplia gama de libros de cocina, que le brindaran el apoyo que necesitan.</br></br>
-
-						Queremos ofrecerle nuestra mejor y mayor disposici&oacuten para atenderlo en todo aquello que sea de su inter&eacutes. </br>
-						Desde nuestros inicios, nuestro objetivo hacia el futuro ser&aacute brindarle el mejor de los servicios y la m&aacutes c&aacutelida atenci&oacuten en todas nuestras sucursales. </br>
-					</p>	
+			<div id='contenido'> 
+				<div id='textoreg'><samp>Registrate, en un simple paso!</samp></div>
+				<div id='registro'>
+					<form id='FReg' action="" method="POST">
+							<label class="Reginput" for="NombreUsuario">Nombre Usuario:</label>
+							<input class="Reginput" type="text" name="NomUs" required><br>
+							<label class="Reginput" for="NombreApellido">Nombre y Apellido:</label>
+							<input class="Reginput" type="text" name="NomApe" required><br>
+							<label class="Reginput" for="DNI">DNI:</label>
+							<input class="Reginput" type="text" name="DNI" required><br>
+							<label class="Reginput" for="Telefono">Telefono:</label>
+							<input class="Reginput" type="text" name="Tel" required><br>
+							<label class="Reginput" for="Direccion">Direccion:</label>
+							<input class="Reginput" type="text" name="Dir" required><br>
+							<label class="Reginput" for="Mail">Mail:</label>
+							<input class="Reginput" type="text" name="Mail" required><br>
+							<label class="Reginput" for="Contraseña1">Contraseña:</label>
+							<input class="Reginput" type="password" name="Pass1" required><br>
+							<label class="Reginput" for="Contraseña2">Comfirme Contraseña:</label>
+							<input class="Reginput" type="password" name="Pass2" required><br>
+							<input class="Reginput" type="submit" value="Confirmar">
+					</form>	
+					<?php
+					if	(!empty($_POST['NomApe']) && !empty($_POST['NomUs']) && !empty($_POST['DNI']) && !empty($_POST['Tel']) && !empty($_POST['Dir']) && !empty($_POST['Mail']) && !empty($_POST['Pass1']) && !empty($_POST['Pass2'])){	
+							AltaUsuario($_POST['NomApe'], $_POST['NomUs'], $_POST['DNI'], $_POST['Tel'], $_POST['Dir'], $_POST['Mail'], $_POST['Pass1'], $_POST['Pass2'], $AltMsg);
+					?>		
+					<script languaje="javascript"> 
+						MensajeAlta("<?=$AltMsg?>");
+					</script>
+					<?php }
+						///CIERRE///
+						CerrarServidor ($con);
+					?>						
 				</div>
 			</div>
 		</div>

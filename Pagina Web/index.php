@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<title>CookBook</title>
+		
 		<link type="text/css" rel="stylesheet" href="style.css">
 		<script>
 			<!-- VENTANA EMERGENTE DE INICIO DE SESION -->
@@ -13,16 +14,37 @@
 				location.href="index.php?flag=true";
 			}			
 			function registro(){
-				
+				location.href="Registrarme.php";
 			}
 			function irperfil(){
-			
+				location.href="VerPerfil.php";
+			}
+			function busqueda (bus){
+				location.href="Busqueda.php?BusRap=" + bus;
+			}
+			function recargar () {
+				<!-- location.reload(); --> 
 			}
 		</script>	
 	</head>
 	<body>
+		<?php
+			if (!empty($_GET['BusRap'])){
+		?>
+				<script languaje="javascript"> 					
+					busqueda("<?=$_GET['BusRap']?>");	
+				</script>
+		<?php
+			}
+		?> 
 		<div id='cabecera'>
 			<div id='imglogo'> <img src="Logo1.gif" width="85%" height="475%"> </div> 
+			<div id='barrabusqueda' action="Busqueda.php" method="GET">
+				<form>
+					<input class='contacto' size="40" type="text" name="BusRap" placeholder="Autor, Titulo, ISBN" required>
+					<input class='contacto' type='submit' value='Busqueda Rapida'/>
+				</form>
+			</div>
 			<div id='sesiones'>	
 				<?php
 					include 'accion.php';
@@ -30,11 +52,15 @@
 					if (!empty($_GET['flag']) && $_GET['flag'] == 'true'){
 						CerrarSesion();
 					}
+					
 					// VERIFICA EL ESTADO DE LA SESION
 					if(!empty($_SESSION['estado'])){
 						//USUARIO LOGEADO CORRECTAMENTE
 						if ($_SESSION['estado'] == 'logeado'){
 				?>			
+						<script languaje="javascript"> 					
+							recargar();	
+						</script>
 							<ul id='bsesiones'>
 				<?php
 							echo '<li>Usuario, ';
@@ -72,20 +98,20 @@
 				<?php
 					if ($_SESSION['categoria'] == 'Administrador'){
 				?>
-						<li><a href="Administrador.php">Modo Administrador</a></li>';
+						<li><a href="Administrador.php">Modo Administrador</a></li>
 				<?php	
 					}
 				?>
 				</ul>
 			</div>
-			<div id='contenido'> 
+			<div id='contenidoindex'> 
 				<div id='imgindex'><img src="cocinero.gif" width="25%" height="75%"></div> 
-				<div id='imgindex2'><img src="cocinera.gif" width="25%" height="50%"></div> 
+				<div id='imgindex2'><img src="cocinera.gif" width="50%" height="75%"></div> 
 				<div id='textoindex'><samp>¡Encontra las recetas que buscar! Hay millones de libros publicados, los mejores autores y los precios más bajos</samp></div>
 			</div>
 		</div>
 		<div id='pie'>
-			<samp> Dirección : Calle 30 N 416  - La Plata - Argentina | Teléfono : (0221) 411-3257 | E-mail : info@cookbook.com.ar |Resolución Óptima 1920 x 1080 | Mozilla Firefox | </samp> 
+			<samp> Dirección : Calle 30 N 416  - La Plata - Argentina | Teléfono : (0221) 411-3257 | E-mail : info@cookbook.com.ar |</br>Resolución Minima 1024 x 768 | Mozilla Firefox | </samp> 
 			<samp>Copyright © 2014 CookBook – Todos los derechos reservados.</samp>
 		</div>
 	</body>

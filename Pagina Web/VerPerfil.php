@@ -1,4 +1,8 @@
-<?php session_start(); ?>
+<?php session_start();
+	if(empty($_SESSION['estado'])){
+		header ("Location: index.php");
+	}
+?>
 <html>
 	<head>
 		<title>CookBook</title>
@@ -10,7 +14,7 @@
 			}
 			<!-- RECARGA LA PAGINA CON EL FLAG EN TRUE -->
 			function salir(){
-				location.href="QuienesSomos.php?flag=true";
+				location.href="index.php?flag=true";
 			}			
 			function registro(){
 				location.href="Registrarme.php";
@@ -84,32 +88,20 @@
 		<div id='cuerpo'>
 			<div id='encabezado'>
 				<ul id='botones'>
-					<li><a href="index.php">Inicio</a></li>
-					<li><a href="Busqueda.php">Busqueda</a></li>
-					<li><a href="QuienesSomos.php">Quienes Somos?</a></li>
-					<li><a href="Contacto.php">Contacto</a></li>
-				<?php
-					if ($_SESSION['categoria'] == 'Administrador'){
-				?>
-						<li><a href="Administrador.php">Modo Administrador</a></li>
-				<?php	
-					}
-				?>
+					<li><a href="PerfilCuenta.php">Informacion de Cuenta</a></li>
+					<?php
+						if ($_SESSION['categoria'] == 'Normal'){
+					?>
+							<li><a href="PerfilPedidos.php">Mis Pedidos</a></li>
+							<li><a href="PerfilCuenta.php?elminar=true">Eliminar Cuenta</a><li>
+					<?php	
+						}
+					?>
+					<li><a href="index.php">Volver al Inicio</a></li>
 				</ul>
 			</div>
-			<div id='contenidoQS'> 
-				<div id='imgquien'> <img src="imgquien.jpg" width="90%" height="90%" align="right"> </div> 
-				<div id='textquien'> 
-					<p>CookBook es un empredimiento familiar, cuya trayectoria comercial data desde 2007.</br> 
-					   A cargo del misma nos encontramos Norma y quien les escribe, Ruben. Dos experimentados cocineros retirados. </br></br>
-
-				     	Hemos definido como objetivo facilitarle a nuestros clientes sus tareas culinarias diarias.</br>
-						Para ello, contamos con una amplia gama de libros de cocina, que le brindaran el apoyo que necesitan.</br></br>
-
-						Queremos ofrecerle nuestra mejor y mayor disposici&oacuten para atenderlo en todo aquello que sea de su inter&eacutes. </br>
-						Desde nuestros inicios, nuestro objetivo hacia el futuro ser&aacute brindarle el mejor de los servicios y la m&aacutes c&aacutelida atenci&oacuten en todas nuestras sucursales. </br>
-					</p>	
-				</div>
+			<div id='contenido'> 
+				<div id='textoindex'><samp>Bienvenido a tu perfil <?php echo $_SESSION["usuario"] ?></samp></div>
 			</div>
 		</div>
 		<div id='pie'>
