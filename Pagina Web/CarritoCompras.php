@@ -3,12 +3,13 @@
       header( "Cache-Control: no-cache, must-revalidate" );
       header( "Pragma: no-cache" );
 	  session_start();
+	if(empty($_SESSION['estado'])){
+		header ("Location: index.php");
+	}
 ?>
 <html>
 	<head>
 		<title>CookBook</title>
-		<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
-		<meta HTTP-EQUIV="SSExpires" CONTENT="-1">
 		<link type="text/css" rel="stylesheet" href="style.css">
 		<script>
 			<!-- VENTANA EMERGENTE DE INICIO DE SESION -->
@@ -28,8 +29,18 @@
 			function busqueda (bus){
 				location.href="Busqueda.php?BusRap=" + bus;
 			}
-			function recargar () {
-				<!-- location.reload(); --> 
+			function Retirar (ISBN, ID){
+				location.href="CarritoCompras.php?retirar=true&Is=" + ISBN + "&Dn=" + ID;
+			}
+			function Vaciar (ID){
+				location.href="CarritoCompras.php?vaciar=true&Dn=" + ID;
+			}
+			function Comprar (ID){
+				location.href="CarritoCompras.php?comprar=true&Dn=" + ID;
+			}
+			function MensajeRet(Msj){
+				alert(Msj);
+				location.href="CarritoCompras.php";
 			}
 		</script>	
 	</head>
@@ -42,31 +53,55 @@
 				</script>
 		<?php
 			}
-		?> 
+		?>
 		<div id='cabecera'>
 			<div id='imglogo'> <img src="Logo1.gif" width="85%" height="475%"> </div> 
 			<div id='barrabusqueda' action="Busqueda.php" method="GET">
 				<form>
 					<input class='contacto' size="40" type="text" name="BusRap" placeholder="Autor, Titulo, ISBN" required>
+
 					<input class='contacto' type='submit' value='Busqueda Rapida'/>
 				</form>
 			</div>
 			<div id='sesiones'>	
 				<?php
 					include 'accion.php';
+					///CONEXIONES///						
+					ConexionServidor ($con);					
+					ConexionBaseDatos ($bd);
+					if (!empty($_GET['retirar']) && $_GET['retirar'] == 'true'){
+						RetirarCarrito($_GET['Is'], $_GET['Dn'], $AltMsg);
+						?>
+							<script languaje="javascript"> 	
+								MensajeRet("<?=$AltMsg?>");	
+							</script>
+						<?php
+					}
+					if (!empty($_GET['vaciar']) && $_GET['vaciar'] == 'true'){
+						VaciarCarrito($_GET['Dn'], $AltMsg);
+						?>
+							<script languaje="javascript"> 	
+								MensajeRet("<?=$AltMsg?>");	
+							</script>
+						<?php
+					}
+					if (!empty($_GET['comprar']) && $_GET['comprar'] == 'true'){
+						ComprarCarrito($_GET['Dn'], $AltMsg);
+						?>
+							<script languaje="javascript"> 	
+								MensajeRet("<?=$AltMsg?>");	
+							</script>
+						<?php
+					}
 					// FLAG = TRUE, INDICA QUE SE PRESIONO SOBRE EL BOTON CERRAR SESION
 					if (!empty($_GET['flag']) && $_GET['flag'] == 'true'){
 						CerrarSesion();
 					}
-					
 					// VERIFICA EL ESTADO DE LA SESION
 					if(!empty($_SESSION['estado'])){
 						//USUARIO LOGEADO CORRECTAMENTE
 						if ($_SESSION['estado'] == 'logeado'){
 				?>			
-						<script languaje="javascript"> 					
-							recargar();	
-						</script>
 							<ul id='bsesiones'>
 				<?php
 							echo '<li>Usuario, ';
@@ -100,29 +135,50 @@
 		<div id='cuerpo'>
 			<div id='encabezado'>
 				<ul id='botones'>
-					<li><a href="index.php">Inicio</a></li>
-					<li><a href="Busqueda.php">Catalogo</a></li>
-					<li><a href="QuienesSomos.php">Quienes Somos?</a></li>
-				<?php
-					if ($_SESSION['categoria'] == 'Normal'){
-				?>
-					<li><a href="Contacto.php">Contacto</a></li>
-				<?php	
-					}
-				?>
-				<?php
-					if ($_SESSION['categoria'] == 'Administrador'){
-				?>
-						<li><a href="Administrador.php">Modo Administrador</a></li>
-				<?php	
-					}
-				?>
+					<li><a href="index.php">Volver al Inicio</a></li>
 				</ul>
 			</div>
-			<div id='contenidoindex'> 
-				<div id='imgindex'><img src="cocinero.gif" width="25%" height="75%"></div> 
-				<div id='imgindex2'><img src="cocinera.gif" width="50%" height="75%"></div> 
-				<div id='textoindex'><samp>¡Encontra las recetas que buscas! Hay millones de libros publicados, los mejores autores y los precios más bajos</samp></div>
+			<div id='contenido'> 
+				<div id='textoindex'><samp>Lista Carrito de Compras:</samp></div>
+				<?php
+					ConsultaCarrito ($res, $_SESSION["ID"]);
+					echo '<div id="tablapedidos">';
+						echo	"<table border='1'>
+								<tr>
+									<th>DNI</th>
+									<th>Nombre</th>
+									<th>ISBN</th>
+									<th>Titulo</th>							
+									<th>Autor</th>
+									<th>Precio</th>
+								</tr>";
+						$ant = ' ';
+						while($row = mysql_fetch_assoc($res)) {
+							if ($row['ISBN'] != $ant){
+								echo "<tr>";
+								echo "<td>", $row['DNI'], "</td>";
+								echo "<td>", $row['Nombre'], "</td>";
+								echo "<td>", $row['ISBN'], "</td>";
+								echo "<td>", $row['Titulo'], "</td>";
+								echo "<td>", $row['NombreApellido'], "</td>";
+								echo "<td>", $row['Precio'], "</td>";
+								$cadena= ' ';
+						?>																	
+								<td><input type='button' value='Retirar' onclick='Retirar("<?=$row['ISBN']?>","<?=$_SESSION['ID']?>")' /></td>
+						<?php													
+								echo "</tr>";
+								$ant = $row['ISBN'];
+						
+							}
+						}
+						echo "</table>";
+						echo '</div>';
+						mysql_free_result($res);
+						///CIERRE///
+						CerrarServidor ($con);
+				?>
+				<input id='carritobot1' type='button' value='Vaciar' onclick='Vaciar("<?=$_SESSION['ID']?>")' />
+				<input id='carritobot2' type='button' value='Comprar' onclick='Comprar("<?=$_SESSION['ID']?>")' />
 			</div>
 		</div>
 		<div id='pie'>

@@ -1,4 +1,9 @@
-<?php session_start(); ?>
+<?php header( "Expires: Mon, 20 Dec 1998 01:00:00 GMT" );
+      header( "Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT" );
+      header( "Cache-Control: no-cache, must-revalidate" );
+      header( "Pragma: no-cache" );
+	  session_start();
+?>
 <html>
 	<head>
 		<title>CookBook</title>
@@ -62,7 +67,10 @@
 							echo $_SESSION['categoria'];
 							echo '</li>';
 							if ($_SESSION['categoria'] == 'Normal'){
-								echo '<li>Carrito de compras:</li>';
+				?>				
+								<li><a id='carrito' href="CarritoCompras.php">Carrito de compras: 
+				<?php				echo $_SESSION["CarritoCant"];
+								echo '</a></li>';
 							}
 							echo '<li><a onclick="irperfil()">Ir a Perfil</a> - <a onclick="salir()">Cerrar Sesion</a></li>';//BOTON DE CIERRE DE SESION, LLAMA A LA fuction salir() 
 						}
@@ -85,9 +93,15 @@
 			<div id='encabezado'>
 				<ul id='botones'>
 					<li><a href="index.php">Inicio</a></li>
-					<li><a href="Busqueda.php">Busqueda</a></li>
+					<li><a href="Busqueda.php">Catalogo</a></li>
 					<li><a href="QuienesSomos.php">Quienes Somos?</a></li>
+				<?php
+					if ($_SESSION['categoria'] == 'Normal'){
+				?>
 					<li><a href="Contacto.php">Contacto</a></li>
+				<?php	
+					}
+				?>
 				<?php
 					if ($_SESSION['categoria'] == 'Administrador'){
 				?>
@@ -107,7 +121,7 @@
 						Para ello, contamos con una amplia gama de libros de cocina, que le brindaran el apoyo que necesitan.</br></br>
 
 						Queremos ofrecerle nuestra mejor y mayor disposici&oacuten para atenderlo en todo aquello que sea de su inter&eacutes. </br>
-						Desde nuestros inicios, nuestro objetivo hacia el futuro ser&aacute brindarle el mejor de los servicios y la m&aacutes c&aacutelida atenci&oacuten en todas nuestras sucursales. </br>
+						Desde nuestros inicios, nuestro objetivo hacia el futuro ser&aacute brindarle el mejor de los servicios y la m&aacutes c&aacutelida atenci&oacuten. </br>
 					</p>	
 				</div>
 			</div>

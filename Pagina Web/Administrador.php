@@ -1,4 +1,8 @@
-<?php session_start();
+<?php header( "Expires: Mon, 20 Dec 1998 01:00:00 GMT" );
+      header( "Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT" );
+      header( "Cache-Control: no-cache, must-revalidate" );
+      header( "Pragma: no-cache" );
+	  session_start();
 	if(empty($_SESSION['estado'])){
 		header ("Location: index.php");
 	}
@@ -65,7 +69,7 @@
 				</ul>
 			</div>
 			<div id='contenido'>
-				ADMINISTRAR
+				<div id='textoindex'><samp>¡Bienvenido a la seccion de administracion <?=$_SESSION['usuario']?>!</samp></div>
 			</div>
 		</div>
 		<div id='pie'>

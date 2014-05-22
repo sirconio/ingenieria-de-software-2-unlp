@@ -1,4 +1,17 @@
-<?php session_start(); ?>
+<?php header( "Expires: Mon, 20 Dec 1998 01:00:00 GMT" );
+      header( "Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT" );
+      header( "Cache-Control: no-cache, must-revalidate" );
+      header( "Pragma: no-cache" );
+	  session_start();
+	  if(empty($_SESSION['estado'])){
+		header ("Location: index.php");
+		}
+		else{
+			if ($_SESSION['categoria'] != 'Normal'){
+				header ("Location: index.php");
+			}
+		}
+?>
 <html>
 	<head>
 		<title>CookBook</title>
@@ -20,6 +33,22 @@
 			}
 			function busqueda (bus){
 				location.href="Busqueda.php?BusRap=" + bus;
+			}
+			function NumerosGuion(e){
+				var keynum = window.event ? window.event.keyCode : e.which;
+				if ((keynum == 8) || (keynum == 45))
+				return true;
+				 
+				return /\d/.test(String.fromCharCode(keynum));
+			}
+			function validarEmail() {
+				object = document.getElementById("id_mail2");
+				email = object.value;
+				expr = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+				if ( !expr.test(email) ){
+					alert("Error: La dirección de correo " + email + " es incorrecta.");
+					object.value = "";
+				}
 			}
 		</script>	
 	</head>
@@ -62,7 +91,10 @@
 							echo $_SESSION['categoria'];
 							echo '</li>';
 							if ($_SESSION['categoria'] == 'Normal'){
-								echo '<li>Carrito de compras:</li>';
+				?>				
+								<li><a id='carrito' href="CarritoCompras.php">Carrito de compras: 
+				<?php				echo $_SESSION["CarritoCant"];
+								echo '</a></li>';
 							}
 							echo '<li><a onclick="irperfil()">Ir a Perfil</a> - <a onclick="salir()">Cerrar Sesion</a></li>';//BOTON DE CIERRE DE SESION, LLAMA A LA fuction salir() 
 						}
@@ -85,9 +117,15 @@
 			<div id='encabezado'>
 				<ul id='botones'>
 					<li><a href="index.php">Inicio</a></li>
-					<li><a href="Busqueda.php">Busqueda</a></li>
+					<li><a href="Busqueda.php">Catalogo</a></li>
 					<li><a href="QuienesSomos.php">Quienes Somos?</a></li>
+				<?php
+					if ($_SESSION['categoria'] == 'Normal'){
+				?>
 					<li><a href="Contacto.php">Contacto</a></li>
+				<?php	
+					}
+				?>
 				<?php
 					if ($_SESSION['categoria'] == 'Administrador'){
 				?>
@@ -111,13 +149,13 @@
 					Dejenos su consulta: </br></br></br>
 					<form action="Contacto.php" method="GET">
 						<label class='contacto' for="lNombre">Nombre:</label>
-						<input class='contacto' type="text" name="Nombre" required>
+						<input class='contacto' type="text" name="Nombre" placeholder="Usuario" maxlength="10" required>
 						<label class='contacto' for="lMail">E-mail:</label>
-						<input class='contacto' type="text" name="e-mail" required>
+						<input class='contacto' id="id_mail2" type="text" size="20" name="e-mail" placeholder="Ej: nombr@corr.com" maxlength="45" onblur="validarEmail()" required>
 						<label class='contacto' for="lTelefono">Telefono/Celular:</label>
-						<input class='contacto' type="text" name="telefono" required></br>
+						<input class='contacto' type="text" name="telefono" placeholder="Ej: 011-4189054" maxlength="10" onkeypress="return NumerosGuion(event);" required></br>
 						<label class='contacto' for="lAusnto">Asunto:</label>
-						<input class='contacto' type="text" name="asunto"></br>
+						<input class='contacto' type="text" name="asunto" placeholder="Asunto" maxlength="10"></br>
 						<label class='contacto' for="lConsulta">Consulta:</label></br>
 						<textarea class='contacto' name="consulta" rows="10" cols="50" maxlength="255" placeholder="Escriba su consulta aqui..." required></textarea> 
 						<input class='contacto' type='submit' value='Enviar'/>

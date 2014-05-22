@@ -1,4 +1,8 @@
-<?php session_start();
+<?php header( "Expires: Mon, 20 Dec 1998 01:00:00 GMT" );
+      header( "Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT" );
+      header( "Cache-Control: no-cache, must-revalidate" );
+      header( "Pragma: no-cache" );
+	  session_start();
 	if(empty($_SESSION['estado'])){
 		header ("Location: index.php");
 	}
@@ -14,7 +18,7 @@
 			}
 			<!-- RECARGA LA PAGINA CON EL FLAG EN TRUE -->
 			function salir(){
-				location.href="index.php?flag=true";
+				location.href="VerPerfil.php?flag=true";
 			}			
 			function registro(){
 				location.href="Registrarme.php";
@@ -66,7 +70,10 @@
 							echo $_SESSION['categoria'];
 							echo '</li>';
 							if ($_SESSION['categoria'] == 'Normal'){
-								echo '<li>Carrito de compras:</li>';
+				?>				
+								<li><a id='carrito' href="CarritoCompras.php">Carrito de compras: 
+				<?php				echo $_SESSION["CarritoCant"];
+								echo '</a></li>';
 							}
 							echo '<li><a onclick="irperfil()">Ir a Perfil</a> - <a onclick="salir()">Cerrar Sesion</a></li>';//BOTON DE CIERRE DE SESION, LLAMA A LA fuction salir() 
 						}

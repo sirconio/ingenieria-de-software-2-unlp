@@ -1,0 +1,89 @@
+//ALTA DE CLIENTE EN ADMUSUARIOS//
+---head---
+			function altaUsuario(){
+				location.href="AdmUsuarios.php?flag=alta";
+			}
+---botones---
+<li><a onclick="altaUsuario()">Dar de alta un Usuario</a></li>
+---contenido---
+elseif (!empty($_GET['flag']) && $_GET['flag'] == 'alta'){ 
+					?>			
+						<div id='AltaLibro'>
+							<div id='registro'>
+							<form id='FReg' action="" method="POST">
+									<label class="Reginput" for="NombreUsuario">Nombre Usuario:</label>
+									<input class="Reginput" type="text" name="NomUs" required><br>
+									<label class="Reginput" for="NombreApellido">Nombre y Apellido:</label>
+									<input class="Reginput" type="text" name="NomApe" required><br>
+									<label class="Reginput" for="DNI">DNI:</label>
+									<input class="Reginput" type="text" name="DNI" required><br>
+									<label class="Reginput" for="Telefono">Telefono:</label>
+									<input class="Reginput" type="text" name="Tel" required><br>
+									<label class="Reginput" for="Direccion">Direccion:</label>
+									<input class="Reginput" type="text" name="Dir" required><br>
+									<label class="Reginput" for="Mail">Mail:</label>
+									<input class="Reginput" type="text" name="Mail" required><br>
+									<label class="Reginput" for="Contraseña1">Contraseña:</label>
+									<input class="Reginput" type="password" name="Pass1" required><br>
+									<label class="Reginput" for="Contraseña2">Comfirme Contraseña:</label>
+									<input class="Reginput" type="password" name="Pass2" required><br>
+									<input class="Reginput" type="submit" value="Confirmar">
+							</form>	
+							<?php
+							if	(!empty($_POST['NomApe']) && !empty($_POST['NomUs']) && !empty($_POST['DNI']) && !empty($_POST['Tel']) && !empty($_POST['Dir']) && !empty($_POST['Mail']) && !empty($_POST['Pass1']) && !empty($_POST['Pass2'])){	
+									AltaUsuario($_POST['NomApe'], $_POST['NomUs'], $_POST['DNI'], $_POST['Tel'], $_POST['Dir'], $_POST['Mail'], $_POST['Pass1'], $_POST['Pass2'], $AltMsg);
+							?>		
+							<script languaje="javascript"> 
+								MensajeAlta("<?=$AltMsg?>");
+							</script>
+							<?php }						
+						echo '</div>
+						</div>';
+					}
+-------FILTROO
+#filtros{
+							position: absolute;
+							top:1%;
+							left:46%;
+							right:1%;
+							height:35%;
+							border: 3px groove #FFFFFF;
+						}
+						#filtros label{
+							margin:0.5%;
+							color: white;
+							font-weight:bold;
+						}
+						#filtrobot{
+							position:absolute;	
+							top:85%;	
+							right:1%;
+						}
+/////busqueda
+#buscar{
+							position: absolute;
+							top:1%;
+							left:3%;
+							right:55%;
+							height:35%;
+							border: 3px groove #FFFFFF;
+						}
+						#buscar label{
+							margin:0.5%;
+							color: white;
+							font-weight:bold;
+						}
+						#buscrobot{
+							position:absolute;
+							top:85%;	
+							right:1%;
+						}
+datapicker
+	 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+		<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+
+			 $(function() {
+				$( "#datepicker2" ).datepicker();
+			});		
+	

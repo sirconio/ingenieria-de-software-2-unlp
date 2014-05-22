@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS `CookBook`.`Libro` (
   `Fecha` DATE NOT NULL,
   `Id_Disponibilidad` INT NOT NULL,
   `Visible` TINYINT(1) NOT NULL,
+  `Hojear` VARCHAR(255) NULL,
   PRIMARY KEY (`ISBN`),
   INDEX `Id_Autor_idx` (`Id_Autor` ASC),
   INDEX `Id_Idioma_idx` (`Id_Idioma` ASC),
@@ -84,9 +85,9 @@ CREATE TABLE IF NOT EXISTS `CookBook`.`Cliente` (
   `DNI` INT NOT NULL,
   `NombreApellido` VARCHAR(45) NOT NULL,
   `FechaAlta` DATE NOT NULL,
-  `Telefono` VARCHAR(45) NULL,
-  `Direccion` VARCHAR(45) NULL,
-  `Contacto` VARCHAR(45) NOT NULL,
+  `Telefono` VARCHAR(10) NULL,
+  `Direccion` VARCHAR(30) NULL,
+  `Contacto` VARCHAR(30) NOT NULL,
   PRIMARY KEY (`DNI`))
 ENGINE = InnoDB;
 
@@ -126,12 +127,12 @@ DROP TABLE IF EXISTS `CookBook`.`Usuario` ;
 
 CREATE TABLE IF NOT EXISTS `CookBook`.`Usuario` (
   `Id_Usuario` INT NOT NULL AUTO_INCREMENT,
-  `Nombre` VARCHAR(45) NOT NULL,
+  `Nombre` VARCHAR(10) NOT NULL,
   `Password` VARCHAR(45) NOT NULL,
   `Categoria` VARCHAR(45) NOT NULL,
-  `DNI` INT NULL,
-  `Contacto` VARCHAR(45) NULL,
+  `DNI` INT NOT NULL,
   `Visible` TINYINT(1) NOT NULL,
+  `CantCarrito` INT NOT NULL,
   PRIMARY KEY (`Id_Usuario`),
   INDEX `DNI_idx` (`DNI` ASC))
 ENGINE = InnoDB;
@@ -149,6 +150,20 @@ CREATE TABLE IF NOT EXISTS `CookBook`.`Etiqueta_Libro` (
   PRIMARY KEY (`Id_EtiquetaLibro`),
   INDEX `ISBN_idx` (`ISBN` ASC),
   INDEX `Id_Etiqueta_idx` (`Id_Etiqueta` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `CookBook`.`Carrito`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `CookBook`.`Carrito` ;
+
+CREATE TABLE IF NOT EXISTS `CookBook`.`Carrito` (
+  `Id_Carrito` INT NOT NULL AUTO_INCREMENT,
+  `Id_Usuario` INT NOT NULL,
+  `ISBN` INT NOT NULL,
+  PRIMARY KEY (`Id_Carrito`),
+  INDEX `ISBN_idx` (`ISBN` ASC))
 ENGINE = InnoDB;
 
 
@@ -198,13 +213,13 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `CookBook`;
-INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`) VALUES (882894293, 'Cocina Criolla', 1, 87, 59.99, 1, '1983-03-31', 1, True);
-INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`) VALUES (123456789, 'La guia optima para el ayuno de Daniel', 2, 68, 69.00, 1, '2001-08-25', 1, True);
-INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`) VALUES (879548481, 'Las mejores recetas de rico y abundante', 3, 70, 87.45, 1, '2012-07-24', 1, True);
-INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`) VALUES (888444777, 'Cocina con calor de hogar - rustica', 4, 154, 152.21, 1, '2006-06-06', 1, True);
-INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`) VALUES (878987655, 'La dieta de los zumos', 5, 54, 99.99, 1, '1999-05-03', 1, True);
-INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`) VALUES (1478523698, 'Cupcakes veganos', 6, 55, 47.80, 1, '2011-01-02', 1, True);
-INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`) VALUES (8521479632, 'El libro de las viandas para pequeños', 7, 87, 79.84, 1, '2012-01-01', 1, True);
+INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (882894293, 'Cocina Criolla', 1, 87, 59.99, 1, '1983-03-31', 1, True, NULL);
+INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (123456789, 'La guia optima para el ayuno de Daniel', 2, 68, 69.00, 1, '2001-08-25', 1, True, NULL);
+INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (879548481, 'Las mejores recetas de rico y abundante', 3, 70, 87.45, 1, '2012-07-24', 1, True, NULL);
+INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (888444777, 'Cocina con calor de hogar - rustica', 4, 154, 152.21, 1, '2006-06-06', 1, True, NULL);
+INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (878987655, 'La dieta de los zumos', 5, 54, 99.99, 1, '1999-05-03', 1, True, NULL);
+INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (1478523698, 'Cupcakes veganos', 6, 55, 47.80, 1, '2011-01-02', 1, True, NULL);
+INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (8521479632, 'El libro de las viandas para pequeños', 7, 87, 79.84, 1, '2012-01-01', 1, True, NULL);
 
 COMMIT;
 
@@ -248,7 +263,7 @@ COMMIT;
 START TRANSACTION;
 USE `CookBook`;
 INSERT INTO `CookBook`.`Estado` (`Id_Estado`, `Descripcion`) VALUES (1, 'Pendiente');
-INSERT INTO `CookBook`.`Estado` (`Id_Estado`, `Descripcion`) VALUES (2, 'Evidado');
+INSERT INTO `CookBook`.`Estado` (`Id_Estado`, `Descripcion`) VALUES (2, 'Enviado');
 INSERT INTO `CookBook`.`Estado` (`Id_Estado`, `Descripcion`) VALUES (3, 'Entregado');
 
 COMMIT;
@@ -275,14 +290,14 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `CookBook`;
-INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Contacto`, `Visible`) VALUES (1, 'Ruben', 'admin', 'Administrador', 0, '-', False);
-INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Contacto`, `Visible`) VALUES (2, 'Carlos', 'carlos', 'Normal', 11454789, 'carlos@hotmail.com', True);
-INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Contacto`, `Visible`) VALUES (3, 'Roberto', 'roberto', 'Normal', 10222333, 'roberto@hotmail.com', True);
-INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Contacto`, `Visible`) VALUES (4, 'Ariel', 'ariel', 'Normal', 30876961, 'ariel@hotmail.com', True);
-INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Contacto`, `Visible`) VALUES (5, 'Nicolas', 'nicolas', 'Normal', 2968741, 'nicolas@hotmail.com', True);
-INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Contacto`, `Visible`) VALUES (6, 'Sebastian', 'sebastian', 'Normal', 3478987, 'sebastian@hotmail.com', True);
-INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Contacto`, `Visible`) VALUES (7, 'Maria', 'maria', 'Normal', 12547897, 'maria@hotmail.com', True);
-INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Contacto`, `Visible`) VALUES (8, 'Catalina', 'catalina', 'Normal', 14879564, 'catalina@hotmail.com', True);
+INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (1, 'Ruben', 'admin', 'Administrador', 0, True, 0);
+INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (2, 'Carlos', 'carlos', 'Normal', 11454789, True, 0);
+INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (3, 'Roberto', 'roberto', 'Normal', 10222333, True, 0);
+INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (4, 'Ariel', 'ariel', 'Normal', 30876961, True, 0);
+INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (5, 'Nicolas', 'nicolas', 'Normal', 2968741, True, 0);
+INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (6, 'Sebastian', 'sebastian', 'Normal', 3478987, True, 0);
+INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (7, 'Maria', 'maria', 'Normal', 12547897, True, 0);
+INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (8, 'Catalina', 'catalina', 'Normal', 14879564, True, 0);
 
 COMMIT;
 

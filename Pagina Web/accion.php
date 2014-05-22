@@ -14,7 +14,7 @@
 	}
 	function IniciarSesion (&$usuario, &$clave, &$msg){
 		session_start();
-		$cons = 'SELECT usuario.Nombre, usuario.Password, usuario.Categoria, usuario.Id_Usuario, usuario.Visible
+		$cons = 'SELECT usuario.Nombre, usuario.Password, usuario.Categoria, usuario.Id_Usuario, usuario.Visible, usuario.CantCarrito
 								FROM usuario
 								ORDER BY usuario.Id_Usuario';
 		$resUsuarioClave = mysql_query($cons);
@@ -28,6 +28,7 @@
 					$_SESSION['usuario'] = $usuario;
 					$_SESSION['categoria'] = $row['Categoria'];
 					$_SESSION['ID'] = $row['Id_Usuario'];
+					$_SESSION['CarritoCant'] = $row['CantCarrito'];
 					$msg = "Acceso Permitido, Haga Click en el Boton para Ingresar</br><button onclick='Entrar()'>Entrar</button>";
 					break;
 				}
@@ -41,9 +42,21 @@
 		session_start();
 		session_unset();
 		session_destroy();
+	?>
+		<script languaje="javascript"> 	
+			location.href="index.php";
+		</script>
+	<?php
+	}
+	function ConsultarUsuarios (&$res){
+		$cons = ('SELECT usuario.Id_Usuario as ID, usuario.Nombre as Usuario, "-----" as Password, usuario.Categoria, cliente.*,usuario.Visible as Estado 
+						FROM usuario, cliente
+						WHERE usuario.DNI = cliente.DNI
+						ORDER BY ID'); 
+		$res = mysql_query ($cons);
 	}
 	function DatosUsuario(&$res, $ID){
-		$cons = ('SELECT usuario.Nombre, usuario.Password, cliente.* 
+		$cons = ('SELECT usuario.Id_Usuario as ID, usuario.Nombre, usuario.Password, usuario.Visible As Estado, cliente.* 
 						FROM usuario, cliente
 						WHERE usuario.Id_Usuario = ' .$ID .'
 						AND usuario.DNI = cliente.DNI'); 
@@ -58,10 +71,21 @@
 					WHERE cliente.DNI =' .$DNI;
 		$res = mysql_query ($cons);
 		$cons1 = 'UPDATE usuario 
-					SET Nombre = "'.$NomUs .'",
-						Contacto = "' .$Mail.'" 
+					SET Nombre = "'.$NomUs .'"
 					WHERE Id_Usuario = ' .$ID;
 		$res1 = mysql_query ($cons1);
+		if(!$res && !$res1) {
+				$AltMsg = "La modificacion no pudo realizarse";
+		}	
+		elseif (!$res){
+				$AltMsg = "Nombre de Usuario no modificado";
+		}
+		elseif (!$res1){
+				$AltMsg = "Datos personales no modificados";
+		}
+		else {
+			$AltMsg = "Modificacion satisfactoria";
+		}
 	}
 	function ModClaves ($ID, $PassActual, $Pass1, $Pass2, &$AltMsg){
 		$cons = ('SELECT usuario.Password 
@@ -75,6 +99,7 @@
 					SET Password = "'.$Pass1 .'" 
 					WHERE usuario.Id_Usuario =' .$ID;
 				$res = mysql_query ($cons);
+				$AltMsg = "La contraseña fue modificada";
 			}
 			else{
 				$AltMsg = "Las Contraseña no coinciden";
@@ -88,11 +113,13 @@
 		if ($Pass1 == $Pass2){
 			$today = getdate();
 			$Fecha = $today[year]. '-' .$today[mon]. '-'. $today[mday];
+			if	(!empty($Tel)){$Telf = $Tel;}else{$Telf = Null;}
+			if	(!empty($Dir)){$Dirc = $Dir;}else{$Dirc = Null;}
 			$cons = 'INSERT INTO `cookbook`.`cliente` (`DNI` ,`NombreApellido` ,`FechaAlta` ,`Telefono` ,`Direccion` ,`Contacto`)
-					VALUES ("' .$DNI .'", "' .$NomApe .'", "' .$Fecha .'", "' .$Tel .'", "' .$Dir .'", "' .$Mail .'")';
+					VALUES ("' .$DNI .'", "' .$NomApe .'", "' .$Fecha .'", "' .$Telf .'", "' .$Dirc .'", "' .$Mail .'")';
 			$res = mysql_query($cons);
-			$cons2 = 'INSERT INTO `cookbook`.`usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Contacto`, `Visible`) 
-					VALUES (NULL, "' .$NomUs .'", "' .$Pass1 .'", "Normal","' .$DNI .'", "' .$Mail .'", 1)';
+			$cons2 = 'INSERT INTO `cookbook`.`usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Contacto`, `Visible`, `CantCarrito`) 
+					VALUES (NULL, "' .$NomUs .'", "' .$Pass1 .'", "Normal","' .$DNI .'", "' .$Mail .'", 1, 0)';
 			$res1 = mysql_query($cons2);
 			if(!$res || !$res1) {
 				$AltMsg = "Usuario no pudo agregarse";
@@ -117,6 +144,26 @@
 			$AltMsg = "Borrado satisfactorio";
 		}
 	}
+	function ActivarUsuario($ID, &$AltMsg){
+		$cons1 = 'UPDATE usuario 
+					SET Visible = 1 
+					WHERE Id_Usuario = ' .$ID;
+		$res1 = mysql_query ($cons1);
+		if(!$res1) {
+			$AltMsg = "Usuario no se pudo activar";
+		}	
+		else{
+			$AltMsg = "Activacion satisfactorio";
+		}	
+	}
+	function UsuarioPeriodo (&$res, $Fini, $Ffin){
+		$cons = ('SELECT usuario.Id_Usuario as ID, usuario.Nombre as Usuario, cliente.DNI, cliente.NombreApellido, cliente.FechaAlta,usuario.Visible as Estado 
+					FROM usuario, cliente
+					WHERE usuario.DNI = cliente.DNI
+					AND	cliente.FechaAlta BETWEEN "' .$Fini. '" AND "' .$Ffin. '"
+					ORDER BY ID'); 
+		$res = mysql_query ($cons);
+	}
 	function ConsultaPedidos (&$res, $ID){
 		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
 				FROM usuario, cliente, pedidos, estado, libro
@@ -124,26 +171,333 @@
 				AND usuario.DNI = cliente.DNI
 				AND cliente.DNI = pedidos.DNI
 				AND pedidos.Id_Estado = estado.Id_Estado
-				AND pedidos.ISBN = libro.ISBN';
+				AND pedidos.ISBN = libro.ISBN
+				ORDER BY pedidos.FechaPedido DESC';
 		$res = mysql_query( $cons);
 	}
-	function PedidoEntregado ($ISBN, $DNI){
+	function ConsultarPedidos (&$res){
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+				FROM usuario, cliente, pedidos, estado, libro
+				WHERE usuario.DNI = cliente.DNI
+				AND cliente.DNI = pedidos.DNI
+				AND pedidos.Id_Estado = estado.Id_Estado
+				AND pedidos.ISBN = libro.ISBN
+				ORDER BY pedidos.FechaPedido DESC';
+		$res = mysql_query( $cons);
+	}
+	function ConsultarPedidosPend (&$res){
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+				FROM usuario, cliente, pedidos, estado, libro
+				WHERE usuario.DNI = cliente.DNI
+				AND cliente.DNI = pedidos.DNI
+				AND pedidos.Id_Estado = estado.Id_Estado
+				AND pedidos.Id_Estado = 1
+				AND pedidos.ISBN = libro.ISBN
+				ORDER BY pedidos.FechaPedido DESC';
+		$res = mysql_query( $cons);
+	}	
+	function ConsultarPedidosEnv (&$res){
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+				FROM usuario, cliente, pedidos, estado, libro
+				WHERE usuario.DNI = cliente.DNI
+				AND cliente.DNI = pedidos.DNI
+				AND pedidos.Id_Estado = estado.Id_Estado
+				AND pedidos.Id_Estado = 2
+				AND pedidos.ISBN = libro.ISBN
+				ORDER BY pedidos.FechaPedido DESC';
+		$res = mysql_query( $cons);
+	}
+	function ConsultarPedidosEnt (&$res){
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+				FROM usuario, cliente, pedidos, estado, libro
+				WHERE usuario.DNI = cliente.DNI
+				AND cliente.DNI = pedidos.DNI
+				AND pedidos.Id_Estado = estado.Id_Estado
+				AND pedidos.Id_Estado = 3
+				AND pedidos.ISBN = libro.ISBN
+				ORDER BY pedidos.FechaPedido DESC';
+		$res = mysql_query( $cons);
+	}
+	function PedidoEntregado ($ISBN, $DNI, &$Msj){
 		$cons = 'UPDATE pedidos 
 					SET Id_Estado = 3 
 					WHERE ISBN = ' .$ISBN. '
 					AND DNI = ' .$DNI;
-		$res = mysql_query( $cons);			
+		$res = mysql_query( $cons);		
+		if (!$res){
+			$Msj = "Estado no modificado";
+		}
+		else{
+			$Msj = "Estado modificado con exito";
+		}
+	}
+	function PedidoEnviado($ISBN, $DNI, &$Msj){
+		$cons = 'UPDATE pedidos 
+					SET Id_Estado = 2 
+					WHERE ISBN = ' .$ISBN. '
+					AND DNI = ' .$DNI;
+		$res = mysql_query( $cons);		
+		if (!$res){
+			$Msj = "Estado no modificado";
+		}
+		else{
+			$Msj = "Estado modificado con exito";
+		}
+	}
+	function ConsultaCarrito (&$res, $ID){
+		$cons = 'SELECT usuario.DNI, usuario.Nombre, libro.ISBN, libro.Titulo, autor.NombreApellido, libro.Precio
+				FROM usuario, carrito, libro, autor
+				WHERE usuario.Id_Usuario =' .$ID .'
+				AND usuario.Id_Usuario = carrito.Id_Usuario
+				AND carrito.ISBN = libro.ISBN
+				AND libro.Id_Autor = autor.Id_Autor';
+		$res = mysql_query( $cons);
+	}
+	function AgregarCarrito($ISBN, $ID, &$Msj){
+		$cons = 'INSERT INTO `cookbook`.`carrito` (`Id_Usuario` ,`ISBN`)VALUES (' .$ID. ', ' .$ISBN. ')';
+		$res = mysql_query( $cons);
+		if (!$res){
+			$Msj = "No se pudo agregar al carrito";
+		}
+		else{
+			$cons1 = 'SELECT usuario.CantCarrito 
+						FROM usuario 
+						WHERE Id_Usuario = ' .$ID;
+			$res1 = mysql_query ($cons1);
+			while($row = mysql_fetch_assoc($res1)){
+				$cant = $row['CantCarrito'] + 1;
+				$cons2 = 'UPDATE usuario 
+							SET CantCarrito = ' .$cant. ' 
+							WHERE Id_Usuario = ' .$ID;
+				$res2 = mysql_query ($cons2);
+			$_SESSION['CarritoCant'] = $cant;
+			$Msj = "Agregado con exito al carrito";
+			}
+		}
+	}
+	function RetirarCarrito($ISBN, $ID, &$Msj){
+		$cons =	'DELETE FROM `carrito` WHERE `carrito`.`Id_Usuario` = ' .$ID. ' AND `carrito`.`ISBN` = ' .$ISBN;
+		$res = mysql_query( $cons);
+		$cons1 = 'SELECT usuario.CantCarrito 
+					FROM usuario 
+					WHERE Id_Usuario = ' .$ID;
+		$res1 = mysql_query ($cons1);
+		while($row = mysql_fetch_assoc($res1)){
+			$cant = $row['CantCarrito'] - 1;
+			$cons2 = 'UPDATE usuario 
+						SET CantCarrito = ' .$cant. ' 
+						WHERE Id_Usuario = ' .$ID;
+			$res2 = mysql_query ($cons2);
+			$_SESSION['CarritoCant'] = $cant;
+		}
+		if (!$res){
+			$Msj = "No se pudo borrar del carrito";
+		}
+		else{
+			$Msj = "Borrado con exito del carrito";
+		}
+	}
+	function VaciarCarrito($ID, &$Msj){
+		$cons =	'DELETE FROM carrito WHERE carrito.Id_Usuario = ' .$ID;
+		$res = mysql_query( $cons);
+		$cons2 = 'UPDATE usuario 
+					SET CantCarrito = 0 
+					WHERE Id_Usuario = ' .$ID;
+		$res2 = mysql_query ($cons2);
+		$_SESSION['CarritoCant'] = 0;
+		if (!$res){
+			$Msj = "No se pudo vaciar el carrito";
+		}
+		else{
+			$Msj = "Carrito vaciado con exito";
+		}
+	}
+	function ComprarCarrito($ID, &$AltMsg){
+		$cons = 'SELECT carrito.ISBN
+				FROM carrito
+				WHERE carrito.ID_Usuario = ' .$ID;
+		$res = mysql_query( $cons);
+		$cons1 = 'SELECT usuario.DNI
+				FROM usuario
+				WHERE usuario.ID_Usuario = ' .$ID;
+		$res1 = mysql_query( $cons1);
+		$today = getdate();
+		$Fecha = $today[year]. '-' .$today[mon]. '-'. $today[mday];
+		$Msg = 'Libros comprados con exito: ';
+		$Msg2 = 'Operaciones Fallidas: ';
+		while($row1 = mysql_fetch_assoc($res1)){
+			while($row = mysql_fetch_assoc($res)){
+				$cons2 = 'INSERT INTO `cookbook`.`pedidos` (`ISBN` ,`DNI` ,`FechaPedido` ,`Id_Estado`)VALUES (' .$row['ISBN']. ', ' .$row1['DNI'].', "' .$Fecha. '", 1)';
+				$res2 = mysql_query( $cons2);
+				if ($res2) {
+					$Msg = $Msg .'' .$row['ISBN']. '; ';
+					RetirarCarrito($row['ISBN'], $ID, $Msj);
+				}
+				else{
+					$Msg2 = $Msg2 .'' .$row['ISBN']. '; ';
+				}
+			}
+		}
+		$AltMsg = $Msg. ' /// ' .$Msg2;
+	}
+	function LibroPeriodo (&$res, $Fini, $Ffin){
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, autor.NombreApellido AS Autor, pedidos.DNI, cliente.NombreApellido AS Cliente, pedidos.FechaPedido
+				FROM cliente, pedidos, libro, autor
+				WHERE cliente.DNI = pedidos.DNI
+				AND libro.Id_Autor = autor.Id_Autor
+				AND pedidos.ISBN = libro.ISBN
+				AND	pedidos.FechaPedido BETWEEN "' .$Fini. '" AND "' .$Ffin. '"';
+		$res = mysql_query( $cons);
+	}
+	function BuscarEtiq ($IS, &$LibEtiq){
+		$LibEtiq = mysql_query('SELECT Descripcion
+			FROM etiqueta_Libro, etiqueta	
+			WHERE ISBN = ' .$IS .'
+			AND etiqueta_Libro.Id_Etiqueta = etiqueta.Id_Etiqueta');
 	}
 	function ConsultaLibro (&$res, $ISBN){
-		$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
+		$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible as Estado
 						FROM libro, autor, idioma, disponibilidad
 						WHERE autor.Id_Autor = libro.Id_Autor
 						AND idioma.Id_Idioma = libro.Id_Idioma
 						AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
 						AND libro.ISBN=' .$ISBN);
 	}
+	function BajaLibro($ISBN, &$AltMsg){
+		$cons1 = 'UPDATE libro 
+					SET Visible = 0 
+					WHERE ISBN = ' .$ISBN;
+		$res1 = mysql_query ($cons1);
+		if(!$res1) {
+			$AltMsg = "Libro no se pudo borrar";
+		}	
+		else{
+			$AltMsg = "Borrado satisfactorio";
+		}	
+	}
+	function ActivarLibro($ISBN, &$AltMsg){
+		$cons1 = 'UPDATE libro 
+					SET Visible = 1 
+					WHERE ISBN = ' .$ISBN;
+		$res1 = mysql_query ($cons1);
+		if(!$res1) {
+			$AltMsg = "Libro no se pudo activar";
+		}	
+		else{
+			$AltMsg = "Activacion satisfactorio";
+		}	
+	}	
+	function AltaLibro($IS, $Tit, $Aut, $CPag, $Pre, $Idio, $Fec, $Etiq, &$AltMsg){
+		$RAut = mysql_query('SELECT Id_Autor
+							FROM autor
+							WHERE NombreApellido = "'. $Aut .'"');
+		$Arow = mysql_fetch_assoc($RAut);
+		$RIdio = mysql_query('SELECT Id_Idioma
+							FROM idioma
+							WHERE Descripcion = "'. $Idio .'"');
+		$Irow = mysql_fetch_assoc($RIdio);
+		$cons1 ='INSERT INTO `cookbook`.`libro` (`ISBN` ,`Titulo` ,`Id_Autor` ,`CantidadPaginas` ,`Precio` ,`Id_Idioma` ,`Fecha` ,`Id_Disponibilidad` ,`Visible` ,`Hojear`)
+			VALUES (' .$IS .', "' .$Tit .'", ' .$Arow['Id_Autor'] .',' .$CPag .' , ' .$Pre .', ' .$Irow['Id_Idioma'] .', "' .$Fec .'", 1, 1, NULL)';
+		$res1 = mysql_query ($cons1);
+		if (!empty($Etiq)){		
+			foreach ($Etiq as &$valor){
+				$REtiq = mysql_query('SELECT Id_Etiqueta
+							FROM etiqueta
+							WHERE Descripcion = "'. $valor .'"');
+				$Erow = mysql_fetch_assoc($REtiq);
+				$consetiq = 'INSERT INTO Etiqueta_Libro (`Id_EtiquetaLibro`, `Id_Etiqueta`, `ISBN`) VALUES (NULL, "'.$Erow['Id_Etiqueta'] .'", "'.$IS .'")';
+				mysql_query($consetiq);
+			}			
+		}
+		if(!$res1) {
+			$AltMsg = "El Libro no se agrego correctamente";
+		}	
+		else{
+			$AltMsg = "El Libro se agrego correctamente";
+		}
+	}
+	function ModLibro ($IS, $Tit, $Aut, $CPag, $Pre, $Idio, $Fec, $Etiq, $Disp, &$AltMsg){
+		$RAut = mysql_query('SELECT Id_Autor
+							FROM autor
+							WHERE NombreApellido = "'. $Aut .'"');
+		$Arow = mysql_fetch_assoc($RAut);
+		$RIdio = mysql_query('SELECT Id_Idioma
+							FROM idioma
+							WHERE Descripcion = "'. $Idio .'"');
+		$Irow = mysql_fetch_assoc($RIdio);
+		$RDis = mysql_query('SELECT Id_Disponibilidad
+							FROM disponibilidad
+							WHERE Descripcion = "'. $Disp .'"');
+		$Drow = mysql_fetch_assoc($RDis);
+		$cons = 'UPDATE libro 
+			SET Titulo = "'.$Tit .'",
+				Id_Autor = "' .$Arow['Id_Autor'] .'",
+				CantidadPaginas = "' .$CPag .'",
+				Precio = "' .$Pre .'",
+				Id_Idioma = "' .$Irow['Id_Idioma'] .'",
+				Fecha = "' .$Fec .'",
+				Id_Disponibilidad = "' .$Drow['Id_Disponibilidad'] .'"
+			WHERE ISBN =' .$IS;
+		$res = mysql_query ($cons);
+		$Eres = mysql_query ('SELECT Id_EtiquetaLibro
+							FROM etiqueta_Libro
+							WHERE ISBN =' .$IS);				
+		while ($row = mysql_fetch_assoc($Eres)){					
+			$conscar = 'DELETE FROM etiqueta_Libro WHERE etiqueta_Libro.Id_EtiquetaLibro =' .$row["Id_EtiquetaLibro"];
+			mysql_query ($conscar);
+		}	
+		if (!empty($Etiq)){
+			foreach ($Etiq as &$valor){
+				$REtiq = mysql_query('SELECT Id_Etiqueta
+							FROM etiqueta
+							WHERE Descripcion = "'. $valor .'"');
+				$Erow = mysql_fetch_assoc($REtiq);
+				$consetiq = 'INSERT INTO Etiqueta_Libro (`Id_EtiquetaLibro`, `Id_Etiqueta`, `ISBN`) VALUES (NULL, "'.$Erow['Id_Etiqueta'] .'", "'.$IS .'")';
+				mysql_query($consetiq);		
+			}
+		}	
+		if(!$res) {
+			$AltMsg = "Lo modificacion no se pudo realizar";
+		}	
+		else{
+			$AltMsg = "Modificacion Satisfactoria";
+		}
+	}
+	function AgregarAutor ($NomApe, &$AltMsg){
+		$cons = 'INSERT INTO autor (`Id_Autor` ,`NombreApellido`)
+							VALUES (NULL , "' .$NomApe .'")';
+		$res = mysql_query ($cons);
+		if(!$res) {
+			$AltMsg = "El alta del autor no se pudo realizar";
+		}	
+		else{
+			$AltMsg = "Autor agregado Satisfactoriamente";
+		}
+	}
+	function AgregarIdioma ($NomIdo, &$AltMsg){
+		$cons = 'INSERT INTO idioma (`Id_Idioma` ,`Descripcion`)
+										VALUES (NULL , "' .$NomIdo .'")';
+		$res = mysql_query ($cons);
+		if(!$res) {
+			$AltMsg = "El alta del idioma no se pudo realizar";
+		}	
+		else{
+			$AltMsg = "Idioma agregado Satisfactoriamente";
+		}
+	}
+	function AgregarEtiqueta ($NomEtq, &$AltMsg){
+		$cons = 'INSERT INTO etiqueta (`Id_Etiqueta` ,`Descripcion`)
+											VALUES (NULL , "' .$NomEtq .'")';
+		$res = mysql_query ($cons);
+		if(!$res) {
+			$AltMsg = "El alta de la etiqueta no se pudo realizar";
+		}	
+		else{
+			$AltMsg = "Etiqueta agregado Satisfactoriamente";
+		}
+	}
 	function ConsultaPorDefecto (&$res){
-	$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
+	$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado
 						FROM libro, autor, idioma, disponibilidad
 						WHERE autor.Id_Autor = libro.Id_Autor
 						AND idioma.Id_Idioma = libro.Id_Idioma
@@ -169,6 +523,13 @@
 								FROM libro
 								ORDER BY libro.ISBN');								
 	}	
+	function consultatitulos(&$restitulo, $autornom){
+		$restitulo = mysql_query('SELECT libro.Titulo as Titulo
+								FROM libro, autor
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND autor.NombreApellido = "'.$autornom .'"
+								ORDER BY libro.Titulo');
+	}
 	function ConsultaOrdenamiento (&$res, &$orden){
 		if ($orden == 'PrecAsc') {
 			$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
@@ -343,14 +704,17 @@
 				.$eti;		
 		$res = mysql_query($cons);
 	}
-	function ConsultaFiltros (&$res, &$Pinf, &$Psup){
+	// and libro.ISBN IN (res) lo mismo para ordenar
+	function ConsultaFiltros (&$res, $Pinf, $Psup, $Idio){
 		if	(!empty($Pinf)){$PreInf = '"'.$Pinf.'"';}else{$PreInf = 'libro.Precio';}
 		if	(!empty($Psup)){$PreSup = '"'.$Psup.'"';}else{$PreSup = 'libro.Precio';}
+		if	(!empty($Idio)){$Idioma = '"'.$Idio.'"';}else{$Idioma = 'idioma.Descripcion';}
 		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
 				FROM libro, autor, idioma, disponibilidad
 				WHERE autor.Id_Autor = libro.Id_Autor
 				AND idioma.Id_Idioma = libro.Id_Idioma
 				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
+				AND idioma.Descripcion = "' .$idioma .'"
 				AND libro.Precio >= ' .$PreInf .'
 				AND libro.Precio <= ' .$PreSup;
 		$res = mysql_query($cons);
@@ -362,8 +726,8 @@
 		if	(!empty($Disp)){$Dispo = '"'.$Disp.'"';}else{$Dispo = 'disponibilidad.Descripcion';}
 		if	(!empty($Paginf)){$PagiInf = '"'.$Paginf.'"';}else{$PagiInf = 'libro.CantidadPaginas';}
 		if	(!empty($Pagsup)){$PagiSup = '"'.$Pagsup.'"';}else{$PagiSup = 'libro.CantidadPaginas';}
-		if	(!empty($Finf)){$FecInf = '"'.$Finf.'"';}else{$FecInf = 'libro.Fecha';}
-		if	(!empty($Fsup)){$FecSup = '"'.$Fsup.'"';}else{$FecSup = 'libro.Fecha';}
+		if	(!empty($Finf)){$FecInf = $Finf;}else{$FecInf = 'libro.Fecha';}
+		if	(!empty($Fsup)){$FecSup = $Fsup;}else{$FecSup = 'libro.Fecha';}
 		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
 				FROM libro, autor, idioma, disponibilidad
 				WHERE autor.Id_Autor = libro.Id_Autor

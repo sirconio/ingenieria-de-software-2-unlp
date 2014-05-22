@@ -1,4 +1,8 @@
-<?php session_start();
+<?php header( "Expires: Mon, 20 Dec 1998 01:00:00 GMT" );
+      header( "Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT" );
+      header( "Cache-Control: no-cache, must-revalidate" );
+      header( "Pragma: no-cache" );
+	  session_start();
 	if(empty($_SESSION['estado'])){
 		header ("Location: index.php");
 	}
@@ -14,7 +18,7 @@
 			}
 			<!-- RECARGA LA PAGINA CON EL FLAG EN TRUE -->
 			function salir(){
-				location.href="index.php?flag=true";
+				location.href="PerfilCuenta.php?flag=true";
 			}			
 			function registro(){
 				location.href="Registrarme.php";
@@ -25,9 +29,42 @@
 			function busqueda (bus){
 				location.href="Busqueda.php?BusRap=" + bus;
 			}
-			function MensajeAlta(Msj){
+			function MensajeBaja(Msj){
 				alert(Msj);
 				location.href="index.php?flag=true";
+			}
+			function MensajeMod(Msj){
+				alert(Msj);
+				location.href="PerfilCuenta.php";
+			}function LetrasEspacio(e) {
+				tecla = (document.all) ? e.keyCode : e.which;
+				if ((tecla==8) || (tecla == 32)) return true;
+				patron =/[A-Za-z]/;
+				te = String.fromCharCode(tecla);
+				return patron.test(te);
+			}
+			function NumerosPunto(e){
+				var keynum = window.event ? window.event.keyCode : e.which;
+				if ((keynum == 8) || (keynum == 46))
+				return true;
+				 
+				return /\d/.test(String.fromCharCode(keynum));
+			}
+			function NumerosGuion(e){
+				var keynum = window.event ? window.event.keyCode : e.which;
+				if ((keynum == 8) || (keynum == 45))
+				return true;
+				 
+				return /\d/.test(String.fromCharCode(keynum));
+			}
+			function validarEmail() {
+				object = document.getElementById("id_mail3");
+				email = object.value;
+				expr = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+				if ( !expr.test(email) ){
+					alert("Error: La dirección de correo " + email + " es incorrecta.");
+					object.value = "";	
+				}
 			}
 		</script>	
 	</head>
@@ -61,7 +98,7 @@
 						BajaUsuario($_SESSION["ID"], $AltMsg);
 					?>		
 						<script languaje="javascript"> 
-							MensajeAlta("<?=$AltMsg?>");
+							MensajeBaja("<?=$AltMsg?>");
 						</script>
 					<?php }
 					// FLAG = TRUE, INDICA QUE SE PRESIONO SOBRE EL BOTON CERRAR SESION
@@ -81,7 +118,10 @@
 							echo $_SESSION['categoria'];
 							echo '</li>';
 							if ($_SESSION['categoria'] == 'Normal'){
-								echo '<li>Carrito de compras:</li>';
+				?>				
+								<li><a id='carrito' href="CarritoCompras.php">Carrito de compras: 
+				<?php				echo $_SESSION["CarritoCant"];
+								echo '</a></li>';
 							}
 							echo '<li><a onclick="irperfil()">Ir a Perfil</a> - <a onclick="salir()">Cerrar Sesion</a></li>';//BOTON DE CIERRE DE SESION, LLAMA A LA fuction salir() 
 						}
@@ -122,14 +162,14 @@
 							ModUsuario($_SESSION["ID"], $_POST['NomApe'], $_POST['NomUs'], $_POST['DNI'], $_POST['Tel'], $_POST['Dir'], $_POST['Mail'], $AltMsg);
 				?>		
 					<script languaje="javascript"> 
-						MensajeAlta("<?=$AltMsg?>");
+						MensajeMod("<?=$AltMsg?>");
 					</script>
 				<?php }
 					if	(!empty($_POST['PassActual']) && !empty($_POST['Pass1']) && !empty($_POST['Pass2'])){	
-								ModClave($_SESSION["ID"], $_POST['PassActual'], $_POST['Pass1'], $_POST['Pass2'], $AltMsg);
+								ModClaves($_SESSION["ID"], $_POST['PassActual'], $_POST['Pass1'], $_POST['Pass2'], $AltMsg);
 					?>		
 						<script languaje="javascript"> 
-							MensajeAlta("<?=$AltMsg?>");
+							MensajeMod("<?=$AltMsg?>");
 						</script>
 					<?php }
 					DatosUsuario($res, $_SESSION["ID"]);     
@@ -137,28 +177,28 @@
 						echo '<form id="FRegPerfil" action="" method="POST">
 								<label class="Reginput" for="ModPers">Modificar Datos Personales:</label></br>
 								<label class="Reginput" for="NombreUsuario">Nombre Usuario:</label>
-								<input class="Reginput" type="text" name="NomUs" value="', $row['Nombre'], '" required><br>
+								<input class="Reginput" type="text" name="NomUs" value="', $row['Nombre'], '" placeholder="Usuario" maxlength="10" required><br>
 								<label class="Reginput" for="NombreApellido">Nombre y Apellido:</label>
-								<input class="Reginput" type="text" name="NomApe"  value="', $row['NombreApellido'], '" required><br>
+								<input class="Reginput" type="text" name="NomApe"  value="', $row['NombreApellido'], '" placeholder="Nombre Apellido" maxlength="45" onkeypress="return LetrasEspacio(event)" required><br>
 								<label class="Reginput" for="DNI">DNI:</label>
-								<input class="Reginput" type="text" name="DNI" value="', $row['DNI'], '" required readonly><br>
+								<input class="Reginput" type="text" name="DNI" value="', $row['DNI'], '" name="DNI" placeholder="Ej: 37.148.135" maxlength="10" onkeypress="return NumerosPunto(event);" required readonly><br>
 								<label class="Reginput" for="Telefono">Telefono:</label>
-								<input class="Reginput" type="text" name="Tel" value="', $row['Telefono'], '" required><br>
+								<input class="Reginput" type="text" name="Tel" value="', $row['Telefono'], '" placeholder="Ej: 011-4189054" maxlength="10" onkeypress="return NumerosGuion(event);"required><br>
 								<label class="Reginput" for="Direccion">Direccion:</label>
-								<input class="Reginput" type="text" name="Dir" value="', $row['Direccion'], '" required><br>
+								<input class="Reginput" type="text" name="Dir" value="', $row['Direccion'], '" placeholder="Ej: Calle #Numero" maxlength="45" required><br>
 								<label class="Reginput" for="Mail">Mail:</label>
-								<input class="Reginput" type="text" name="Mail" value="', $row['Contacto'], '" required><br>
+								<input class="Reginput" id="id_mail3" type="text" name="Mail" value="', $row['Contacto'], '" placeholder="Ej: nombre@correo.com" maxlength="45" onblur="validarEmail()" required><br>
 								<input class="Reginput" type="submit" value="Modificar">
 						</form>';	
 					}
 					echo '<form id="FRegPerfil2" action="" method="POST">
 							<label class="Reginput" for="Modcontra">Modificar Contraseña:</label></br>
 							<label class="Reginput" for="Contraseña1">Contraseña Actual:</label>
-							<input class="Reginput" type="password" name="PassActual" required><br>
+							<input class="Reginput" type="password" name="PassActual" placeholder="Contraseña Actual" maxlength="30" required><br>
 							<label class="Reginput" for="Contraseña2">Nueva Contraseña:</label>
-							<input class="Reginput" type="password" name="Pass1" required><br>
+							<input class="Reginput" type="password" name="Pass1" placeholder="Nueva Contraseña" maxlength="30" required><br>
 							<label class="Reginput" for="Contraseña2">Comfirme Contraseña:</label>
-							<input class="Reginput" type="password" name="Pass2" required><br>
+							<input class="Reginput"  size= "20" type="password" name="Pass2" placeholder="Repita Nueva Contraseña" maxlength="30" required><br>
 							<input class="Reginput" type="submit" value="Modificar">
 						</form>';	
 				?>

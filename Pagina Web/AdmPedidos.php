@@ -1,4 +1,8 @@
-<?php session_start();
+<?php header( "Expires: Mon, 20 Dec 1998 01:00:00 GMT" );
+      header( "Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT" );
+      header( "Cache-Control: no-cache, must-revalidate" );
+      header( "Pragma: no-cache" );
+	  session_start();
 	if(empty($_SESSION['estado'])){
 		header ("Location: index.php");
 	}
@@ -26,16 +30,31 @@
 			}
 			function listarPedidos(){
 				location.href="AdmPedidos.php?flag=lista";
+			}	
+			function Enviado (ISBN, DNI){
+				if (confirm("Desea cambiar el estado del pedido a enviado?")){
+					location.href="AdmPedidos.php?pedido=true&Is=" + ISBN + "&Dn=" + DNI;
+				}
+				else{
+					alert("La operacion no se realizo");
+				}
+			}	
+			function MensajeMod(Msj){
+				alert(Msj);
+				location.href="AdmPedidos.php";
+			}	
+			function listarPedidos(){
+				location.href="AdmPedidos.php?flag=lista";
 			}
-			function altaPedido(){
-				location.href="AdmPedidos.php?flag=alta";
+			function pedidosPendientes(){
+				location.href="AdmPedidos.php?flag=pend";
 			}
-			function bajaPedido(){
-				location.href="AdmPedidos.php?flag=baja";
+			function pedidosEnviados(){
+				location.href="AdmPedidos.php?flag=env";
 			}
-			function modPedido(){
-				location.href="AdmPedidos.php?flag=mod";
-			}
+			function pedidosEntregados(){
+				location.href="AdmPedidos.php?flag=ent";
+			}			
 		</script>
 	</head>
 	<body>
@@ -44,6 +63,17 @@
 			<div id='sesiones'>
 				<?php
 					include 'accion.php';
+					///CONEXIONES///						
+					ConexionServidor ($con);					
+					ConexionBaseDatos ($bd);
+					if (!empty($_GET['pedido']) && $_GET['pedido'] == 'true'){
+						PedidoEnviado($_GET['Is'], $_GET['Dn'], $AltMsg);
+						?>
+						<script languaje="javascript"> 	
+							MensajeMod("<?=$AltMsg?>");	
+						</script>
+						<?php
+					}
 					// FLAG = TRUE, INDICA QUE SE PRESIONO SOBRE EL BOTON CERRAR SESION
 					if (!empty($_GET['flag']) && $_GET['flag'] == 'true'){
 						CerrarSesion();
@@ -85,60 +115,231 @@
 				<div id='Admfunciones'>	
 					<ul>
 						<li><a onclick="listarPedidos()">Listar todos los Pedidos</a></li>
-						<li><a onclick="altaPedido()">Dar de alta un Pedido</a></li>
-						<li><a onclick="bajaPedido()">Dar de baja un Pedido</a></li>
-						<li><a onclick="modPedido()">Modificar un Pedido</a></li>
+						<li><a onclick="pedidosPendientes()">Pedidos Pendientes</a></li>
+						<li><a onclick="pedidosEnviados()">Pedidos Enviados</a></li>
+						<li><a onclick="pedidosEntregados()">Pedidos Entregados</a></li>
 					</ul>
 				</div>
 				<div id='libros'>
 					<?php	
 					if (!empty($_GET['flag']) && $_GET['flag'] == 'lista'){
-					
-						ConsultaLibros ($res);
+						echo '<div id="tablapedidos">';
+						ConsultarPedidos ($res);
 						if(!$res) {
 							$message= 'Consulta invalida: ' .mysql_error() ."\n";
 							die($message);
 						}		
-						echo	"<table border='1'>
-								<tr>
-									<th>ISBN</th>
-									<th>Titulo</th>
-									<th>Autor</th>
-									<th>CantidadPaginas</th>
-									<th>Precio</th>
-									<th>Idioma</th>
-									<th>Fecha</th>
-									<th>Disponibilidad</th>
-									<th>Detalles</th>
-								</tr>";
-						$ant = ' ';
-						while($row = mysql_fetch_assoc($res)) {
-							if ($row['ISBN'] != $ant){
-								echo "<tr>";
-								echo "<td>", $row['ISBN'], "</td>";
-								echo "<td>", $row['Titulo'], "</td>";
-								echo "<td>", $row['NombreApellido'], "</td>";
-								echo "<td>", $row['CantidadPaginas'], "</td>";
-								echo "<td>", $row['Precio'], "</td>";
-								echo "<td>", $row['Idioma'], "</td>";
-								echo "<td>", $row['Fecha'], "</td>";
-								echo "<td>", $row['Disponibilidad'], "</td>";
-								$cadena= ' ';
-								//ConsultarAuto ($cadena, $row['Dominio'], $row['Anio']);			
-					?>																	
-								<td><input type='button' value='Detalles' onclick='MostarDetalle()' /></td>
-					<?php
-								echo "</tr>";
-								$ant = $row['ISNB'];
-							}
+						$num1 = mysql_num_rows($res);
+						if($num1 == 0){
+							echo 'No se localizo ningun pedido';
 						}
-						echo "</table>";
+						else{
+							echo '<div id="ListaPedidos">';
+							echo	"<table border='1'>
+									<tr>
+										<th>ISBN</th>
+										<th>Titulo</th>
+										<th>DNI</th>
+										<th>NombreApellido</th>
+										<th>FechaPedido</th>
+										<th>Estado</th>
+										
+									</tr>";
+							$ant = ' ';
+							while($row = mysql_fetch_assoc($res)) {
+								if ($row['ISBN'] != $ant){
+									echo "<tr>";
+									echo "<td>", $row['ISBN'], "</td>";
+									echo "<td>", $row['Titulo'], "</td>";
+									echo "<td>", $row['DNI'], "</td>";
+									echo "<td>", $row['NombreApellido'], "</td>";
+									echo "<td>", $row['FechaPedido'], "</td>";
+									echo "<td>", $row['Estado'], "</td>";
+									$cadena= ' ';
+								if ($row['Estado'] == "Pendiente"){	
+							?>													
+									<td><input type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
+							<?php		
+								}
+								else {
+							?>													
+									<td><input type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
+							<?php		
+								}
+									echo "</tr>";
+									$ant = $row['ISBN'];
+							
+								}
+							}
+							echo "</table>";
+							echo '</div>';
+						}	
 						mysql_free_result($res);
-					}
-						///CIERRE///
-						CerrarServidor ($con);
+				}
+				elseif (!empty($_GET['flag']) && $_GET['flag'] == 'pend'){		
+						echo '<div id="tablapedidos">';
+						ConsultarPedidosPend ($res);
+						if(!$res) {
+							$message= 'Consulta invalida: ' .mysql_error() ."\n";
+							die($message);
+						}		
+						$num1 = mysql_num_rows($res);
+						if($num1 == 0){
+							echo 'No se localizo ningun pedido pendiente';
+						}
+						else{
+							echo '<div id="ListaPedidos">';
+							echo	"<table border='1'>
+									<tr>
+										<th>ISBN</th>
+										<th>Titulo</th>
+										<th>DNI</th>
+										<th>NombreApellido</th>
+										<th>FechaPedido</th>
+										<th>Estado</th>
+										
+									</tr>";
+							$ant = ' ';
+							while($row = mysql_fetch_assoc($res)) {
+								if ($row['ISBN'] != $ant){
+									echo "<tr>";
+									echo "<td>", $row['ISBN'], "</td>";
+									echo "<td>", $row['Titulo'], "</td>";
+									echo "<td>", $row['DNI'], "</td>";
+									echo "<td>", $row['NombreApellido'], "</td>";
+									echo "<td>", $row['FechaPedido'], "</td>";
+									echo "<td>", $row['Estado'], "</td>";
+									$cadena= ' ';
+								if ($row['Estado'] == "Pendiente"){	
+							?>													
+									<td><input type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
+							<?php		
+								}
+								else {
+							?>													
+									<td><input type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
+							<?php		
+								}
+									echo "</tr>";
+									$ant = $row['ISBN'];
+							
+								}
+							}
+							echo "</table>";
+							echo '</div>';
+						}	
+						mysql_free_result($res);
+				}
+				elseif (!empty($_GET['flag']) && $_GET['flag'] == 'env'){		
+						echo '<div id="tablapedidos">';
+						ConsultarPedidosEnv ($res);
+						if(!$res) {
+							$message= 'Consulta invalida: ' .mysql_error() ."\n";
+							die($message);
+						}	
+						$num1 = mysql_num_rows($res);
+						if($num1 == 0){
+							echo 'No se localizo ningun pedido enviado';
+						}
+						else{
+							echo '<div id="ListaPedidos">';
+							echo	"<table border='1'>
+									<tr>
+										<th>ISBN</th>
+										<th>Titulo</th>
+										<th>DNI</th>
+										<th>NombreApellido</th>
+										<th>FechaPedido</th>
+										<th>Estado</th>
+										
+									</tr>";
+							$ant = ' ';
+							while($row = mysql_fetch_assoc($res)) {
+								if ($row['ISBN'] != $ant){
+									echo "<tr>";
+									echo "<td>", $row['ISBN'], "</td>";
+									echo "<td>", $row['Titulo'], "</td>";
+									echo "<td>", $row['DNI'], "</td>";
+									echo "<td>", $row['NombreApellido'], "</td>";
+									echo "<td>", $row['FechaPedido'], "</td>";
+									echo "<td>", $row['Estado'], "</td>";
+									$cadena= ' ';
+								if ($row['Estado'] == "Pendiente"){	
+							?>													
+									<td><input type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
+							<?php		
+								}
+								else {
+							?>													
+									<td><input type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
+							<?php		
+								}
+									echo "</tr>";
+									$ant = $row['ISBN'];
+							
+								}
+							}
+							echo "</table>";
+							echo '</div>';
+						}	
+						mysql_free_result($res);
+				}
+				elseif (!empty($_GET['flag']) && $_GET['flag'] == 'ent'){		
+						echo '<div id="tablapedidos">';
+						ConsultarPedidosEnt ($res);
+						if(!$res) {
+							$message= 'Consulta invalida: ' .mysql_error() ."\n";
+							die($message);
+						}		
+						$num1 = mysql_num_rows($res);
+						if($num1 == 0){
+							echo 'No se localizo ningun pedido entregado';
+						}
+						else{
+							echo '<div id="ListaPedidos">';
+							echo	"<table border='1'>
+									<tr>
+										<th>ISBN</th>
+										<th>Titulo</th>
+										<th>DNI</th>
+										<th>NombreApellido</th>
+										<th>FechaPedido</th>
+										<th>Estado</th>
+										
+									</tr>";
+							$ant = ' ';
+							while($row = mysql_fetch_assoc($res)) {
+								if ($row['ISBN'] != $ant){
+									echo "<tr>";
+									echo "<td>", $row['ISBN'], "</td>";
+									echo "<td>", $row['Titulo'], "</td>";
+									echo "<td>", $row['DNI'], "</td>";
+									echo "<td>", $row['NombreApellido'], "</td>";
+									echo "<td>", $row['FechaPedido'], "</td>";
+									echo "<td>", $row['Estado'], "</td>";
+									$cadena= ' ';
+								if ($row['Estado'] == "Pendiente"){	
+							?>													
+									<td><input type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
+							<?php		
+								}
+								else {
+							?>													
+									<td><input type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
+							<?php		
+								}
+									echo "</tr>";
+									$ant = $row['ISBN'];
+							
+								}
+							}
+							echo "</table>";
+							echo '</div>';
+						}	
+						mysql_free_result($res);
+				}
 					?>	
-				</div>
+			</div>
 			</div>
 		</div>
 		<div id='pie'>

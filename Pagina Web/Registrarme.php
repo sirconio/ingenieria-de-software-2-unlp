@@ -1,4 +1,8 @@
-<?php session_start();
+<?php header( "Expires: Mon, 20 Dec 1998 01:00:00 GMT" );
+      header( "Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT" );
+      header( "Cache-Control: no-cache, must-revalidate" );
+      header( "Pragma: no-cache" );
+	  session_start();
 	if(!empty($_SESSION['estado'])){
 		header ("Location: index.php");
 	}
@@ -33,6 +37,45 @@
 			}
 			function busqueda (bus){
 				location.href="Busqueda.php?BusRap=" + bus;
+			}
+			function LetrasEspacio(e) {
+				tecla = (document.all) ? e.keyCode : e.which;
+				if ((tecla==8) || (tecla == 32)) return true;
+				patron =/[A-Za-z]/;
+				te = String.fromCharCode(tecla);
+				return patron.test(te);
+			}
+			function NumerosPunto(e){
+				var keynum = window.event ? window.event.keyCode : e.which;
+				if ((keynum == 8) || (keynum == 46))
+				return true;
+				 
+				return /\d/.test(String.fromCharCode(keynum));
+			}
+			function NumerosGuion(e){
+				var keynum = window.event ? window.event.keyCode : e.which;
+				if ((keynum == 8) || (keynum == 45))
+				return true;
+				 
+				return /\d/.test(String.fromCharCode(keynum));
+			}
+			function validarEmail() {
+				object = document.getElementById("id_mail");
+				email = object.value;
+				expr = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+				if ( !expr.test(email) ){
+					alert("Error: La dirección de correo " + email + " es incorrecta.");
+					object.value = "";	
+				}
+			}
+			function validarTelefono(){
+				object = document.getElementById("idtel");
+				precio = object.value;
+				expr = /^([0-9])*[-]?[0-9]*$/;
+				if ( !expr.test(precio) ){
+					alert("Error: El telefono " + precio + " es incorrecto.");
+					object.value = "";	
+				}
 			}
 		</script>	
 	</head>
@@ -77,9 +120,6 @@
 							echo ' logeado - Categoria:';
 							echo $_SESSION['categoria'];
 							echo '</li>';
-							if ($_SESSION['categoria'] == 'Normal'){
-								echo '<li>Carrito de compras:</li>';
-							}
 							echo '<li><a onclick="irperfil()">Ir a Perfil</a> - <a onclick="salir()">Cerrar Sesion</a></li>';//BOTON DE CIERRE DE SESION, LLAMA A LA fuction salir() 
 						}
 						//USUARIO NO LOGEADO, SE LE OFRECE LA OPCION DE ENTRAR A MODO ADMINISTRADOR
@@ -107,26 +147,27 @@
 				<div id='textoreg'><samp>Registrate, en un simple paso!</samp></div>
 				<div id='registro'>
 					<form id='FReg' action="" method="POST">
-							<label class="Reginput" for="NombreUsuario">Nombre Usuario:</label>
-							<input class="Reginput" type="text" name="NomUs" required><br>
-							<label class="Reginput" for="NombreApellido">Nombre y Apellido:</label>
-							<input class="Reginput" type="text" name="NomApe" required><br>
-							<label class="Reginput" for="DNI">DNI:</label>
-							<input class="Reginput" type="text" name="DNI" required><br>
+							<label class="Reginput" for="NombreUsuario">*Nombre Usuario:</label>
+							<input class="Reginput" type="text" name="NomUs" placeholder="Usuario" maxlength="10" required><br>
+							<label class="Reginput" for="NombreApellido">*Nombre y Apellido:</label>
+							<input class="Reginput" type="text" name="NomApe" placeholder="Nombre Apellido" maxlength="45" onkeypress="return LetrasEspacio(event)" required><br>
+							<label class="Reginput" for="DNI">*DNI:</label>
+							<input class="Reginput" type="text" name="DNI" placeholder="Ej: 37.148.135" maxlength="10" onkeypress="return NumerosPunto(event);" required><br>
 							<label class="Reginput" for="Telefono">Telefono:</label>
-							<input class="Reginput" type="text" name="Tel" required><br>
+							<input class="Reginput" type="tel" id="idtel" name="Tel" placeholder="Ej: 011-4189054" maxlength="10" onkeypress="return NumerosGuion(event);" onblur="validarTelefono()" ><br>
 							<label class="Reginput" for="Direccion">Direccion:</label>
-							<input class="Reginput" type="text" name="Dir" required><br>
-							<label class="Reginput" for="Mail">Mail:</label>
-							<input class="Reginput" type="text" name="Mail" required><br>
-							<label class="Reginput" for="Contraseña1">Contraseña:</label>
-							<input class="Reginput" type="password" name="Pass1" required><br>
-							<label class="Reginput" for="Contraseña2">Comfirme Contraseña:</label>
-							<input class="Reginput" type="password" name="Pass2" required><br>
-							<input class="Reginput" type="submit" value="Confirmar">
+							<input class="Reginput" type="text" size="30" name="Dir" placeholder="Ej: Calle #Numero" maxlength="45" ><br>
+							<label class="Reginput" for="Mail">*Mail:</label>
+							<input class="Reginput" id="id_mail" type="text" size="30" name="Mail" placeholder="Ej: nombre@correo.com" maxlength="45" onblur="validarEmail()" required><br>
+							<label class="Reginput" for="Contraseña1">*Contraseña:</label>
+							<input class="Reginput" type="password" name="Pass1" placeholder="Contraseña" maxlength="30" required><br>
+							<label class="Reginput" for="Contraseña2">*Comfirme Contraseña:</label>
+							<input class="Reginput" type="password" name="Pass2" placeholder="Contraseña" maxlength="30" required><br>
+							<input class="Reginput" type="submit" value="Confirmar"></br></br>
+							<label for="obligatorios">Los * son campos obligatorios</label>
 					</form>	
 					<?php
-					if	(!empty($_POST['NomApe']) && !empty($_POST['NomUs']) && !empty($_POST['DNI']) && !empty($_POST['Tel']) && !empty($_POST['Dir']) && !empty($_POST['Mail']) && !empty($_POST['Pass1']) && !empty($_POST['Pass2'])){	
+					if	(!empty($_POST['NomApe']) && !empty($_POST['NomUs']) && !empty($_POST['DNI']) && !empty($_POST['Mail']) && !empty($_POST['Pass1']) && !empty($_POST['Pass2'])){	
 							AltaUsuario($_POST['NomApe'], $_POST['NomUs'], $_POST['DNI'], $_POST['Tel'], $_POST['Dir'], $_POST['Mail'], $_POST['Pass1'], $_POST['Pass2'], $AltMsg);
 					?>		
 					<script languaje="javascript"> 

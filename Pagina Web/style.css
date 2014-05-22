@@ -46,24 +46,29 @@
 					text-align:center;						
 					font-weight:bold;
 					font-size:100%;	
+					color: #610b38;
 				}
 				#Bsesiones{
 					list-style-type:none;
 					text-align:center;						
 					font-weight:bold;
 					font-size:100%;	
+					color: #610b38;
 				}
 				#sesiones li a:link,a:visited{
 					display:block;
 					height:30%;
 					width:100%;
-					padding-top: 10%;
+					color: #610b38;
 					text-decoration:none;
 				}
 				#sesiones li a:hover,a:active{
 					cursor:pointer;
 					text-transform:uppercase;
 					color: #2A0A1B;
+				}
+				#carrito {
+					color: #610b38;
 				}
 					#imglogo{
 						position:absolute;
@@ -129,7 +134,7 @@
 						overflow:auto;
 						min-height: 300px;
 						float: right;
-						height:95%;
+						height:93%;
 						width:79%;
 						text-align:justify;
 						font-weight:bold;
@@ -142,7 +147,7 @@
 						overflow:auto;
 						min-height: 300px;
 						float: right;
-						top:15%;
+						top:8%;
 						height:75%;
 						width:77%;
 						text-align:justify;
@@ -215,8 +220,8 @@
 						}
 						#listlibros{
 							position:absolute;
-							bottom:-35%;
-							left:2.5%;
+							bottom:-50%;
+							left:5%;
 							height:90%;
 							width:90%;					
 							overflow: auto;
@@ -226,7 +231,8 @@
 							float:right;
 							width:100%;
 							color: white;
-							background-image:url('Fondo2.gif');
+							background-image:url('Fondo9.jpg');
+							background-size:contain;
 							border: 3px groove #190714;
 							overflow: auto;
 						}
@@ -235,7 +241,7 @@
 						}
 						#ordenamiento{
 							position: absolute;
-							top:40%;
+							top:50%;
 							left:3%;
 							
 						}
@@ -244,8 +250,10 @@
 							top:1%;
 							left:46%;
 							right:1%;
-							height:35%;
+							height:45%;
 							border: 3px groove #FFFFFF;
+							background-image:url('Fondo9.jpg');
+							background-size:contain;
 						}
 						#filtros label{
 							margin:0.5%;
@@ -262,7 +270,9 @@
 							top:1%;
 							left:3%;
 							right:55%;
-							height:35%;
+							height:45%;
+							background-image:url('Fondo9.jpg');
+							background-size:contain;
 							border: 3px groove #FFFFFF;
 						}
 						#buscar label{
@@ -277,7 +287,7 @@
 						}
 						#listlibros2{
 							position:absolute;
-							top:45%;
+							top:52%;
 							left:2.5%;
 							height:42%;
 							width:90%;
@@ -288,7 +298,8 @@
 							float:right;
 							width:100%;
 							color: white;
-							background-image:url('Fondo2.gif');
+							background-image:url('Fondo9.jpg');
+							background-size:contain;
 							border: 3px groove #190714;
 							overflow: auto;
 						}
@@ -299,6 +310,7 @@
 							position: absolute;
 							top:40%;
 							left:3%;
+							width:19%;
 							z-index:4;
 						}
 						#filtros2{
@@ -308,6 +320,8 @@
 							right:1%;
 							height:35%;
 							border: 3px groove #FFFFFF;
+							background-image:url('Fondo9.jpg');
+							background-size:contain;
 							z-index:4;
 						}
 						#filtros2 label{
@@ -320,16 +334,76 @@
 							top:85%;	
 							right:1%;
 						}
+						#filtrobot3{
+							position:absolute;	
+							top:60%;	
+							right:75%;
+						}
+						#filtrobot3b{
+							position:absolute;	
+							top:75%;	
+							right:75%;
+						}
 						#buscar2{
 							position: absolute;
 							top:1%;
 							left:3%;
 							right:55%;
-							height:35%;
+							height:45%;
 							border: 3px groove #FFFFFF;
+							background-image:url('Fondo9.jpg');
+							background-size:contain;
 							z-index:4;
 						}
 						#buscar2 label{
+							margin:0.5%;
+							color: white;
+							font-weight:bold;
+						}
+						#buscar2b{
+							position: absolute;
+							top:1%;
+							left:3%;
+							right:55%;
+							height:30%;
+							border: 3px groove #FFFFFF;
+							background-image:url('Fondo9.jpg');
+							background-size:contain;
+							z-index:4;
+						}
+						#buscar2b label{
+							margin:0.5%;
+							color: white;
+							font-weight:bold;
+						}
+						#buscar3{
+							position: absolute;
+							top:8%;
+							left:3%;
+							right:55%;
+							height:38%;
+							border: 3px groove #FFFFFF;
+							background-image:url('Fondo9.jpg');
+							background-size:contain;
+							z-index:4;
+						}
+						#buscar3 label{
+							margin:0.5%;
+							color: white;
+							font-weight:bold;
+						}
+						#buscar3b{
+							position: absolute;
+							top:8%;
+							left:3%;
+							right:55%;
+							height:28%;
+							border: 3px groove #FFFFFF;
+							background-image:url('Fondo9.jpg');
+							background-size:contain;
+							z-index:4;
+						}
+						#buscar3b label{
 							margin:0.5%;
 							color: white;
 							font-weight:bold;
@@ -338,6 +412,16 @@
 							position:absolute;
 							top:85%;	
 							right:1%;
+						}
+						#buscrobot3{
+							position:absolute;
+							top:85%;	
+							left:75%;
+						}
+						#buscrobot3b{
+							position:absolute;
+							top:53%;	
+							left:30%;
 						}
 						#Caracteristicas{
 							position: absolute;
@@ -349,6 +433,18 @@
 							border: 1px dashed #FFFFFF;
 						}
 						#Caracteristicas input{
+							margin:1%;
+						}
+						#Caracteristicas1{
+							position: absolute;
+							left: 1%;
+							top:60%;
+							height:57%;
+							width:70%;
+							overflow: auto;
+							border: 1px dashed #FFFFFF;
+						}
+						#Caracteristicas1 input{
 							margin:1%;
 						}
 						/*QUIENES SOMOS*/
@@ -373,8 +469,11 @@
 							position: absolute;
 							width: 70%;
 							top:12%;
-							left:20%;
+							left:15%;
 							right:20%;
+							border: 3px double #FFFFFF;
+							background-image:url('Fondo9.jpg');
+							background-size:contain;
 						}
 						.contacto{
 							margin:1.2%;
@@ -390,10 +489,13 @@
 						}	
 						#registro  {
 							position: absolute;
-							width: 70%;
-							top:20%;
-							left:20%;
+							width: 50%;
+							top:13%;
+							left:13%;
 							right:20%;
+							background-image:url('Fondo9.jpg');
+							background-size:contain;
+							border: 3px groove #FFFFFF;
 						}
 						.Reginput{
 							margin:1.2%;
@@ -401,11 +503,14 @@
 				/*ADMINISTRAR*/
 				#Admfunciones{
 					position: absolute;
-					left:10%;
+					top:2%;
+					left:5%;
 				}
 				#Admfunciones li {
 					display:inline;
-					border: 3px groove #FFFFFF;
+					border: 4px groove #FFFFFF;
+					background-image:url('Fondo9.jpg');
+					background-size:contain;
 				}
 				#Admfunciones a:link,a:visited{
 					height:30%;
@@ -423,9 +528,11 @@
 					Top: 10%;
 					left:15%;
 					width: 50%;
-					height: 50%;
+					height: 66%;
 					padding:1%;
 					border: 3px double #FFFFFF;
+					background-image:url('Fondo9.jpg');
+					background-size:contain;
 				}
 				#AdminEtiq{
 					height:20%;
@@ -443,12 +550,18 @@
 					top: 45%;
 					left: 10%;
 					width: 30%;
+					border: 3px double #FFFFFF;
+					background-image:url('Fondo9.jpg');
+					background-size:contain;
 				}
 				#FRegPerfil2 {
 					position: absolute;
 					top: 15%;
 					left: 10%;
 					width: 30%;
+					border: 3px double #FFFFFF;
+					background-image:url('Fondo9.jpg');
+					background-size:contain;
 				}
 				#tablapedidos{
 					position:absolute;
@@ -463,12 +576,107 @@
 					float:right;
 					width:100%;
 					color: white;
-					background-image:url('Fondo2.gif');
+					background-image:url('Fondo9.jpg');
+					background-size:contain;
 					border: 3px groove #190714;
 					overflow: auto;
 				}
 				#tablapedidos table td,th{
 					border: 3px groove #190714;
+				}
+				#tablapedidos2{
+					position:absolute;
+					top:15%;
+					left:10%;
+					height:70%;
+					width:90%;		
+					overflow: auto;
+				}
+				#tablapedidos2 table{
+					position:absolute;
+					float:right;
+					width:100%;
+					color: white;
+					background-image:url('Fondo9.jpg');
+					background-size:contain;
+					border: 3px groove #190714;
+					overflow: auto;
+				}
+				#tablapedidos2 table td,th{
+					border: 3px groove #190714;
+				}
+				#tablauser{
+					position:absolute;
+					top:15%;
+					left:7%;
+					height:70%;
+					width:90%;		
+					overflow: auto;
+				}
+				#tablauser table{
+					position:absolute;
+					float:right;
+					width:100%;
+					color: white;
+					background-image:url('Fondo9.jpg');
+					background-size:contain;
+					border: 3px groove #190714;
+					overflow: auto;
+				}
+				#tablauser table td,th{
+					border: 3px groove #190714;
+				}
+				#tablauser1{
+					position:absolute;
+					top:40%;
+					left:3%;
+					height:50%;
+					width:90%;		
+					overflow: auto;
+				}
+				#tablauser1 table{
+					position:absolute;
+					float:right;
+					width:100%;
+					color: white;
+					background-image:url('Fondo9.jpg');
+					background-size:contain;
+					border: 3px groove #190714;
+					overflow: auto;
+				}
+				#tablauser1 table td,th{
+					border: 3px groove #190714;
+				}
+				#ListaPedidos{
+					position:absolute;
+					top:0.1%;
+					left:5%;
+					height:90%;
+					width:95%;		
+					overflow: auto;
+				}
+				#ListaPedidos table{
+					position:absolute;
+					float:right;
+					width:100%;
+					color: white;
+					background-image:url('Fondo9.jpg');
+					background-size:contain;
+					border: 3px groove #190714;
+					overflow: auto;
+				}
+				#ListaPedidos table td,th{
+					border: 3px groove #190714;
+				}
+				#carritobot1{
+					position:absolute;
+					top:15%;
+					right:10%;
+				}
+				#carritobot2{
+					position:absolute;
+					top:15%;
+					right:3%;
 				}
 			#pie{
 				position: absolute;

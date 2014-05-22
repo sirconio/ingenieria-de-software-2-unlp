@@ -1,4 +1,9 @@
-<?php session_start(); ?>
+<?php header( "Expires: Mon, 20 Dec 1998 01:00:00 GMT" );
+      header( "Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT" );
+      header( "Cache-Control: no-cache, must-revalidate" );
+      header( "Pragma: no-cache" );
+	  session_start();
+?>
 <html>
 	<head>
 		<title>Iniciar Sesion</title>
@@ -23,8 +28,8 @@
 		?>
 			<form method="post" action="">
 				<samp>Por favor, ingrese:<samp/></br></br>
-				<label for="Usuario">Usuario:</label><input type="text" name="usuario" required /></br></br>
-				<label for="Clave">Clave:</label><input type="password" name="clave" required /></br></br>
+				<label for="Usuario">Usuario:</label><input type="text" name="usuario" placeholder="Usuario" maxlength="10" required /></br></br>
+				<label for="Clave">Clave:</label><input type="password" name="clave" placeholder="Contraseña" maxlength="30" required /></br></br>
 				<input type="submit" value="Enviar">
 			</form>
 		<?php

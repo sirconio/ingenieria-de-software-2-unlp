@@ -1,4 +1,8 @@
-<?php session_start();
+<?php header( "Expires: Mon, 20 Dec 1998 01:00:00 GMT" );
+      header( "Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT" );
+      header( "Cache-Control: no-cache, must-revalidate" );
+      header( "Pragma: no-cache" );
+	  session_start();
 	if(empty($_SESSION['estado'])){
 		header ("Location: index.php");
 	}
@@ -14,7 +18,7 @@
 			}
 			<!-- RECARGA LA PAGINA CON EL FLAG EN TRUE -->
 			function salir(){
-				location.href="index.php?flag=true";
+				location.href="PerfilPedidos.php?flag=true";
 			}			
 			function registro(){
 				location.href="Registrarme.php";
@@ -27,6 +31,10 @@
 			}
 			function Recibido (ISBN, DNI){
 				location.href="PerfilPedidos.php?pedido=true&Is=" + ISBN + "&Dn=" + DNI;
+			}
+			function MensajeMod(Msj){
+				alert(Msj);
+				location.href="PerfilPedidos.php";
 			}
 		</script>	
 	</head>
@@ -56,10 +64,10 @@
 					ConexionServidor ($con);					
 					ConexionBaseDatos ($bd);
 					if (!empty($_GET['pedido']) && $_GET['pedido'] == 'true'){
-						PedidoEntregado($_GET['Is'], $_GET['Dn']);
+						PedidoEntregado($_GET['Is'], $_GET['Dn'], $AltMsg);
 						?>
 						<script languaje="javascript"> 	
-							location.href="PerfilPedidos.php";
+							MensajeMod("<?=$AltMsg?>");	
 						</script>
 						<?php
 					}
@@ -80,7 +88,10 @@
 							echo $_SESSION['categoria'];
 							echo '</li>';
 							if ($_SESSION['categoria'] == 'Normal'){
-								echo '<li>Carrito de compras:</li>';
+				?>				
+								<li><a id='carrito' href="CarritoCompras.php">Carrito de compras: 
+				<?php				echo $_SESSION["CarritoCant"];
+								echo '</a></li>';
 							}
 							echo '<li><a onclick="irperfil()">Ir a Perfil</a> - <a onclick="salir()">Cerrar Sesion</a></li>';//BOTON DE CIERRE DE SESION, LLAMA A LA fuction salir() 
 						}
@@ -139,11 +150,17 @@
 								echo "<td>", $row['NombreApellido'], "</td>";
 								echo "<td>", $row['FechaPedido'], "</td>";
 								echo "<td>", $row['Estado'], "</td>";
-								$cadena= ' ';
+								if ($row['Estado'] == "Enviado"){
+								
 						?>																	
 								<td><input type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
+						<?php		
+								}
+								else{
+						?>		
+								 	<td><input type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
 						<?php
-								//ConsultarAuto ($cadena, $row['Dominio'], $row['Anio']);			
+							}
 								echo "</tr>";
 								$ant = $row['ISBN'];
 						
