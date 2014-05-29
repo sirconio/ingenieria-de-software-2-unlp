@@ -8,7 +8,7 @@
 ---contenido---
 elseif (!empty($_GET['flag']) && $_GET['flag'] == 'alta'){ 
 					?>			
-						<div id='AltaLibro'>
+						<div id='ABMDiv'>
 							<div id='registro'>
 							<form id='FReg' action="" method="POST">
 									<label class="Reginput" for="NombreUsuario">Nombre Usuario:</label>
@@ -87,3 +87,50 @@ datapicker
 				$( "#datepicker2" ).datepicker();
 			});		
 	
+	
+	
+	
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script> 
+		$(document).ready(function(){
+		  $("#PanelFilNoReg").click(function(){
+			$("#FilCatNoReg").slideToggle("slow");
+		  });
+		});
+		$(document).ready(function(){
+		  $("#PanelBusNoReg").click(function(){
+			$("#BusISCatNoReg").slideToggle("slow");
+			$("#BusCatNoReg").slideToggle("slow");
+		  });
+		});
+		</script>	
+	
+					<div  class="botones" id="PanelBusNoReg">Panel de Busqueda</div>
+	<div  class="botones" id="PanelFilNoReg">Panel de Filtrado</div>
+	
+						#BusISCatNoReg, #BusCatNoReg, #PanelBusNoReg{
+						position: absolute;
+						top:0%;
+						left:9%;
+						right:55%;
+						text-align:center;
+						border: 3px groove #FFFFFF;
+						background-image:url('Fondo5.jpg');
+						z-index:4;
+					}
+										#FilCatNoReg, #PanelFilNoReg{
+						position: absolute;
+						top:0%;
+						left:46%;
+						width: 35%;
+						text-align:center;
+						border: 3px groove #FFFFFF;
+						background-image:url('Fondo5.jpg');
+						z-index:4;
+					}
+					
+					
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

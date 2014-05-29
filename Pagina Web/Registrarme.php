@@ -25,19 +25,24 @@
 			function salir(){
 				location.href="index.php?flag=true";
 			}			
+			<!-- TRASLADA A LA PAGINA REGISTRAME -->
 			function registro(){
 				location.href="Registrarme.php";
 			}
+			<!-- TRASLADA LA PAGINA VER PERFIL -->
 			function irperfil(){
 				location.href="VerPerfil.php";
 			}
+			<!-- MENSAJE DE ALTA -->
 			function MensajeAlta(Msj){
 				alert(Msj);
 				location.href="Registrarme.php";
 			}
+			<!-- ACTIVACION DEL FLAG DE BUSQUEDA RAPIDA -->
 			function busqueda (bus){
 				location.href="Busqueda.php?BusRap=" + bus;
 			}
+			<!-- VALIDACIONES DE CAMPOS -->
 			function LetrasEspacio(e) {
 				tecla = (document.all) ? e.keyCode : e.which;
 				if ((tecla==8) || (tecla == 32)) return true;
@@ -70,89 +75,120 @@
 			}
 			function validarTelefono(){
 				object = document.getElementById("idtel");
-				precio = object.value;
+				telef = object.value;
 				expr = /^([0-9])*[-]?[0-9]*$/;
-				if ( !expr.test(precio) ){
-					alert("Error: El telefono " + precio + " es incorrecto.");
+				if ( !expr.test(telef) ){
+					alert("Error: El telefono " + telef + " es incorrecto.");
 					object.value = "";	
 				}
 			}
+			function validarDNI(){
+				object = document.getElementById("id_Dni");
+				dni = object.value;
+				expr = /^([0-9])*[.]([0-9])*[.]?[0-9]*$/;
+				if ( !expr.test(dni) ){
+					alert("Error: El DNI " + dni + " es incorrecto.");
+					object.value = "";	
+				}
+			}
+			function validarPass(){
+				object1 = document.getElementById("id_pass1");
+				pass1 = object1.value;
+				object2 = document.getElementById("id_pass2");
+				pass2 = object2.value;
+				if (pass1 != pass2){
+					alert("Las Contraseña no coinciden");
+					object1.value = "";	
+					object2.value = "";	
+				}
+			}
+			<!-- FIN VALIDACIONES DE CAMPOS -->
 		</script>	
 	</head>
 	<body>
-		<?php
-			if (!empty($_GET['BusRap'])){
-		?>
-				<script languaje="javascript"> 					
-					busqueda("<?=$_GET['BusRap']?>");	
-				</script>
-		<?php
-			}
-		?>
+		<!-- COMPROBACION DE BUSQUEDA RAPIDA -->
+	<?php
+		if (!empty($_GET['BusRap'])){
+	?>
+			<script languaje="javascript"> 					
+				busqueda("<?=$_GET['BusRap']?>");//LLAMA A LA fuction busqueda()
+			</script>
+	<?php
+		}
+	?>
+		<!-- CABECERA -->
 		<div id='cabecera'>
-			<div id='imglogo'> <img src="Logo1.gif" width="85%" height="475%"> </div> 
+			<!-- LOGO COOKBOOK -->
+			<div id='imglogo'><a href="index.php"><img src="Logo1.gif" width="85%" height="475%"></a></div> 
+			<!-- BARRA DE BUSQUEDA RAPIDA -->
 			<div id='barrabusqueda' action="Busqueda.php" method="GET">
 				<form>
-					<input class='contacto' size="40" type="text" name="BusRap" placeholder="Autor, Titulo, ISBN" required>
-
-					<input class='contacto' type='submit' value='Busqueda Rapida'/>
+					<input size="40" type="text" name="BusRap" placeholder="Autor, Titulo, ISBN" required>
+					<input id="BusRapBot" type='submit' value='Busqueda Rapida'/>
 				</form>
 			</div>
+			<!-- CONTROL DE SESIONES -->
 			<div id='sesiones'>	
-				<?php
-					include 'accion.php';
-					///CONEXIONES///						
-					ConexionServidor ($con);					
-					ConexionBaseDatos ($bd);	
-					// FLAG = TRUE, INDICA QUE SE PRESIONO SOBRE EL BOTON CERRAR SESION
-					if (!empty($_GET['flag']) && $_GET['flag'] == 'true'){
-						CerrarSesion();
-					}
-					// VERIFICA EL ESTADO DE LA SESION
-					if(!empty($_SESSION['estado'])){
-						//USUARIO LOGEADO CORRECTAMENTE
+	<?php
+				///CONEXIONES///						
+				include 'accion.php';
+				ConexionServidor ($con);					
+				ConexionBaseDatos ($bd);	
+				// FLAG = TRUE, INDICA QUE SE PRESIONO SOBRE EL BOTON CERRAR SESION
+				if (!empty($_GET['flag']) && $_GET['flag'] == 'true'){
+					CerrarSesion();
+				}
+				// VERIFICA EL ESTADO DE LA SESION
+				if(!empty($_SESSION['estado'])){
+					//USUARIO LOGEADO CORRECTAMENTE
 						if ($_SESSION['estado'] == 'logeado'){
-				?>			
+	?>			
 							<ul id='bsesiones'>
-				<?php
-							echo '<li>Usuario, ';
-							echo $_SESSION["usuario"];
-							echo ' logeado - Categoria:';
-							echo $_SESSION['categoria'];
-							echo '</li>';
-							echo '<li><a onclick="irperfil()">Ir a Perfil</a> - <a onclick="salir()">Cerrar Sesion</a></li>';//BOTON DE CIERRE DE SESION, LLAMA A LA fuction salir() 
+	<?php
+								echo '<li>Usuario, ';
+								echo $_SESSION["usuario"];
+								echo ' logeado - Categoria:';
+								echo $_SESSION['categoria'];
+								echo '</li>';
+								echo '<li><a onclick="irperfil()">Ir a Perfil</a> - <a onclick="salir()">Cerrar Sesion</a></li>';//BOTON DE CIERRE DE SESION, LLAMA A LA fuction salir() 
 						}
-						//USUARIO NO LOGEADO, SE LE OFRECE LA OPCION DE ENTRAR A MODO ADMINISTRADOR
+						//USUARIO NO LOGEADO, SE LE OFRECE LA OPCION DE LOGEARSE
 						else{
 							echo '<li><a onclick="acceso()">&nbsp Iniciar sesion</a></li>';//LLAMA A LA fuction acceso()
-							echo '<li><a onclick="registro()">&nbsp Registrate</a></li>';
+							echo '<li><a onclick="registro()">&nbsp Registrate</a></li>';//LLAMA A LA fuction registro()
 						}
-					}
-					//USUARIO NO LOGEADO, SE LE OFRECE LA OPCION DE ENTRAR A MODO ADMINISTRADOR 
-					else{
-						echo '<li><a onclick="acceso()">&nbsp Iniciar Sesion</a></li>';//LLAMA A LA fuction acceso()
-						echo '<li><a onclick="registro()">&nbsp Registrate</a></li>';
-					}
-					echo '</ul>';
-				?>
+				}
+				//USUARIO NO LOGEADO, SE LE OFRECE LA OPCION DE LOGEARSE 
+				else{
+					echo '<li><a onclick="acceso()">&nbsp Iniciar Sesion</a></li>';//LLAMA A LA fuction acceso()
+					echo '<li><a onclick="registro()">&nbsp Registrate</a></li>';//LLAMA A LA fuction registro()
+				}
+							echo '</ul>';
+	?>
 			</div>	
 		</div>
+		<!-- CUERPO -->
 		<div id='cuerpo'>
+			<!-- BOTONES DE DESPLAZAMIENTO -->
 			<div id='encabezado'>
 				<ul id='botones'>
 					<li><a href="index.php">Volver al Inicio</a></li>
 				</ul>
 			</div>
-			<div id='contenido'> 
+			<!-- CONTENIDO REGISTRARTE -->
+			<div id='contenidoreg'>
+				<!-- TEXTO -->
 				<div id='textoreg'><samp>Registrate, en un simple paso!</samp></div>
+				<!-- RECTANGULO DE REGISTRO -->
 				<div id='registro'>
-					<form id='FReg' action="" method="POST">
+					<!-- FORMULARIO DE REGISTRO -->
+					<form action="" method="POST">
 							<label class="Reginput" for="NombreUsuario">*Nombre Usuario:</label>
 							<input class="Reginput" type="text" name="NomUs" placeholder="Usuario" maxlength="10" required><br>
 							<label class="Reginput" for="NombreApellido">*Nombre y Apellido:</label>
 							<input class="Reginput" type="text" name="NomApe" placeholder="Nombre Apellido" maxlength="45" onkeypress="return LetrasEspacio(event)" required><br>
 							<label class="Reginput" for="DNI">*DNI:</label>
-							<input class="Reginput" type="text" name="DNI" placeholder="Ej: 37.148.135" maxlength="10" onkeypress="return NumerosPunto(event);" required><br>
+							<input class="Reginput" id="id_Dni"type="text" name="DNI" placeholder="Ej: 37.148.135" maxlength="10" onkeypress="return NumerosPunto(event);" onblur="validarDNI()" required><br>	
 							<label class="Reginput" for="Telefono">Telefono:</label>
 							<input class="Reginput" type="tel" id="idtel" name="Tel" placeholder="Ej: 011-4189054" maxlength="10" onkeypress="return NumerosGuion(event);" onblur="validarTelefono()" ><br>
 							<label class="Reginput" for="Direccion">Direccion:</label>
@@ -160,29 +196,30 @@
 							<label class="Reginput" for="Mail">*Mail:</label>
 							<input class="Reginput" id="id_mail" type="text" size="30" name="Mail" placeholder="Ej: nombre@correo.com" maxlength="45" onblur="validarEmail()" required><br>
 							<label class="Reginput" for="Contraseña1">*Contraseña:</label>
-							<input class="Reginput" type="password" name="Pass1" placeholder="Contraseña" maxlength="30" required><br>
+							<input class="Reginput" id="id_pass1" type="password" name="Pass1" placeholder="Contraseña" maxlength="30" required><br>
 							<label class="Reginput" for="Contraseña2">*Comfirme Contraseña:</label>
-							<input class="Reginput" type="password" name="Pass2" placeholder="Contraseña" maxlength="30" required><br>
-							<input class="Reginput" type="submit" value="Confirmar"></br></br>
+							<input class="Reginput" id="id_pass2" type="password" name="Pass2" placeholder="Contraseña" maxlength="30" onblur="validarPass()" required><br>
+							<input id="RegBoton" class="Reginput" type="submit" value="Confirmar"></br></br>
 							<label for="obligatorios">Los * son campos obligatorios</label>
 					</form>	
-					<?php
+	<?php
 					if	(!empty($_POST['NomApe']) && !empty($_POST['NomUs']) && !empty($_POST['DNI']) && !empty($_POST['Mail']) && !empty($_POST['Pass1']) && !empty($_POST['Pass2'])){	
 							AltaUsuario($_POST['NomApe'], $_POST['NomUs'], $_POST['DNI'], $_POST['Tel'], $_POST['Dir'], $_POST['Mail'], $_POST['Pass1'], $_POST['Pass2'], $AltMsg);
-					?>		
-					<script languaje="javascript"> 
-						MensajeAlta("<?=$AltMsg?>");
-					</script>
-					<?php }
-						///CIERRE///
-						CerrarServidor ($con);
-					?>						
+	?>		
+						<script languaje="javascript"> 
+							MensajeAlta("<?=$AltMsg?>");
+						</script>
+	<?php			 }
+					// CIERRE SERVIDOR //
+					CerrarServidor ($con);
+	?>						
 				</div>
 			</div>
 		</div>
+		<!-- PIE DE PAGINA -->
 		<div id='pie'>
-			<samp> Dirección : Calle 30 N 416  - La Plata - Argentina | Teléfono : (0221) 411-3257 | E-mail : info@cookbook.com.ar |</br>Resolución Minima 1024 x 768 | Mozilla Firefox | </samp> 
-			<samp>Copyright © 2014 CookBook – Todos los derechos reservados.</samp>
+			<samp> Direcci&oacuten : Calle 30 N&deg 416  - La Plata - Argentina | Tel&eacutefono : (0221) 411-3257 | E-mail : info@cookbook.com.ar |</br>Resoluci&oacuten M&iacutenima 1024 x 768 | Mozilla Firefox | </samp> 
+			<samp>Copyright &copy 2014 CookBook – &reg Todos los derechos reservados.</samp>
 		</div>
 	</body>
 </html>

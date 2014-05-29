@@ -1,17 +1,23 @@
 <?php
 	session_start();
+// GESTION DE CONEXIONES //
+	// CONEXION CON EL SERVIDOR //
 	function ConexionServidor (&$con){
 		$con = mysql_connect('127.0.0.1', 'Fernando', 'Gimnasia13.');
 		if (!$con){
 			die('NO PUDO CONECTARSE: ' .mysql_error());
 		}
 	}
+	// CERRAR CONEXION CON EL SERVIDOR //
 	function CerrarServidor (&$con){
 		mysql_close($con);
 	}
+	// CONEXION CON LA BASE DE DATOS //
 	function ConexionBaseDatos (&$bd){
 		$bd = mysql_select_db('cookbook') or die('La Base de Datos no se pudo seleccionar');
 	}
+// GESTION DE SESIONES //
+	// INICIO DE SESION //
 	function IniciarSesion (&$usuario, &$clave, &$msg){
 		session_start();
 		$cons = 'SELECT usuario.Nombre, usuario.Password, usuario.Categoria, usuario.Id_Usuario, usuario.Visible, usuario.CantCarrito
@@ -38,6 +44,7 @@
 			}
 		}
 	}
+	// CERADO DE SESION //
 	function CerrarSesion (){
 		session_start();
 		session_unset();
@@ -48,6 +55,8 @@
 		</script>
 	<?php
 	}
+// GESTION DE USUARIOS //
+	// CONSULTA TODOS LOS USUARIOS //
 	function ConsultarUsuarios (&$res){
 		$cons = ('SELECT usuario.Id_Usuario as ID, usuario.Nombre as Usuario, "-----" as Password, usuario.Categoria, cliente.*,usuario.Visible as Estado 
 						FROM usuario, cliente
@@ -55,6 +64,7 @@
 						ORDER BY ID'); 
 		$res = mysql_query ($cons);
 	}
+	// CONSULTA USUARIO CON ID //
 	function DatosUsuario(&$res, $ID){
 		$cons = ('SELECT usuario.Id_Usuario as ID, usuario.Nombre, usuario.Password, usuario.Visible As Estado, cliente.* 
 						FROM usuario, cliente
@@ -62,6 +72,33 @@
 						AND usuario.DNI = cliente.DNI'); 
 		$res = mysql_query ($cons);
 	}
+	// BAJA LOGICA DE USUARIO //
+	function BajaUsuario($ID, &$AltMsg){
+		$cons1 = 'UPDATE usuario 
+					SET Visible = 0 
+					WHERE Id_Usuario = ' .$ID;
+		$res1 = mysql_query ($cons1);
+		if(!$res1) {
+			$AltMsg = "Usuario no se pudo borrar";
+		}	
+		else{
+			$AltMsg = "Borrado satisfactorio";
+		}
+	}
+	// ACTIVACION DE USUARIO //
+	function ActivarUsuario($ID, &$AltMsg){
+		$cons1 = 'UPDATE usuario 
+					SET Visible = 1 
+					WHERE Id_Usuario = ' .$ID;
+		$res1 = mysql_query ($cons1);
+		if(!$res1) {
+			$AltMsg = "Usuario no se pudo activar";
+		}	
+		else{
+			$AltMsg = "Activacion satisfactorio";
+		}	
+	}
+	// MODIFICAR USUARIO CON ID //
 	function ModUsuario ($ID, $NomApe, $NomUs, $DNI, $Tel, $Dir, $Mail, &$AltMsg){
 		$cons = 'UPDATE cliente 
 					SET NombreApellido = "'.$NomApe .'",
@@ -87,6 +124,7 @@
 			$AltMsg = "Modificacion satisfactoria";
 		}
 	}
+	// CAMBIAR CLAVE //
 	function ModClaves ($ID, $PassActual, $Pass1, $Pass2, &$AltMsg){
 		$cons = ('SELECT usuario.Password 
 					FROM usuario
@@ -109,53 +147,55 @@
 			$AltMsg = "Contraseña incorrecta";
 		}
 	}
+	// ALTA DE USUARIOS //
 	function AltaUsuario($NomApe, $NomUs, $DNI, $Tel, $Dir, $Mail, $Pass1, $Pass2, &$AltMsg){
 		if ($Pass1 == $Pass2){
-			$today = getdate();
-			$Fecha = $today[year]. '-' .$today[mon]. '-'. $today[mday];
-			if	(!empty($Tel)){$Telf = $Tel;}else{$Telf = Null;}
-			if	(!empty($Dir)){$Dirc = $Dir;}else{$Dirc = Null;}
-			$cons = 'INSERT INTO `cookbook`.`cliente` (`DNI` ,`NombreApellido` ,`FechaAlta` ,`Telefono` ,`Direccion` ,`Contacto`)
-					VALUES ("' .$DNI .'", "' .$NomApe .'", "' .$Fecha .'", "' .$Telf .'", "' .$Dirc .'", "' .$Mail .'")';
-			$res = mysql_query($cons);
-			$cons2 = 'INSERT INTO `cookbook`.`usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Contacto`, `Visible`, `CantCarrito`) 
-					VALUES (NULL, "' .$NomUs .'", "' .$Pass1 .'", "Normal","' .$DNI .'", "' .$Mail .'", 1, 0)';
-			$res1 = mysql_query($cons2);
-			if(!$res || !$res1) {
-				$AltMsg = "Usuario no pudo agregarse";
-			}	
-			else{
-				$AltMsg = "Usuario agregado satisfactoriamente";
+			ComprobarDNI ($DNI,$Flag);
+			if ($Flag){
+				$AltMsg = "Ya se encuentra registrado un cliente con dicho DNI";
 			}
+			else{
+				$today = getdate();
+				$Fecha = $today[year]. '-' .$today[mon]. '-'. $today[mday];
+				if	(!empty($Tel)){$Telf = $Tel;}else{$Telf = Null;}
+				if	(!empty($Dir)){$Dirc = $Dir;}else{$Dirc = Null;}
+				$cons = 'INSERT INTO cliente (`DNI` ,`NombreApellido` ,`FechaAlta` ,`Telefono` ,`Direccion` ,`Contacto`)
+						VALUES ("' .$DNI .'", "' .$NomApe .'", "' .$Fecha .'", "' .$Telf .'", "' .$Dirc .'", "' .$Mail .'")';
+				$res = mysql_query($cons);
+				$cons2 = 'INSERT INTO usuario (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) 
+						VALUES (NULL, "' .$NomUs .'", "' .$Pass1 .'", "Normal","' .$DNI .'", 1, 0)';
+				$res1 = mysql_query($cons2);
+				if(!$res || !$res1){
+					$AltMsg = "Usuario no pudo agregarse";
+					if (!$res){
+						$cons =	'DELETE FROM usuario WHERE usuario.DNI = ' .$DNI;
+						$res = mysql_query( $cons);
+					}
+					else{
+						$cons =	'DELETE FROM cliente WHERE cliente.DNI = ' .$DNI;
+						$res = mysql_query( $cons);
+					}
+				}	
+				else{
+					$AltMsg = "Usuario agregado satisfactoriamente";
+				}
+			}	
 		}
 		else{
 			$AltMsg = "Las Contraseña no coinciden";
 		}
 	}
-	function BajaUsuario($ID, &$AltMsg){
-		$cons1 = 'UPDATE usuario 
-					SET Visible = 0 
-					WHERE Id_Usuario = ' .$ID;
-		$res1 = mysql_query ($cons1);
-		if(!$res1) {
-			$AltMsg = "Usuario no se pudo borrar";
-		}	
-		else{
-			$AltMsg = "Borrado satisfactorio";
+	function ComprobarDNI ($Dniphp, &$correcto){
+		$res = mysql_query ('SELECT DNI FROM cliente');
+		$correcto = false;
+		while($row = mysql_fetch_assoc($res)){
+			if ($Dniphp == $row['DNI']){
+				$correcto = true;
+				break;
+			}
 		}
 	}
-	function ActivarUsuario($ID, &$AltMsg){
-		$cons1 = 'UPDATE usuario 
-					SET Visible = 1 
-					WHERE Id_Usuario = ' .$ID;
-		$res1 = mysql_query ($cons1);
-		if(!$res1) {
-			$AltMsg = "Usuario no se pudo activar";
-		}	
-		else{
-			$AltMsg = "Activacion satisfactorio";
-		}	
-	}
+	// USUARIOS REGISTRADOS EN UN PERIODO //
 	function UsuarioPeriodo (&$res, $Fini, $Ffin){
 		$cons = ('SELECT usuario.Id_Usuario as ID, usuario.Nombre as Usuario, cliente.DNI, cliente.NombreApellido, cliente.FechaAlta,usuario.Visible as Estado 
 					FROM usuario, cliente
@@ -164,6 +204,19 @@
 					ORDER BY ID'); 
 		$res = mysql_query ($cons);
 	}
+// GESTION DE PEDIDOS //
+	// CONSULTAR TODOS LOS PEDIDOS //
+	function ConsultarPedidos (&$res){
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+				FROM usuario, cliente, pedidos, estado, libro
+				WHERE usuario.DNI = cliente.DNI
+				AND cliente.DNI = pedidos.DNI
+				AND pedidos.Id_Estado = estado.Id_Estado
+				AND pedidos.ISBN = libro.ISBN
+				ORDER BY pedidos.FechaPedido DESC';
+		$res = mysql_query( $cons);
+	}
+	// CONSULTAR PEDIDO CON ID //
 	function ConsultaPedidos (&$res, $ID){
 		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
 				FROM usuario, cliente, pedidos, estado, libro
@@ -175,16 +228,7 @@
 				ORDER BY pedidos.FechaPedido DESC';
 		$res = mysql_query( $cons);
 	}
-	function ConsultarPedidos (&$res){
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
-				FROM usuario, cliente, pedidos, estado, libro
-				WHERE usuario.DNI = cliente.DNI
-				AND cliente.DNI = pedidos.DNI
-				AND pedidos.Id_Estado = estado.Id_Estado
-				AND pedidos.ISBN = libro.ISBN
-				ORDER BY pedidos.FechaPedido DESC';
-		$res = mysql_query( $cons);
-	}
+	// CONSULTAR PEDIDOS PENDIENTES //
 	function ConsultarPedidosPend (&$res){
 		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
 				FROM usuario, cliente, pedidos, estado, libro
@@ -196,6 +240,7 @@
 				ORDER BY pedidos.FechaPedido DESC';
 		$res = mysql_query( $cons);
 	}	
+	// CONSULTAR PEDIDOS ENVIDADOS //
 	function ConsultarPedidosEnv (&$res){
 		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
 				FROM usuario, cliente, pedidos, estado, libro
@@ -207,6 +252,7 @@
 				ORDER BY pedidos.FechaPedido DESC';
 		$res = mysql_query( $cons);
 	}
+	// CONSULTAR PEDIDOS ENTREGADOS //
 	function ConsultarPedidosEnt (&$res){
 		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
 				FROM usuario, cliente, pedidos, estado, libro
@@ -218,7 +264,8 @@
 				ORDER BY pedidos.FechaPedido DESC';
 		$res = mysql_query( $cons);
 	}
-	function PedidoEntregado ($ISBN, $DNI, &$Msj){
+	// CAMBIAR PEDIDO A ENTREGADO //
+ 	function PedidoEntregado ($ISBN, $DNI, &$Msj){
 		$cons = 'UPDATE pedidos 
 					SET Id_Estado = 3 
 					WHERE ISBN = ' .$ISBN. '
@@ -231,6 +278,7 @@
 			$Msj = "Estado modificado con exito";
 		}
 	}
+	// CAMBIAR PEDIDO A ENVIADO //
 	function PedidoEnviado($ISBN, $DNI, &$Msj){
 		$cons = 'UPDATE pedidos 
 					SET Id_Estado = 2 
@@ -244,6 +292,8 @@
 			$Msj = "Estado modificado con exito";
 		}
 	}
+// GESTION DEL CARRITO DE COMPRAS //
+	// CONSULTAR CARRITO CON ID //
 	function ConsultaCarrito (&$res, $ID){
 		$cons = 'SELECT usuario.DNI, usuario.Nombre, libro.ISBN, libro.Titulo, autor.NombreApellido, libro.Precio
 				FROM usuario, carrito, libro, autor
@@ -253,6 +303,7 @@
 				AND libro.Id_Autor = autor.Id_Autor';
 		$res = mysql_query( $cons);
 	}
+	// AGREGAR LIBRO-ISBN A CARRITO CON ID //
 	function AgregarCarrito($ISBN, $ID, &$Msj){
 		$cons = 'INSERT INTO `cookbook`.`carrito` (`Id_Usuario` ,`ISBN`)VALUES (' .$ID. ', ' .$ISBN. ')';
 		$res = mysql_query( $cons);
@@ -275,6 +326,7 @@
 			}
 		}
 	}
+	// RETIRAR LIBRO-ISBN DEL CARRITO CON ID //
 	function RetirarCarrito($ISBN, $ID, &$Msj){
 		$cons =	'DELETE FROM `carrito` WHERE `carrito`.`Id_Usuario` = ' .$ID. ' AND `carrito`.`ISBN` = ' .$ISBN;
 		$res = mysql_query( $cons);
@@ -297,6 +349,7 @@
 			$Msj = "Borrado con exito del carrito";
 		}
 	}
+	// VACIAR CARRITO CON ID //
 	function VaciarCarrito($ID, &$Msj){
 		$cons =	'DELETE FROM carrito WHERE carrito.Id_Usuario = ' .$ID;
 		$res = mysql_query( $cons);
@@ -312,6 +365,7 @@
 			$Msj = "Carrito vaciado con exito";
 		}
 	}
+	// EFECTIVIZAR COMPRA DEL CARRITO //
 	function ComprarCarrito($ID, &$AltMsg){
 		$cons = 'SELECT carrito.ISBN
 				FROM carrito
@@ -340,21 +394,8 @@
 		}
 		$AltMsg = $Msg. ' /// ' .$Msg2;
 	}
-	function LibroPeriodo (&$res, $Fini, $Ffin){
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, autor.NombreApellido AS Autor, pedidos.DNI, cliente.NombreApellido AS Cliente, pedidos.FechaPedido
-				FROM cliente, pedidos, libro, autor
-				WHERE cliente.DNI = pedidos.DNI
-				AND libro.Id_Autor = autor.Id_Autor
-				AND pedidos.ISBN = libro.ISBN
-				AND	pedidos.FechaPedido BETWEEN "' .$Fini. '" AND "' .$Ffin. '"';
-		$res = mysql_query( $cons);
-	}
-	function BuscarEtiq ($IS, &$LibEtiq){
-		$LibEtiq = mysql_query('SELECT Descripcion
-			FROM etiqueta_Libro, etiqueta	
-			WHERE ISBN = ' .$IS .'
-			AND etiqueta_Libro.Id_Etiqueta = etiqueta.Id_Etiqueta');
-	}
+// GESTION DE LIBROS //
+	// CONSULTA LIBRO CON ISBN //
 	function ConsultaLibro (&$res, $ISBN){
 		$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible as Estado
 						FROM libro, autor, idioma, disponibilidad
@@ -363,6 +404,7 @@
 						AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
 						AND libro.ISBN=' .$ISBN);
 	}
+	// BAJA LOGICA DE LIBRO CON ISBN //
 	function BajaLibro($ISBN, &$AltMsg){
 		$cons1 = 'UPDATE libro 
 					SET Visible = 0 
@@ -375,6 +417,7 @@
 			$AltMsg = "Borrado satisfactorio";
 		}	
 	}
+	// ACTIVAR LIBRO //
 	function ActivarLibro($ISBN, &$AltMsg){
 		$cons1 = 'UPDATE libro 
 					SET Visible = 1 
@@ -386,7 +429,15 @@
 		else{
 			$AltMsg = "Activacion satisfactorio";
 		}	
+	}
+	// CONSULTA ETIQUETAS DE UN ISBN //
+	function BuscarEtiq ($IS, &$LibEtiq){
+		$LibEtiq = mysql_query('SELECT Descripcion
+			FROM etiqueta_Libro, etiqueta	
+			WHERE ISBN = ' .$IS .'
+			AND etiqueta_Libro.Id_Etiqueta = etiqueta.Id_Etiqueta');
 	}	
+	// ALTA DE LIBRO //
 	function AltaLibro($IS, $Tit, $Aut, $CPag, $Pre, $Idio, $Fec, $Etiq, &$AltMsg){
 		$RAut = mysql_query('SELECT Id_Autor
 							FROM autor
@@ -416,6 +467,7 @@
 			$AltMsg = "El Libro se agrego correctamente";
 		}
 	}
+	// MODIFICACION DE LIBRO //
 	function ModLibro ($IS, $Tit, $Aut, $CPag, $Pre, $Idio, $Fec, $Etiq, $Disp, &$AltMsg){
 		$RAut = mysql_query('SELECT Id_Autor
 							FROM autor
@@ -463,6 +515,17 @@
 			$AltMsg = "Modificacion Satisfactoria";
 		}
 	}
+	// TOP 10 LIBROS MAS VENDIDOS EN UN PERIODO //	
+	function LibroPeriodo (&$res, $Fini, $Ffin){
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, autor.NombreApellido AS Autor, pedidos.DNI, cliente.NombreApellido AS Cliente, pedidos.FechaPedido
+				FROM cliente, pedidos, libro, autor
+				WHERE cliente.DNI = pedidos.DNI
+				AND libro.Id_Autor = autor.Id_Autor
+				AND pedidos.ISBN = libro.ISBN
+				AND	pedidos.FechaPedido BETWEEN "' .$Fini. '" AND "' .$Ffin. '"';
+		$res = mysql_query( $cons);
+	}
+// GESTION DE AUTOR //	
 	function AgregarAutor ($NomApe, &$AltMsg){
 		$cons = 'INSERT INTO autor (`Id_Autor` ,`NombreApellido`)
 							VALUES (NULL , "' .$NomApe .'")';
@@ -474,6 +537,7 @@
 			$AltMsg = "Autor agregado Satisfactoriamente";
 		}
 	}
+//GESTION DE IDIOMA //
 	function AgregarIdioma ($NomIdo, &$AltMsg){
 		$cons = 'INSERT INTO idioma (`Id_Idioma` ,`Descripcion`)
 										VALUES (NULL , "' .$NomIdo .'")';
@@ -485,6 +549,7 @@
 			$AltMsg = "Idioma agregado Satisfactoriamente";
 		}
 	}
+// GESTION DE ETIQUETA //	
 	function AgregarEtiqueta ($NomEtq, &$AltMsg){
 		$cons = 'INSERT INTO etiqueta (`Id_Etiqueta` ,`Descripcion`)
 											VALUES (NULL , "' .$NomEtq .'")';
@@ -496,6 +561,8 @@
 			$AltMsg = "Etiqueta agregado Satisfactoriamente";
 		}
 	}
+// GESTION DEL CATALOGO //
+	// CONSULTA POR DEFECTO //
 	function ConsultaPorDefecto (&$res){
 	$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado
 						FROM libro, autor, idioma, disponibilidad
@@ -503,147 +570,7 @@
 						AND idioma.Id_Idioma = libro.Id_Idioma
 						AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad');
 	}
-	function ConsultasSelect (&$residiomas, &$resdisp, &$resetiquetas, &$resautor, &$restitulo, &$resisbn){
-		$residiomas = mysql_query('SELECT idioma.Descripcion as Idioma
-								FROM idioma
-								ORDER BY idioma.Descripcion');						
-		$resdisp = mysql_query('SELECT disponibilidad.Descripcion as Disponibilidad
-								FROM disponibilidad
-								ORDER BY disponibilidad.Descripcion');
-		$resetiquetas = mysql_query('SELECT etiqueta.Descripcion as Etiqueta
-								FROM etiqueta
-								ORDER BY etiqueta.Descripcion');
-		$resautor = mysql_query('SELECT autor.NombreApellido as Autor
-								FROM autor
-								ORDER BY autor.NombreApellido');
-		$restitulo = mysql_query('SELECT libro.Titulo as Titulo
-								FROM libro
-								ORDER BY libro.Titulo');
-		$resisbn = mysql_query('SELECT libro.ISBN as ISBN
-								FROM libro
-								ORDER BY libro.ISBN');								
-	}	
-	function consultatitulos(&$restitulo, $autornom){
-		$restitulo = mysql_query('SELECT libro.Titulo as Titulo
-								FROM libro, autor
-								WHERE autor.Id_Autor = libro.Id_Autor
-								AND autor.NombreApellido = "'.$autornom .'"
-								ORDER BY libro.Titulo');
-	}
-	function ConsultaOrdenamiento (&$res, &$orden){
-		if ($orden == 'PrecAsc') {
-			$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
-								FROM libro, autor, idioma, disponibilidad
-								WHERE autor.Id_Autor = libro.Id_Autor
-								AND idioma.Id_Idioma = libro.Id_Idioma
-								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
-								ORDER BY libro.Precio ASC');
-		}
-		elseif ($orden == 'PrecDes') {
-			$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
-								FROM libro, autor, idioma, disponibilidad
-								WHERE autor.Id_Autor = libro.Id_Autor
-								AND idioma.Id_Idioma = libro.Id_Idioma
-								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
-								ORDER BY libro.Precio DESC');
-		}
-		elseif  ($orden == 'TitAsc') {
-			$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
-								FROM libro, autor, idioma, disponibilidad
-								WHERE autor.Id_Autor = libro.Id_Autor
-								AND idioma.Id_Idioma = libro.Id_Idioma
-								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
-								ORDER BY libro.Titulo ASC');
-		}						
-		elseif  ($orden == 'TitDes') {
-			$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
-								FROM libro, autor, idioma, disponibilidad
-								WHERE autor.Id_Autor = libro.Id_Autor
-								AND idioma.Id_Idioma = libro.Id_Idioma
-								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
-								ORDER BY libro.Titulo DESC');
-		}
-		elseif  ($orden == 'AutAsc') {
-			$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
-								FROM libro, autor, idioma, disponibilidad
-								WHERE autor.Id_Autor = libro.Id_Autor
-								AND idioma.Id_Idioma = libro.Id_Idioma
-								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
-								ORDER BY autor.NombreApellido ASC');
-		}						
-		elseif  ($orden == 'AutDes') {
-			$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
-								FROM libro, autor, idioma, disponibilidad
-								WHERE autor.Id_Autor = libro.Id_Autor
-								AND idioma.Id_Idioma = libro.Id_Idioma
-								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
-								ORDER BY autor.NombreApellido DESC');
-		}			
-		elseif  ($orden == 'ISBNAsc') {
-			$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
-								FROM libro, autor, idioma, disponibilidad
-								WHERE autor.Id_Autor = libro.Id_Autor
-								AND idioma.Id_Idioma = libro.Id_Idioma
-								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
-								ORDER BY libro.ISBN ASC');
-		}						
-		elseif  ($orden == 'ISBNDes') {
-			$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
-								FROM libro, autor, idioma, disponibilidad
-								WHERE autor.Id_Autor = libro.Id_Autor
-								AND idioma.Id_Idioma = libro.Id_Idioma
-								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
-								ORDER BY libro.ISBN DESC');
-		}
-		elseif  ($orden == 'CPAsc') {
-			$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
-								FROM libro, autor, idioma, disponibilidad
-								WHERE autor.Id_Autor = libro.Id_Autor
-								AND idioma.Id_Idioma = libro.Id_Idioma
-								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
-								ORDER BY libro.CantidadPaginas ASC');
-		}						
-		elseif  ($orden == 'CPDes') {
-			$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
-								FROM libro, autor, idioma, disponibilidad
-								WHERE autor.Id_Autor = libro.Id_Autor
-								AND idioma.Id_Idioma = libro.Id_Idioma
-								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
-								ORDER BY libro.CantidadPaginas DESC');
-		}	
-		elseif  ($orden == 'FecAsc') {
-			$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
-								FROM libro, autor, idioma, disponibilidad
-								WHERE autor.Id_Autor = libro.Id_Autor
-								AND idioma.Id_Idioma = libro.Id_Idioma
-								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
-								ORDER BY libro.Fecha ASC');
-		}						
-		elseif  ($orden == 'FecDes') {
-			$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
-								FROM libro, autor, idioma, disponibilidad
-								WHERE autor.Id_Autor = libro.Id_Autor
-								AND idioma.Id_Idioma = libro.Id_Idioma
-								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
-								ORDER BY libro.Fecha DESC');
-		}
-		elseif  ($orden == 'IdioAsc') {
-			$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
-								FROM libro, autor, idioma, disponibilidad
-								WHERE autor.Id_Autor = libro.Id_Autor
-								AND idioma.Id_Idioma = libro.Id_Idioma
-								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
-								ORDER BY idioma.Descripcion ASC');
-		}						
-		elseif  ($orden == 'IdioDes') {
-			$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
-								FROM libro, autor, idioma, disponibilidad
-								WHERE autor.Id_Autor = libro.Id_Autor
-								AND idioma.Id_Idioma = libro.Id_Idioma
-								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
-								ORDER BY idioma.Descripcion DESC');
-		}			
-	}
+		// BUSQUEDA PARA USURIO NO REGISTRADO //
 	function ConsultaBusqueda (&$res, &$Aut, &$Tit, &$IS){
 		if	(!empty($Aut)){$Autor = '"'.$Aut.'"';}else{$Autor = 'autor.NombreApellido';}
 		if	(!empty($Tit)){$Titulo = '"'.$Tit.'"';}else{$Titulo = 'libro.Titulo';}
@@ -658,23 +585,7 @@
 				AND libro.ISBN = ' .$ISBN;		
 		$res = mysql_query($cons);
 	}
-	function ConsultaBusca (&$res, &$C){	
-		$carts = ' AND Caracteristicas.Caracteristica IN (';
-		$temp = '';
-		foreach ($C as &$valor){
-				$temp = $temp .'"' .$valor .'",';
-		}
-		$carts = $carts . $temp . '"")';
-		$cons = 'SELECT Marcas.Marca, Modelos.Modelo, Tipos.Tipo, Vehiculos.Dominio, Vehiculos.Anio, Vehiculos.Precio
-				FROM Marcas, Modelos, Tipos, Vehiculos, Caracteristicas, Vehiculos_Caracteristicas
-				WHERE Marcas.idMarca = Modelos.idMarca
-				AND Modelos.idModelo = Vehiculos.idModelo
-				AND Tipos.idTipo = Vehiculos.idTipo
-				AND Vehiculos.idVehiculo = Vehiculos_Caracteristicas.idVehiculo
-				AND Caracteristicas.idCaracteristica = Vehiculos_Caracteristicas.idCaracteristica'
-				.$carts;
-		$res = mysql_query($cons);
-	}
+	// BUSQUEDA PARA USUARIO REGISTRADO //
 	function ConsultaBusqueda2 (&$res, &$Aut, &$Tit, &$IS, &$Et){
 		if	(!empty($Aut)){$Autor = '"'.$Aut.'"';}else{$Autor = 'autor.NombreApellido';}
 		if	(!empty($Tit)){$Titulo = '"'.$Tit.'"';}else{$Titulo = 'libro.Titulo';}
@@ -704,21 +615,30 @@
 				.$eti;		
 		$res = mysql_query($cons);
 	}
-	// and libro.ISBN IN (res) lo mismo para ordenar
-	function ConsultaFiltros (&$res, $Pinf, $Psup, $Idio){
-		if	(!empty($Pinf)){$PreInf = '"'.$Pinf.'"';}else{$PreInf = 'libro.Precio';}
-		if	(!empty($Psup)){$PreSup = '"'.$Psup.'"';}else{$PreSup = 'libro.Precio';}
+	// FILTRADO CON UNA TABLA USUARIO NO REGISTRADO //
+	function ConsultaFiltros (&$res, &$Pinf, &$Psup, &$Idio, &$Tab){
+		if	(!empty($Pinf)){$PrecInf = '"'.$Pinf.'"';}else{$PrecInf = 'libro.Precio';}
+		if	(!empty($Psup)){$PrecSup = '"'.$Psup.'"';}else{$PrecSup = 'libro.Precio';}
 		if	(!empty($Idio)){$Idioma = '"'.$Idio.'"';}else{$Idioma = 'idioma.Descripcion';}
+		if  (!empty($Tab)){
+			$IS = ' AND libro.ISBN IN ( ';
+			$temp = '';
+			foreach ($Tab as &$valor){
+				$temp = $temp .$valor .', ';
+			}
+			$IS = $IS . $temp . '"")';
+		}
 		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
 				FROM libro, autor, idioma, disponibilidad
 				WHERE autor.Id_Autor = libro.Id_Autor
 				AND idioma.Id_Idioma = libro.Id_Idioma
 				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
-				AND idioma.Descripcion = "' .$idioma .'"
-				AND libro.Precio >= ' .$PreInf .'
-				AND libro.Precio <= ' .$PreSup;
+				AND libro.Precio >= ' .$PrecInf .'
+				AND libro.Precio <= ' .$PrecSup .'
+				AND idioma.Descripcion = ' .$Idioma .$IS;
 		$res = mysql_query($cons);
 	}
+	// FILTRADO CON UNA TABLA USUARIO REGISTRADO //
 	function ConsultaFiltros2 (&$res, &$Preinf, &$Presup, &$Idio, &$Disp, &$Paginf, &$Pagsup, &$Finf, &$Fsup){
 		if	(!empty($Preinf)){$PrecInf = '"'.$Preinf.'"';}else{$PrecInf = 'libro.Precio';}
 		if	(!empty($Presup)){$PrecSup = '"'.$Presup.'"';}else{$PrecSup = 'libro.Precio';}
@@ -743,6 +663,7 @@
 				AND libro.Fecha <= ' .$FecSup;		
 		$res = mysql_query($cons);
 	}
+	// BUSQUEDA RAPIDA //
 	function ConsultaBusquedaRapida (&$res, &$BusRap){
 		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
 				FROM libro, autor, idioma, disponibilidad
@@ -753,5 +674,171 @@
 				OR    autor.NombreApellido LIKE "%' .$BusRap .'%" 
 				OR	  libro.ISBN LIKE "%'.$BusRap .'%")';			
 		$res = mysql_query($cons);
+	}
+	// GENERADOR DE SELECT //
+	function ConsultasSelect (&$residiomas, &$resdisp, &$resetiquetas, &$resautor, &$restitulo, &$resisbn){
+		$residiomas = mysql_query('SELECT idioma.Descripcion as Idioma
+								FROM idioma
+								ORDER BY idioma.Descripcion');						
+		$resdisp = mysql_query('SELECT disponibilidad.Descripcion as Disponibilidad
+								FROM disponibilidad
+								ORDER BY disponibilidad.Descripcion');
+		$resetiquetas = mysql_query('SELECT etiqueta.Descripcion as Etiqueta
+								FROM etiqueta
+								ORDER BY etiqueta.Descripcion');
+		$resautor = mysql_query('SELECT autor.NombreApellido as Autor
+								FROM autor
+								ORDER BY autor.NombreApellido');
+		$restitulo = mysql_query('SELECT libro.Titulo as Titulo
+								FROM libro
+								ORDER BY libro.Titulo');
+		$resisbn = mysql_query('SELECT libro.ISBN as ISBN
+								FROM libro
+								ORDER BY libro.ISBN');								
+	}	
+	// CONSULTA DE TITULOS CON AUTOR //
+	function consultatitulos(&$restitulo, $autornom){
+		$restitulo = mysql_query('SELECT libro.Titulo as Titulo
+								FROM libro, autor
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND autor.NombreApellido = "'.$autornom .'"
+								ORDER BY libro.Titulo');
+	}
+	// GENERADOR DE ORDENACION //
+	function ConsultaOrdenamiento (&$res, &$orden, &$Tab){
+		if  (!empty($Tab)){
+			$IS = ' AND libro.ISBN IN ( ';
+			$temp = '';
+			foreach ($Tab as &$valor){
+				$temp = $temp .$valor .', ';
+			}
+			$IS = $IS . $temp . '"")';
+		}
+		if ($orden == 'PrecAsc') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.Precio ASC';
+			$res = mysql_query($cons);					
+		}
+		elseif ($orden == 'PrecDes') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.Precio DESC';
+			$res = mysql_query($cons);						
+		}
+		elseif  ($orden == 'TitAsc') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.Titulo ASC';
+			$res = mysql_query($cons);	
+		}						
+		elseif  ($orden == 'TitDes') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.Titulo DESC';
+			$res = mysql_query($cons);	
+		}
+		elseif  ($orden == 'AutAsc') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY autor.NombreApellido ASC';
+			$res = mysql_query($cons);	
+		}						
+		elseif  ($orden == 'AutDes') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY autor.NombreApellido DESC';
+			$res = mysql_query($cons);	
+		}			
+		elseif  ($orden == 'ISBNAsc') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.ISBN ASC';
+			$res = mysql_query($cons);	
+		}						
+		elseif  ($orden == 'ISBNDes') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.ISBN DESC';
+			$res = mysql_query($cons);	
+		}
+		elseif  ($orden == 'CPAsc') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.CantidadPaginas ASC';
+			$res = mysql_query($cons);	
+		}						
+		elseif  ($orden == 'CPDes') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.CantidadPaginas DESC';
+			$res = mysql_query($cons);	
+		}	
+		elseif  ($orden == 'FecAsc') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.Fecha ASC';
+			$res = mysql_query($cons);	
+		}						
+		elseif  ($orden == 'FecDes') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.Fecha DESC';
+			$res = mysql_query($cons);	
+		}
+		elseif  ($orden == 'IdioAsc') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY idioma.Descripcion ASC';
+			$res = mysql_query($cons);	
+		}						
+		elseif  ($orden == 'IdioDes') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY idioma.Descripcion DESC';
+			$res = mysql_query($cons);	
+		}			
 	}
 ?>
