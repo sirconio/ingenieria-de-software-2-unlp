@@ -118,7 +118,7 @@
 				</ul>
 			</div>
 			<!-- CONTENIDO VER PERFIL -->
-			<div id='contenido'> 
+			<div id='contenidoperfil'> 
 				<!-- TEXTO -->
 				<div id='textoperfil'><samp>Bienvenido a tu perfil <?php echo $_SESSION["usuario"] ?></samp></div>
 			</div>

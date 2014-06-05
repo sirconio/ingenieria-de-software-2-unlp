@@ -68,9 +68,12 @@
 			<!-- BOTONES DE DESPLAZAMIENTO -->
 			<div id='encabezado'>
 				<ul id='botones'>
-					<li><a href="AdmLibros.php">Administrar Libros</a></li>
-					<li><a href="AdmUsuarios.php">Administrar Usuarios</a></li>
-					<li><a href="AdmPedidos.php">Administrar Pedidos</a></li>
+					<li><a href="AdmLibros.php?flag=lista">Administrar Libros</a></li>
+					<li><a href="AdmUsuarios.php?flag=lista">Administrar Usuarios</a></li>
+					<li><a href="AdmPedidos.php?flag=lista">Administrar Pedidos</a></li>
+					<li><a href="AdmAutor.php?flag=lista">Administrar Autores</a></li>
+					<li><a href="AdmIdioma.php?flag=lista">Administrar Idiomas</a></li>
+					<li><a href="AdmEtiqueta.php?flag=lista">Administrar Etiquetas</a></li>
 					<li><a href="index.php">Volver al Inicio</a></li>
 				</ul>
 			</div>

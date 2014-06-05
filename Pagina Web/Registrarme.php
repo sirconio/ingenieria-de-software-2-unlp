@@ -38,6 +38,10 @@
 				alert(Msj);
 				location.href="Registrarme.php";
 			}
+			function MensajeErr(Msj, NomApe, NomUs , DNI, Mail, Tel, Dir){
+				alert(Msj);
+				location.href="Registrarme.php?flag=err&NomApe="+NomApe+"&NomUs="+NomUs+"&DNI="+DNI+"&Mail="+Mail+"&Tel="+Tel+"&Dir="+Dir;
+			}				
 			<!-- ACTIVACION DEL FLAG DE BUSQUEDA RAPIDA -->
 			function busqueda (bus){
 				location.href="Busqueda.php?BusRap=" + bus;
@@ -182,34 +186,71 @@
 				<!-- RECTANGULO DE REGISTRO -->
 				<div id='registro'>
 					<!-- FORMULARIO DE REGISTRO -->
-					<form action="" method="POST">
-							<label class="Reginput" for="NombreUsuario">*Nombre Usuario:</label>
-							<input class="Reginput" type="text" name="NomUs" placeholder="Usuario" maxlength="10" required><br>
-							<label class="Reginput" for="NombreApellido">*Nombre y Apellido:</label>
-							<input class="Reginput" type="text" name="NomApe" placeholder="Nombre Apellido" maxlength="45" onkeypress="return LetrasEspacio(event)" required><br>
-							<label class="Reginput" for="DNI">*DNI:</label>
-							<input class="Reginput" id="id_Dni"type="text" name="DNI" placeholder="Ej: 37.148.135" maxlength="10" onkeypress="return NumerosPunto(event);" onblur="validarDNI()" required><br>	
-							<label class="Reginput" for="Telefono">Telefono:</label>
-							<input class="Reginput" type="tel" id="idtel" name="Tel" placeholder="Ej: 011-4189054" maxlength="10" onkeypress="return NumerosGuion(event);" onblur="validarTelefono()" ><br>
-							<label class="Reginput" for="Direccion">Direccion:</label>
-							<input class="Reginput" type="text" size="30" name="Dir" placeholder="Ej: Calle #Numero" maxlength="45" ><br>
-							<label class="Reginput" for="Mail">*Mail:</label>
-							<input class="Reginput" id="id_mail" type="text" size="30" name="Mail" placeholder="Ej: nombre@correo.com" maxlength="45" onblur="validarEmail()" required><br>
-							<label class="Reginput" for="Contraseña1">*Contraseña:</label>
-							<input class="Reginput" id="id_pass1" type="password" name="Pass1" placeholder="Contraseña" maxlength="30" required><br>
-							<label class="Reginput" for="Contraseña2">*Comfirme Contraseña:</label>
-							<input class="Reginput" id="id_pass2" type="password" name="Pass2" placeholder="Contraseña" maxlength="30" onblur="validarPass()" required><br>
-							<input id="RegBoton" class="Reginput" type="submit" value="Confirmar"></br></br>
-							<label for="obligatorios">Los * son campos obligatorios</label>
-					</form>	
 	<?php
+					if (!empty($_GET['flag']) && $_GET['flag'] == 'err'){
+						echo '<form action="" method="POST">
+								<label class="Reginput" for="NombreUsuario">*Nombre Usuario:</label>
+								<input class="Reginput" type="text" name="NomUs" value="', $_GET['NomUs'], '" placeholder="Usuario" maxlength="10" required><br>
+								<label class="Reginput" for="NombreApellido">*Nombre y Apellido:</label>
+								<input class="Reginput" type="text" name="NomApe" value="', $_GET['NomApe'], '" placeholder="Nombre Apellido" maxlength="45" onkeypress="return LetrasEspacio(event)" required><br>
+								<label class="Reginput" for="DNI">*DNI:</label>
+								<input class="Reginput" id="id_Dni"type="text" name="DNI" value="', $_GET['DNI'], '" placeholder="Ej: 37.148.135" maxlength="10" onkeypress="return NumerosPunto(event);" onblur="validarDNI()" required><br>	
+								<label class="Reginput" for="Telefono">Telefono:</label>
+								<input class="Reginput" type="tel" id="idtel" name="Tel" value="', $_GET['Tel'], '" placeholder="Ej: 011-4189054" maxlength="10" onkeypress="return NumerosGuion(event);" onblur="validarTelefono()" ><br>
+								<label class="Reginput" for="Direccion">Direccion:</label>
+								<input class="Reginput" type="text" size="30" name="Dir" value="', $_GET['Dir'], '" placeholder="Ej: Calle #Numero" maxlength="45" ><br>
+								<label class="Reginput" for="Mail">*Mail:</label>
+								<input class="Reginput" id="id_mail" type="text" size="30" name="Mail" value="', $_GET['Mail'], '" placeholder="Ej: nombre@correo.com" maxlength="45" onblur="validarEmail()" required><br>
+								<label class="Reginput" for="Contraseña1">*Contraseña:</label>
+								<input class="Reginput" id="id_pass1" type="password" name="Pass1" placeholder="Contraseña" maxlength="30" required><br>
+								<label class="Reginput" for="Contraseña2">*Comfirme Contraseña:</label>
+								<input class="Reginput" id="id_pass2" type="password" name="Pass2" placeholder="Contraseña" maxlength="30" onblur="validarPass()" required><br>
+								<input id="RegBoton" class="Reginput" type="submit" value="Confirmar"></br></br>
+								<label for="obligatorios">Los * son campos obligatorios</label>
+						</form>';
+					}
+					else{
+	?>
+						<form action="" method="POST">
+								<label class="Reginput" for="NombreUsuario">*Nombre Usuario:</label>
+								<input class="Reginput" type="text" name="NomUs" placeholder="Usuario" maxlength="10" required><br>
+								<label class="Reginput" for="NombreApellido">*Nombre y Apellido:</label>
+								<input class="Reginput" type="text" name="NomApe" placeholder="Nombre Apellido" maxlength="45" onkeypress="return LetrasEspacio(event)" required><br>
+								<label class="Reginput" for="DNI">*DNI:</label>
+								<input class="Reginput" id="id_Dni"type="text" name="DNI" placeholder="Ej: 37.148.135" maxlength="10" onkeypress="return NumerosPunto(event);" onblur="validarDNI()" required><br>	
+								<label class="Reginput" for="Telefono">Telefono:</label>
+								<input class="Reginput" type="tel" id="idtel" name="Tel" placeholder="Ej: 011-4189054" maxlength="10" onkeypress="return NumerosGuion(event);" onblur="validarTelefono()" ><br>
+								<label class="Reginput" for="Direccion">Direccion:</label>
+								<input class="Reginput" type="text" size="30" name="Dir" placeholder="Ej: Calle #Numero" maxlength="45" ><br>
+								<label class="Reginput" for="Mail">*Mail:</label>
+								<input class="Reginput" id="id_mail" type="text" size="30" name="Mail" placeholder="Ej: nombre@correo.com" maxlength="45" onblur="validarEmail()" required><br>
+								<label class="Reginput" for="Contraseña1">*Contraseña:</label>
+								<input class="Reginput" id="id_pass1" type="password" name="Pass1" placeholder="Contraseña" maxlength="30" required><br>
+								<label class="Reginput" for="Contraseña2">*Comfirme Contraseña:</label>
+								<input class="Reginput" id="id_pass2" type="password" name="Pass2" placeholder="Contraseña" maxlength="30" onblur="validarPass()" required><br>
+								<input id="RegBoton" class="Reginput" type="submit" value="Confirmar"></br></br>
+								<label for="obligatorios">Los * son campos obligatorios</label>
+						</form>	
+	<?php
+					}
 					if	(!empty($_POST['NomApe']) && !empty($_POST['NomUs']) && !empty($_POST['DNI']) && !empty($_POST['Mail']) && !empty($_POST['Pass1']) && !empty($_POST['Pass2'])){	
-							AltaUsuario($_POST['NomApe'], $_POST['NomUs'], $_POST['DNI'], $_POST['Tel'], $_POST['Dir'], $_POST['Mail'], $_POST['Pass1'], $_POST['Pass2'], $AltMsg);
+							$Cons = false;
+							AltaUsuario($Cons, $_POST['NomApe'], $_POST['NomUs'], $_POST['DNI'], $_POST['Tel'], $_POST['Dir'], $_POST['Mail'], $_POST['Pass1'], $_POST['Pass2'], $AltMsg);
+							if ($Cons){
 	?>		
-						<script languaje="javascript"> 
-							MensajeAlta("<?=$AltMsg?>");
-						</script>
-	<?php			 }
+								<script languaje="javascript"> 
+									MensajeAlta("<?=$AltMsg?>");
+								</script>
+	<?php			
+							}
+							else{
+	?>
+								<script languaje="javascript">
+									MensajeErr("<?=$AltMsg?>", "<?=$_POST['NomApe']?>", "<?=$_POST['NomUs']?>" , "<?=$_POST['DNI']?>", "<?=$_POST['Mail']?>", "<?=$_POST['Tel']?>", "<?=$_POST['Dir']?>");	
+								</script>
+	<?php						
+							}
+					}
 					// CIERRE SERVIDOR //
 					CerrarServidor ($con);
 	?>						

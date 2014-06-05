@@ -156,12 +156,12 @@
 				</ul>
 			</div>
 			<!-- CONTENIDO CARRITO COMPRAS -->
-			<div id='contenido'> 
+			<div id='contenidocarrito'> 
 				<!-- TEXTO -->
-				<div id='textoindex'><samp>Lista Carrito de Compras:</samp></div>
+				<div id='textocarrito'><samp>Lista Carrito de Compras:</samp></div>
 	<?php
 				ConsultaCarrito ($res, $_SESSION["ID"]);
-				echo '<div id="tablapedidos">';
+				echo '<div id="TablaCarrito">';
 					// GENERAR TABLA //
 					echo"<table border='1'>
 						<tr>
@@ -183,7 +183,7 @@
 								echo "<td>", $row['NombreApellido'], "</td>";
 								echo "<td>", $row['Precio'], "</td>";
 	?>																	
-								<td><input type='button' value='Retirar' onclick='Retirar("<?=$row['ISBN']?>","<?=$_SESSION['ID']?>")' /></td>
+								<td><input class="botones" type='button' value='Retirar' onclick='Retirar("<?=$row['ISBN']?>","<?=$_SESSION['ID']?>")' /></td>
 	<?php													
 							echo "</tr>";
 							$ant = $row['ISBN'];							
@@ -192,8 +192,8 @@
 					echo "</table>";
 					echo '</div>';
 	?>
-				<input id='carritobot1' type='button' value='Vaciar' onclick='Vaciar("<?=$_SESSION['ID']?>")' />
-				<input id='carritobot2' type='button' value='Comprar' onclick='Comprar("<?=$_SESSION['ID']?>")' />
+				<input class="botones" id='carritobot1' type='button' value='Vaciar' onclick='Vaciar("<?=$_SESSION['ID']?>")' />
+				<input class="botones" id='carritobot2' type='button' value='Comprar' onclick='Comprar("<?=$_SESSION['ID']?>")' />
 			</div>
 	<?php
 			mysql_free_result($res);

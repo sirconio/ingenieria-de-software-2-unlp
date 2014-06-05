@@ -147,19 +147,6 @@
 						background-image:-webkit-linear-gradient(#3B0B2E, #190714);  /*Chrome y Safari*/
 					}
 				/* CONTENIDO DE LA PAGINA */	
-				#contenido{
-					position:relative;
-					overflow:auto;
-					min-height: 300px;
-					float: right;
-					height:93%;
-					width:79%;
-					text-align:justify;
-					font-weight:bold;
-					font-size:normal;
-					font-family:Georgia,"Times New Roman",Serif;
-					color: white;
-				}
 				/* SECCION INDEX */
 				#contenidoindex{
 					position:absolute;
@@ -586,32 +573,7 @@
 						left:12%;
 						font-weight:bold;
 					    font-size:200%;
-					}					
-					#Admfunciones{
-						position: absolute;
-						top:2%;
-						right:0%;
-						width:95%;
-						height:20%;
-					}
-					#Admfunciones li {
-						display:inline;
-						border: 3px groove #FFFFFF;
-						margin-top:15%;
-						margin-bottom:15%;
-						background-image:url('Fondo9.jpg');
-						background-size:contain;
-					}
-					#Admfunciones a:link,a:visited{
-						height:30%;
-						width:100%;
-						text-decoration:none;
-					}
-					#Admfunciones a:hover,a:active{
-						cursor:pointer;
-						text-transform:uppercase;
-						color: #FFFFFF;
-					}	
+					}						
 					.FAbm label, input, select{
 						margin:0.3%;
 						padding: 0.2%;
@@ -621,8 +583,44 @@
 						overflow:auto;
 						Top: 10%;
 						left:15%;
-						width: 60%;
-						height: 70%;
+						width: 64%;
+						height: 72%;
+						padding:1%;
+						border: 3px double #FFFFFF;
+						background-image:url('Fondo9.jpg');
+						background-size:contain;
+					}
+					#ABMAlta{
+						position: absolute;
+						overflow:auto;
+						Top: 10%;
+						left:10%;
+						width: 35%;
+						height: 35%;
+						padding:1%;
+						border: 3px double #FFFFFF;
+						background-image:url('Fondo9.jpg');
+						background-size:contain;
+					}
+					#ABMBaja{
+						position: absolute;
+						overflow:auto;
+						Top: 55%;
+						left:10%;
+						width: 35%;
+						height: 35%;
+						padding:1%;
+						border: 3px double #FFFFFF;
+						background-image:url('Fondo9.jpg');
+						background-size:contain;
+					}
+					#ABMMod{
+						position: absolute;
+						overflow:auto;
+						Top: 30%;
+						left:50%;
+						width: 35%;
+						height: 35%;
 						padding:1%;
 						border: 3px double #FFFFFF;
 						background-image:url('Fondo9.jpg');
@@ -678,7 +676,7 @@
 						border: 3px groove #190714;
 					}
 					/* ADMINISTRAR USUARIOS */
-					#tablauser{
+					#TablaUser{
 						position:absolute;
 						top:15%;
 						left:8%;
@@ -686,7 +684,7 @@
 						width:90%;		
 						overflow: auto;
 					}
-					#tablauser table{
+					#TablaUser table{
 						position:absolute;
 						float:right;
 						width:100%;
@@ -696,10 +694,10 @@
 						border: 3px groove #190714;
 						overflow: auto;
 					}
-					#tablauser table td,th{
+					#TablaUser table td,th{
 						border: 3px groove #190714;
 					}
-					#tablauser1{
+					#TablaUserPeriodo{
 						position:absolute;
 						top:40%;
 						left:3%;
@@ -707,7 +705,7 @@
 						width:90%;		
 						overflow: auto;
 					}
-					#tablauser1 table{
+					#TablaUserPeriodo table{
 						position:absolute;
 						float:right;
 						width:100%;
@@ -717,15 +715,78 @@
 						border: 3px groove #190714;
 						overflow: auto;
 					}
-					#tablauser1 table td,th{
+					#TablaUserPeriodo table td,th{
 						border: 3px groove #190714;
 					}
 					/* ADMINISTRAR PEDIDOS */
-					
-					
-					
-					
-				/* SECCION CUENTA */		
+					#textoadmped{
+						position:absolute;
+						top:4%;
+						right:3%;
+						left:8%;
+						font-weight:bold;
+					    font-size:200%;
+					}
+					#TablaPedido{
+						position:absolute;
+						top:15%;
+						left:10%;
+						height:70%;
+						width:85%;		
+						overflow: auto;
+					}
+					#TablaPedido table{
+						position:absolute;
+						float:right;
+						width:100%;
+						color: white;
+						background-image:url('Fondo9.jpg');
+						background-size:contain;
+						border: 3px groove #190714;
+						overflow: auto;
+					}
+					#TablaPedido table td,th{
+						border: 3px groove #190714;
+					}	
+					#PaginasPed{
+						position:absolute;
+						top:88%;
+						left:10%;
+						height:5%;
+						width:85%;		
+						border: 3px groove #FFFFFF;
+						background-image:url('Fondo9.jpg');
+						overflow: auto;
+					}
+					#PaginasPed li {
+						display:inline;
+						padding-right: 1%;
+					}
+					#PaginasPed a:link,a:visited{
+						height:30%;
+						width:100%;
+						color:#FFFFFF;
+						text-decoration:none;
+					}
+					#PaginasPed a:hover,a:active{
+						cursor:pointer;
+						text-transform:uppercase;
+						color: #FFFFFF;
+					}	
+				/* SECCION CUENTA */
+				#contenidoperfil{
+					position:relative;
+					overflow:auto;
+					min-height: 300px;
+					float: right;
+					height:93%;
+					width:79%;
+					text-align:justify;
+					font-weight:bold;
+					font-size:normal;
+					font-family:Georgia,"Times New Roman",Serif;
+					color: white;
+				}
 					#textoperfil{
 						position:absolute;
 						top:5%;
@@ -734,6 +795,7 @@
 						font-weight:bold;
 					    font-size:200%;
 					}	
+					/* DATOS PERSONALES USUARIOS */
 					#FRegPerfilPersonal {
 						position: absolute;
 						top: 46%;
@@ -752,15 +814,16 @@
 						background-image:url('Fondo9.jpg');
 						background-size:contain;
 					}
-					#tablapedidos{
+					/* PEDIDOS DE USUARIOS*/
+					#PedidosUsuario{
 						position:absolute;
 						top:15%;
 						left:10%;
 						height:70%;
-						width:70%;		
+						width:85%;		
 						overflow: auto;
 					}
-					#tablapedidos table{
+					#PedidosUsuario table{
 						position:absolute;
 						float:right;
 						width:100%;
@@ -770,43 +833,64 @@
 						border: 3px groove #190714;
 						overflow: auto;
 					}
-					#tablapedidos table td,th{
+					#PedidosUsuario table td,th{
 						border: 3px groove #190714;
 					}
-
-					#ListaPedidos{
+				/* CARRITO DE COMPRAS */
+				#contenidocarrito{
+					position:relative;
+					overflow:auto;
+					min-height: 300px;
+					float: right;
+					height:93%;
+					width:79%;
+					text-align:justify;
+					font-weight:bold;
+					font-size:normal;
+					font-family:Georgia,"Times New Roman",Serif;
+					color: white;
+				}		
+					#textocarrito{
 						position:absolute;
-						top:0.1%;
-						left:5%;
-						height:90%;
-						width:95%;		
-						overflow: auto;
-					}
-					#ListaPedidos table{
-						position:absolute;
-						float:right;
-						width:100%;
-						color: white;
-						background-image:url('Fondo9.jpg');
-						background-size:contain;
-						border: 3px groove #190714;
-						overflow: auto;
-					}
-					#ListaPedidos table td,th{
-						border: 3px groove #190714;
-					}
-					#carritobot1{
+						top:5%;
+						right:3%;
+						left:12%;
+						font-weight:bold;
+					    font-size:200%;
+					}	
+					#TablaCarrito{
 						position:absolute;
 						top:15%;
-						right:10%;
+						left:10%;
+						height:70%;
+						width:85%;		
+						overflow: auto;
+					}
+					#TablaCarrito table{
+						position:absolute;
+						float:right;
+						width:100%;
+						color: white;
+						background-image:url('Fondo9.jpg');
+						background-size:contain;
+						border: 3px groove #190714;
+						overflow: auto;
+					}
+					#TablaCarrito table td,th{
+						border: 3px groove #190714;
+					}	
+					#carritobot1{
+						position:absolute;
+						top:7%;
+						right:15%;
+						width:10%;
 					}
 					#carritobot2{
 						position:absolute;
-						top:15%;
+						top:7%;
 						right:3%;
-					}
-				
-				
+						width:10%;
+					}				
 			/* PIE DE LA PAGINA */
 			#pie{
 				position: absolute;

@@ -144,13 +144,13 @@
 				</ul>
 			</div>
 			<!-- CONTENIDO PERFIL PEDIDOS -->
-			<div id='contenido'> 
+			<div id='contenidoperfil'> 
 				<!-- TEXTO -->
-				<div id='textoindex'><samp>Lista de pedidos:</samp></div>
+				<div id='textoperfil'><samp>Lista de pedidos:</samp></div>
 	<?php
 				ConsultaPedidos ($res, $_SESSION["ID"]);
 				// GENERAR TABLA //	
-				echo '<div id="tablapedidos">';
+				echo '<div id="PedidosUsuario">';
 					echo "<table border='1'>
 						<tr>
 							<th>ISBN</th>
@@ -173,12 +173,12 @@
 								echo "<td>", $row['Estado'], "</td>";
 								if ($row['Estado'] == "Enviado"){							
 	?>																	
-									<td><input type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
+									<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
 	<?php		
 								}
 								else{
 	?>		
-									<td><input type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
+									<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
 	<?php
 								}
 							echo "</tr>";

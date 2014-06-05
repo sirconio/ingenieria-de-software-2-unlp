@@ -171,9 +171,9 @@
 				</ul>
 			</div>
 			<!-- CONTENIDO PERFIL CUENTA -->
-			<div id='contenido'> 
+			<div id='contenidoperfil'> 
 				<!-- TEXTO -->
-				<div id='textoindex'><samp>Informacion de la cuenta:</samp></div>
+				<div id='textoperfil'><samp>Informacion de la cuenta:</samp></div>
 	<?php
 				// MODIFICAR DATOS PERSONALES //
 				if	(!empty($_POST['NomApe']) && !empty($_POST['NomUs']) && !empty($_POST['DNI']) && !empty($_POST['Tel']) && !empty($_POST['Dir']) && !empty($_POST['Mail'])){	
@@ -209,7 +209,7 @@
 						<input class="Reginput" type="text" name="Dir" value="', $row['Direccion'], '" placeholder="Ej: Calle #Numero" maxlength="45" required><br>
 						<label class="Reginput" for="Mail">Mail:</label>
 						<input class="Reginput" id="id_mail3" type="text" name="Mail" value="', $row['Contacto'], '" placeholder="Ej: nombre@correo.com" maxlength="45" onblur="validarEmail()" required><br>
-						<input class="Reginput" type="submit" value="Modificar">
+						<input class="botones" type="submit" value="Modificar">
 					</form>';	
 				}
 				// FORMULARIO DE CLAVE //	
@@ -221,7 +221,7 @@
 					<input class="Reginput" type="password" name="Pass1" placeholder="Nueva Contraseña" maxlength="30" required><br>
 					<label class="Reginput" for="Contraseña2">Comfirme Contraseña:</label>
 					<input class="Reginput" size= "20" type="password" name="Pass2" placeholder="Repita Nueva Contraseña" maxlength="30" required><br>
-					<input class="Reginput" type="submit" value="Modificar">
+					<input class="botones" type="submit" value="Modificar">
 				</form>';	
 				// CIERRE  SERVIDOR//
 				CerrarServidor ($con);
