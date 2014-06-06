@@ -68,6 +68,13 @@
 				 
 				return /\d/.test(String.fromCharCode(keynum));
 			}
+			function Numeros(e){
+				var keynum = window.event ? window.event.keyCode : e.which;
+				if ((keynum == 8))
+				return true;
+				 
+				return /\d/.test(String.fromCharCode(keynum));
+			}
 			function validarEmail() {
 				object = document.getElementById("id_mail");
 				email = object.value;
@@ -194,7 +201,7 @@
 								<label class="Reginput" for="NombreApellido">*Nombre y Apellido:</label>
 								<input class="Reginput" type="text" name="NomApe" value="', $_GET['NomApe'], '" placeholder="Nombre Apellido" maxlength="45" onkeypress="return LetrasEspacio(event)" required><br>
 								<label class="Reginput" for="DNI">*DNI:</label>
-								<input class="Reginput" id="id_Dni"type="text" name="DNI" value="', $_GET['DNI'], '" placeholder="Ej: 37.148.135" maxlength="10" onkeypress="return NumerosPunto(event);" onblur="validarDNI()" required><br>	
+								<input class="Reginput" id="id_Dni"type="text" name="DNI" value="', $_GET['DNI'], '" placeholder="Ej: 37148135" maxlength="10" onkeypress="return Numeros(event);" required><br>	
 								<label class="Reginput" for="Telefono">Telefono:</label>
 								<input class="Reginput" type="tel" id="idtel" name="Tel" value="', $_GET['Tel'], '" placeholder="Ej: 011-4189054" maxlength="10" onkeypress="return NumerosGuion(event);" onblur="validarTelefono()" ><br>
 								<label class="Reginput" for="Direccion">Direccion:</label>
@@ -217,7 +224,7 @@
 								<label class="Reginput" for="NombreApellido">*Nombre y Apellido:</label>
 								<input class="Reginput" type="text" name="NomApe" placeholder="Nombre Apellido" maxlength="45" onkeypress="return LetrasEspacio(event)" required><br>
 								<label class="Reginput" for="DNI">*DNI:</label>
-								<input class="Reginput" id="id_Dni"type="text" name="DNI" placeholder="Ej: 37.148.135" maxlength="10" onkeypress="return NumerosPunto(event);" onblur="validarDNI()" required><br>	
+								<input class="Reginput" id="id_Dni"type="text" name="DNI" placeholder="Ej: 37148135" maxlength="10" onkeypress="return Numeros(event);" required><br>	
 								<label class="Reginput" for="Telefono">Telefono:</label>
 								<input class="Reginput" type="tel" id="idtel" name="Tel" placeholder="Ej: 011-4189054" maxlength="10" onkeypress="return NumerosGuion(event);" onblur="validarTelefono()" ><br>
 								<label class="Reginput" for="Direccion">Direccion:</label>

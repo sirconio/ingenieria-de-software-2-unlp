@@ -10,7 +10,6 @@
 		<link type="text/css" rel="stylesheet" href="style.css">
 		<link rel="stylesheet" media="screen" type="text/css" href="css/datepicker.css" />
 		<script type="text/javascript" src="js/datepicker.js"></script>
-	
 		<script>
 			<!-- VENTANA EMERGENTE DE INICIO DE SESION -->
 			function acceso(){
@@ -163,7 +162,12 @@
 						<li><a href="Administrador.php">Modo Administrador</a></li>
 	<?php	
 					}
+					if (empty($_SESSION['estado'])){
 	?>
+						<li><a href="Registrarme.php">Registrate</a></li>
+	<?php
+					}
+	?>	
 				</ul>
 			</div>
 	<?php
@@ -369,8 +373,6 @@
 					echo '</div>';
 					echo '<input class="botones" id="BusCatRegBot" type="submit" value="Buscar">
 				</form>';		
-				// LIBERAR VARIABLE //
-				mysql_free_result($res);
 				// CIERRE CONEXION //
 				CerrarServidor ($con);				
 			echo '</div>';
@@ -537,8 +539,6 @@
 					}
 					echo '<input id="BusCatNoRegBot" type="submit" value="Buscar">				 
 				</form>';
-				// LIBERAR VARIABLE //
-				mysql_free_result($res);
 				// CIERRE CONEXION //
 				CerrarServidor ($con);
 			echo '</div>';

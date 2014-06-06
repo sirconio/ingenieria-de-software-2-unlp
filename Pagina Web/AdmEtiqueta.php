@@ -38,6 +38,15 @@
 					alert("La operacion no se realizo");
 				}
 			}
+			<!-- ACTIVACION DEL FLAG DE ACTIVAR ETIQUETA CON ID -->
+			function activarEtiqueta(ID){				
+				if (confirm("Desea reactivar esta etiqueta?")){
+					location.href="AdmEtiqueta.php?accion=Activar&ID=" + ID;
+				}
+				else{
+					alert("La operacion no se realizo");
+				}
+			}
 			<!-- ACTIVACION DEL FLAG DE MODIFICACION DE UNA ETIQUETA -->
 			function modEtiqueta(EtiquetaNomMod){
 				if (confirm("Desea modificar este etiqueta?")){
@@ -97,6 +106,15 @@
 					</script>
 	<?php		
 				}
+				// ACCION = ACTIVAR, INDICA QUE SE DARA LA ACTIVACION DE UNA ETIQUETA
+				if (!empty($_GET['accion']) && $_GET['accion'] == 'Activar'){
+					ActivarEtiqueta ($_GET['ID'], $AltMsg);		
+	?>
+					<script languaje="javascript"> 	
+						MensajeResp("<?=$AltMsg?>");	
+					</script>
+	<?php		
+				}
 				// ACCION = MODIFICAR, INDICA QUE SE DARA DE ALTA UN AUTOR
 				if (!empty($_GET['accion']) && $_GET['accion'] == 'Modificar'){
 					ModEtiqueta ($_GET['ID'], $_GET['EtiquetaNom'], $AltMsg);		
@@ -131,7 +149,7 @@
 			<!-- BOTONES DE DESPLAZAMIENTO -->
 			<div id='encabezado'>
 				<ul id='botones'>
-					<li><a href="AdmEtiqueta.php?flag=lista">Listar todas los etiquetas</a></li>
+					<li><a href="AdmEtiqueta.php?flag=lista">Listar todas las etiquetas</a></li>
 					<li><a href="AdmEtiqueta.php?flag=ABM">ABM etiquetas</a></li>
 					<li><a href="Administrador.php">Volver a administrar</a></li>
 				</ul>
@@ -143,15 +161,28 @@
 	<?php	
 	 				// OPCION LISTAR ETIQUETA //
 					if (!empty($_GET['flag']) && $_GET['flag'] == 'lista'){
-						echo '<div id="textoadmped"><samp>Listado de todos las etiquetas:</samp></div>';
-						ConsultaEtiqueta ($restam);
+						echo '<div id="textoadmped"><samp>Listado de todos las etiquetas:</samp></div>
+						<div id="barrabusquedaABM" action="Busqueda.php" method="GET">
+						<form>
+							<input size="40" type="text" name="BusRap" placeholder="Etiqueta" required>
+							<input type="hidden" name="flag" value="lista" required readonly>
+							<input id="BusRapBotABM" type="submit" value="Buscar"/>
+						</form>
+						</div>';
+						echo '<div id="TablaLibros">';
+						if (!empty($_GET['BusRap'])){
+							ConsultaEtiquetaBus ($restam, $_GET['BusRap']);
+						}
+						else{
+							ConsultaEtiqueta ($restam);
+						}
 						if(!$restam) {
 							$message= 'Consulta invalida: ' .mysql_error() ."\n";
 							die($message);
 						}
 						$num1 = mysql_num_rows($restam);
 						if($num1 == 0){
-							echo 'No se encontro ning&uacuten etiqueta';
+							echo 'No se encontro ninguna etiqueta';
 						}
 						else{
 							if (empty($_GET['numpag'])){
@@ -160,30 +191,42 @@
 							else{
 								$NroPag = $_GET['numpag'];
 							}
-							ConsultaEtiquetaPag ($res, ($NroPag-1));
+							if (!empty($_GET['BusRap'])){
+								ConsultaEtiquetaPagBus ($res, ($NroPag-1), $_GET['BusRap']);
+							}
+							else{
+								ConsultaEtiquetaPag ($res, ($NroPag-1));
+							}
 							$num2 = mysql_num_rows($res);
 							if($num2 == 0){
-								echo 'No se localizo ning&uacuten etiqueta';
+								echo 'No se localizo ninguna etiqueta';
 							}
 							else{	
-								// GENERAR TABLA //
-								echo '<div id="TablaLibros">';
+								// GENERAR TABLA //								
 								echo 'Pagina Numero: ' .$NroPag;
 								echo "<table border='1'>
-									<tr>
-										<th>ID</th>
+									<tr>										
 										<th>Etiqueta</th>
+										<th>Estado</th>
 									</tr>";
 								$ant = ' ';
 								while($row = mysql_fetch_assoc($res)) {
 									if ($row['ID'] != $ant){
-										echo "<tr>";
-											echo "<td>", $row['ID'], "</td>";
+										echo "<tr>";						
 											echo "<td>", $row['Etiqueta'], "</td>";
+											echo '<td>'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '</td>';
+											if ($row['Estado'] == 1){
 		?>																	
-											<td><input class="botones" type='button' value='Modificar' onclick='modEtiqueta("<?=$row['Etiqueta']?>")' /></td>
-											<td><input class="botones" type='button' value='Eliminar' onclick='bajaEtiqueta("<?=$row['ID']?>")' /></td>
+												<td><input class="botones" type='button' value='Modificar' onclick='modEtiqueta("<?=$row['Etiqueta']?>")' /></td>
+												<td><input class="botones" type='button' value='Eliminar' onclick='bajaEtiqueta("<?=$row['ID']?>")' /></td>
 		<?php							
+											}
+											else{
+		?>																	
+												<td><input class="botones" type='button' value='Modificar' onclick='modEtiqueta("<?=$row['Etiqueta']?>")' disabled /></td>
+												<td><input class="botones" type='button' value='ReActivar' onclick='activarEtiqueta("<?=$row['ID']?>")' /></td>
+		<?php				
+											}
 										echo "</tr>";
 										$ant = $row['ID'];
 									}
@@ -202,9 +245,8 @@
 								$num1 = $num1-10;
 							}
 						echo '</div>';		
-						mysql_free_result($res);
 					}
-					// OPCION ABM AUTOR //
+					// OPCION ABM ETIQUETA //
 					elseif (!empty($_GET['flag']) && $_GET['flag'] == 'ABM'){ 
 						echo '<div id="textoadmped"><samp>ABM de etiquetas:</samp></div>';
 	?>			
@@ -240,15 +282,25 @@
 							}
 							else{	
 								while($row = mysql_fetch_assoc($res)){
-									echo '<form class="FAbm" action="" method="GET">
-										<label for="Nombre">Identificador:</label>
-										<input type="text" name="ID" value="', $row['ID'], '" required readonly></br>
+									echo '<form class="FAbm" action="" method="GET">										
+										<input type="hidden" name="ID" value="', $row['ID'], '" required readonly>
+										<label class="Reginput" for="Visble">Estado:</label>		
+										<input class="Reginput" type="text" name="Estad" value="'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '" required readonly><br>
 										<label for="Nombre">Descripcion de la Etiqueta:</label>
-										<input type="text" name="EtiquetaNom" placeholder="Descripcion" maxlength="45" onkeypress="return LetrasEspacio(event)" value="', $row['Etiqueta'], '" required readonly></br>							
-										<input type="hidden" name="accion" value="Borrar" required readonly>';
+										<input type="text" name="EtiquetaNom" placeholder="Descripcion" maxlength="45" onkeypress="return LetrasEspacio(event)" value="', $row['Etiqueta'], '" required readonly></br>';															
+	
+										if ($row['Estado'] == 1){ 
+											echo '<input type="hidden" name="accion" value="Borrar" required readonly>';	
 	?>
-													<input class="botones" type="button" value="Borrar" onclick='bajaEtiqueta ("<?=$row['ID']?>")' />
-	<?php							
+											<input class="botones" type="button" value="Borrar" onclick='bajaEtiqueta ("<?=$row['ID']?>")' />
+	<?php												
+										}
+										else{ 
+											echo '<input type="hidden" name="accion" value="Activar" required readonly>';
+	?>
+											<input class="botones" type="button" value="Activar" onclick='activarEtiqueta ("<?=$row['ID']?>")' />
+	<?php	
+										}		
 									echo '</form>';	
 								}	
 							}
@@ -276,14 +328,20 @@
 								}
 								else{	
 									while($row = mysql_fetch_assoc($res)){
-										echo '<form class="FAbm" action="" method="GET">
-											<label for="Nombre">Identificador:</label>
-											<input type="text" name="ID" value="', $row['ID'], '" required readonly></br>
-											<label for="Nombre">Descripcion de la Etiqueta:</label>
-											<input type="text" name="EtiquetaNom" placeholder="Descripcion" maxlength="45" onkeypress="return LetrasEspacio(event)" value="', $row['Etiqueta'], '" required></br>
-											<input type="hidden" name="accion" value="Modificar" required readonly>
-											<input class="botones" class="botones" type="submit" value="Modificar">
-										</form>';	
+										if ($row['Estado'] == 1){
+											echo '<form class="FAbm" action="" method="GET">										
+												<input type="hidden" name="ID" value="', $row['ID'], '" required readonly>
+												<label class="Reginput" for="Visble">Estado:</label>		
+												<input class="Reginput" type="text" name="Estad" value="'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '" required readonly><br>
+												<label for="Nombre">Descripcion de la Etiqueta:</label>
+												<input type="text" name="EtiquetaNom" placeholder="Descripcion" maxlength="45" onkeypress="return LetrasEspacio(event)" value="', $row['Etiqueta'], '" required></br>
+												<input type="hidden" name="accion" value="Modificar" required readonly>
+												<input class="botones" class="botones" type="submit" value="Modificar">
+											</form>';
+										}
+										else{
+											echo 'La etiqueta: Descripcion = ' . $row['Etiqueta'] .'; no es una etiqueta activa y sus datos no son modificables';
+										}	
 									}	
 								}
 							}

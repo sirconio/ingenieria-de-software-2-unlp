@@ -116,7 +116,12 @@
 						<li><a href="Administrador.php">Modo Administrador</a></li>
 	<?php	
 					}
+					if (empty($_SESSION['estado'])){
 	?>
+						<li><a href="Registrarme.php">Registrate</a></li>
+	<?php
+					}
+	?>					
 				</ul>
 			</div>
 			<!-- CONTENIDO INDEX -->

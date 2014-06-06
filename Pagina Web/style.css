@@ -566,6 +566,16 @@
 					font-family:Georgia,"Times New Roman",Serif;
 					color: white;
 				}	
+					#barrabusquedaABM{
+					position: absolute;
+					left:10%;
+					top:10%;
+					width:40%;
+					cursor:pointer;
+					}
+					#BusRapBotABM{
+						cursor:pointer;
+					}
 					#textoadm{
 						position:absolute;
 						top:5%;

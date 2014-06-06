@@ -64,6 +64,17 @@
 						ORDER BY ID'); 
 		$res = mysql_query ($cons);
 	}
+	// CONSULTA TODOS LOS USUARIOS BUSQUEDA //
+	function ConsultarUsuariosBus (&$res, $bus){
+		$cons = ('SELECT usuario.Id_Usuario as ID, usuario.Nombre as Usuario, "-----" as Password, usuario.Categoria, cliente.*,usuario.Visible as Estado 
+						FROM usuario, cliente
+						WHERE usuario.DNI = cliente.DNI
+						AND ( usuario.Nombre LIKE "%' .$bus .'%" 
+						OR    cliente.NombreApellido LIKE "%' .$bus .'%" 
+						OR	  cliente.DNI LIKE "%'.$bus .'%")
+						ORDER BY ID'); 
+		$res = mysql_query ($cons);
+	}
 	// CONSULTA TODOS LOS USUARIOS PAGINADO//
 	function ConsultarUsuariosPag (&$res, $NroPag){
 		$pag = (10*$NroPag);
@@ -74,8 +85,29 @@
 						LIMIT ' .$pag .',10';						
 		$res = mysql_query ($cons);
 	}
+	// CONSULTA TODOS LOS USUARIOS PAGINADO BUSQUEDA//
+	function ConsultarUsuariosPagBus (&$res, $NroPag, $bus){
+		$pag = (10*$NroPag);
+		$cons = 'SELECT usuario.Id_Usuario as ID, usuario.Nombre as Usuario, "-----" as Password, usuario.Categoria, cliente.*,usuario.Visible as Estado 
+						FROM usuario, cliente
+						WHERE usuario.DNI = cliente.DNI
+						AND ( usuario.Nombre LIKE "%' .$bus .'%" 
+						OR    cliente.NombreApellido LIKE "%' .$bus .'%" 
+						OR	  cliente.DNI LIKE "%'.$bus .'%")
+						ORDER BY ID
+						LIMIT ' .$pag .',10';						
+		$res = mysql_query ($cons);
+	}
+	// CONSULTA USUARIO CON NOMUS //
+	function DatosUsuario(&$res, $NomUs){
+		$cons = ('SELECT usuario.Id_Usuario as ID, usuario.Nombre, usuario.Password, usuario.Visible As Estado, cliente.* 
+						FROM usuario, cliente
+						WHERE usuario.Nombre = "' .$NomUs .'"
+						AND usuario.DNI = cliente.DNI'); 
+		$res = mysql_query ($cons);
+	}
 	// CONSULTA USUARIO CON ID //
-	function DatosUsuario(&$res, $ID){
+	function DatosUsuarioID (&$res, $ID){
 		$cons = ('SELECT usuario.Id_Usuario as ID, usuario.Nombre, usuario.Password, usuario.Visible As Estado, cliente.* 
 						FROM usuario, cliente
 						WHERE usuario.Id_Usuario = ' .$ID .'
@@ -112,7 +144,7 @@
 	function ModUsuario (&$Con, $ID, $NomApe, $NomUs, $DNI, $Tel, $Dir, $Mail, &$AltMsg){
 		ComprobarNomUs ($ID, $NomUs,$Flag);
 		if ($Flag){
-			$AltMsg = "Ya se encuentra registrado un cliente con dicho Nombre de Usuario";
+			$AltMsg = "La modificacion no pudo realizarse, ya se encuentra registrado un cliente con dicho Nombre de Usuario";
 		}
 		else{
 			$cons = 'UPDATE cliente 
@@ -120,7 +152,7 @@
 							Telefono = "' .$Tel .'",
 							Direccion = "' .$Dir .'",
 							Contacto = "' .$Mail.'" 
-						WHERE cliente.DNI =' .$DNI;
+						WHERE cliente.DNI = ' .$DNI;
 			$res = mysql_query ($cons);
 			$cons1 = 'UPDATE usuario 
 						SET Nombre = "'.$NomUs .'"
@@ -129,10 +161,10 @@
 			if(!$res && !$res1) {
 					$AltMsg = "La modificacion no pudo realizarse";
 			}	
-			elseif (!$res){
+			elseif (!$res1){
 					$AltMsg = "Nombre de Usuario no modificado";
 			}
-			elseif (!$res1){
+			elseif (!$res){
 					$AltMsg = "Datos personales no modificados";
 			}
 			else {
@@ -169,12 +201,12 @@
 		if ($Pass1 == $Pass2){
 			ComprobarDNI ($DNI,$Flag);
 			if ($Flag){
-				$AltMsg = "Ya se encuentra registrado un cliente con dicho DNI";
+				$AltMsg = "Usuario no pudo agregarse, ya se encuentra registrado un cliente con dicho DNI";
 			}
 			else{
-				ComprobarNomUs ($ID, $NomUs,$Flag2);
+				ComprobarNomUsAlta ($NomUs,$Flag2);
 				if ($Flag2){
-					$AltMsg = "Ya se encuentra registrado un cliente con dicho Nombre de Usuario";
+					$AltMsg = "Usuario no pudo agregarse, ya se encuentra registrado un cliente con dicho Nombre de Usuario";
 				}
 				else{
 					$today = getdate();
@@ -220,6 +252,17 @@
 			}
 		}
 	}
+	// COMPRUEBA NOMBRE USUARIO UNICO EN ALTA //
+	function ComprobarNomUsAlta ($NomUs,&$correcto){
+		$res = mysql_query ('SELECT Nombre FROM usuario');
+		$correcto = false;
+		while($row = mysql_fetch_assoc($res)){
+			if ($NomUs == $row['Nombre']){
+				$correcto = true;
+				break;
+			}
+		}
+	}
 	// COMPRUEBA NOMBRE USUARIO UNICO //
 	function ComprobarNomUs ($ID, $NomUs,&$correcto){
 		$res = mysql_query ('SELECT Nombre FROM usuario WHERE Id_Usuario <> ' .$ID);
@@ -252,6 +295,20 @@
 				ORDER BY pedidos.FechaPedido DESC';
 		$res = mysql_query( $cons);
 	}
+	// CONSULTAR TODOS LOS PEDIDOS BUSQUEDA //
+	function ConsultarPedidosBus (&$res, $bus){
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+				FROM usuario, cliente, pedidos, estado, libro
+				WHERE usuario.DNI = cliente.DNI
+				AND cliente.DNI = pedidos.DNI
+				AND pedidos.Id_Estado = estado.Id_Estado
+				AND pedidos.ISBN = libro.ISBN
+				AND ( pedidos.ISBN LIKE "%' .$bus .'%" 
+				OR    pedidos.DNI LIKE "%' .$bus .'%" 
+				OR	  estado.Descripcion LIKE "%'.$bus .'%")
+				ORDER BY pedidos.FechaPedido DESC';
+		$res = mysql_query( $cons);
+	}
 	// CONSULTAR TODOS LOS PEDIDOS PAGINADOS //
 	function ConsultarPedidosPag (&$res, $NroPag){
 		$pag = (10*$NroPag);
@@ -261,6 +318,22 @@
 				AND cliente.DNI = pedidos.DNI
 				AND pedidos.Id_Estado = estado.Id_Estado
 				AND pedidos.ISBN = libro.ISBN
+				ORDER BY pedidos.FechaPedido DESC
+				LIMIT ' .$pag .',10';
+		$res = mysql_query( $cons);
+	}
+	// CONSULTAR TODOS LOS PEDIDOS PAGINADOS BUSQUEDA //
+	function ConsultarPedidosPagBus (&$res, $NroPag, $bus){
+		$pag = (10*$NroPag);
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+				FROM usuario, cliente, pedidos, estado, libro
+				WHERE usuario.DNI = cliente.DNI
+				AND cliente.DNI = pedidos.DNI
+				AND pedidos.Id_Estado = estado.Id_Estado
+				AND pedidos.ISBN = libro.ISBN
+				AND ( pedidos.ISBN LIKE "%' .$bus .'%" 
+				OR    pedidos.DNI LIKE "%' .$bus .'%" 
+				OR	  estado.Descripcion LIKE "%'.$bus .'%")
 				ORDER BY pedidos.FechaPedido DESC
 				LIMIT ' .$pag .',10';
 		$res = mysql_query( $cons);
@@ -277,11 +350,38 @@
 				ORDER BY pedidos.FechaPedido DESC';
 		$res = mysql_query( $cons);
 	}
+	// CONSULTAR PEDIDO PAGINADOS CON ID //
+	function ConsultaPedidosPag (&$res, $NroPag, $ID){
+		$pag = (10*$NroPag);
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+				FROM usuario, cliente, pedidos, estado, libro
+				WHERE usuario.Id_Usuario =' .$ID .'
+				AND usuario.DNI = cliente.DNI
+				AND cliente.DNI = pedidos.DNI
+				AND pedidos.Id_Estado = estado.Id_Estado
+				AND pedidos.ISBN = libro.ISBN
+				ORDER BY pedidos.FechaPedido DESC
+				LIMIT ' .$pag .',10';
+		$res = mysql_query( $cons);
+	}
 	// CONSULTAR PEDIDOS PENDIENTES //
 	function ConsultarPedidosPend (&$res){
 		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.DNI = cliente.DNI
+				AND cliente.DNI = pedidos.DNI
+				AND pedidos.Id_Estado = estado.Id_Estado
+				AND pedidos.Id_Estado = 1
+				AND pedidos.ISBN = libro.ISBN
+				ORDER BY pedidos.FechaPedido DESC';
+		$res = mysql_query( $cons);
+	}
+	// CONSULTAR PEDIDOS PENDIENTES CON ID //
+	function ConsultarPedidosPendId (&$res, $ID){
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+				FROM usuario, cliente, pedidos, estado, libro
+				WHERE usuario.Id_Usuario = ' .$ID .'
+				AND usuario.DNI = cliente.DNI
 				AND cliente.DNI = pedidos.DNI
 				AND pedidos.Id_Estado = estado.Id_Estado
 				AND pedidos.Id_Estado = 1
@@ -302,12 +402,40 @@
 				ORDER BY pedidos.FechaPedido DESC
 				LIMIT ' .$pag .',10';
 		$res = mysql_query( $cons);
-	}	
+	}
+	// CONSULTAR PEDIDOS PENDIENTES PAGINADO CON ID//
+	function ConsultarPedidosPendPagId (&$res, $NroPag, $ID){
+		$pag = (10*$NroPag);
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+				FROM usuario, cliente, pedidos, estado, libro
+				WHERE usuario.Id_Usuario = ' .$ID .'
+				AND usuario.DNI = cliente.DNI
+				AND cliente.DNI = pedidos.DNI
+				AND pedidos.Id_Estado = estado.Id_Estado
+				AND pedidos.Id_Estado = 1
+				AND pedidos.ISBN = libro.ISBN
+				ORDER BY pedidos.FechaPedido DESC
+				LIMIT ' .$pag .',10';
+		$res = mysql_query( $cons);
+	}		
 	// CONSULTAR PEDIDOS ENVIDADOS //
 	function ConsultarPedidosEnv (&$res){
 		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.DNI = cliente.DNI
+				AND cliente.DNI = pedidos.DNI
+				AND pedidos.Id_Estado = estado.Id_Estado
+				AND pedidos.Id_Estado = 2
+				AND pedidos.ISBN = libro.ISBN
+				ORDER BY pedidos.FechaPedido DESC';
+		$res = mysql_query( $cons);
+	}
+	// CONSULTAR PEDIDOS ENVIDADOS CON ID //
+	function ConsultarPedidosEnvId (&$res, $ID){
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+				FROM usuario, cliente, pedidos, estado, libro
+				WHERE usuario.Id_Usuario = ' .$ID .' 
+				AND usuario.DNI = cliente.DNI
 				AND cliente.DNI = pedidos.DNI
 				AND pedidos.Id_Estado = estado.Id_Estado
 				AND pedidos.Id_Estado = 2
@@ -329,11 +457,39 @@
 				LIMIT ' .$pag .',10';
 		$res = mysql_query( $cons);
 	}
+	// CONSULTAR PEDIDOS ENVIDADOS PAGINADO CON ID //
+	function ConsultarPedidosEnvPagId (&$res, $NroPag, $ID){
+		$pag = (10*$NroPag);
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+				FROM usuario, cliente, pedidos, estado, libro
+				WHERE usuario.Id_Usuario = ' .$ID .'
+				AND usuario.DNI = cliente.DNI
+				AND cliente.DNI = pedidos.DNI
+				AND pedidos.Id_Estado = estado.Id_Estado
+				AND pedidos.Id_Estado = 2
+				AND pedidos.ISBN = libro.ISBN
+				ORDER BY pedidos.FechaPedido DESC
+				LIMIT ' .$pag .',10';
+		$res = mysql_query( $cons);
+	}
 	// CONSULTAR PEDIDOS ENTREGADOS //
 	function ConsultarPedidosEnt (&$res){
 		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.DNI = cliente.DNI
+				AND cliente.DNI = pedidos.DNI
+				AND pedidos.Id_Estado = estado.Id_Estado
+				AND pedidos.Id_Estado = 3
+				AND pedidos.ISBN = libro.ISBN
+				ORDER BY pedidos.FechaPedido DESC';
+		$res = mysql_query( $cons);
+	}
+	// CONSULTAR PEDIDOS ENTREGADOS CON ID //
+	function ConsultarPedidosEntId (&$res, $ID){
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+				FROM usuario, cliente, pedidos, estado, libro
+				WHERE usuario.Id_Usuario = ' .$ID .'
+				AND usuario.DNI = cliente.DNI
 				AND cliente.DNI = pedidos.DNI
 				AND pedidos.Id_Estado = estado.Id_Estado
 				AND pedidos.Id_Estado = 3
@@ -347,6 +503,21 @@
 		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.DNI = cliente.DNI
+				AND cliente.DNI = pedidos.DNI
+				AND pedidos.Id_Estado = estado.Id_Estado
+				AND pedidos.Id_Estado = 3
+				AND pedidos.ISBN = libro.ISBN
+				ORDER BY pedidos.FechaPedido DESC
+				LIMIT ' .$pag .',10';
+		$res = mysql_query( $cons);
+	}
+	// CONSULTAR PEDIDOS ENTREGADOS PAGINADO CON ID//
+	function ConsultarPedidosEntPagId (&$res, $NroPag, $ID){
+		$pag = (10*$NroPag);
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+				FROM usuario, cliente, pedidos, estado, libro
+				WHERE usuario.Id_Usuario = ' .$ID .'
+				AND usuario.DNI = cliente.DNI
 				AND cliente.DNI = pedidos.DNI
 				AND pedidos.Id_Estado = estado.Id_Estado
 				AND pedidos.Id_Estado = 3
@@ -392,6 +563,18 @@
 				AND usuario.Id_Usuario = carrito.Id_Usuario
 				AND carrito.ISBN = libro.ISBN
 				AND libro.Id_Autor = autor.Id_Autor';
+		$res = mysql_query( $cons);
+	}
+	// CONSULTAR CARRITO PAGINADO CON ID //
+	function ConsultaCarritoPag (&$res, $ID, $NroPag){
+		$pag = (10*$NroPag);
+		$cons = 'SELECT usuario.DNI, usuario.Nombre, libro.ISBN, libro.Titulo, autor.NombreApellido, libro.Precio
+				FROM usuario, carrito, libro, autor
+				WHERE usuario.Id_Usuario =' .$ID .'
+				AND usuario.Id_Usuario = carrito.Id_Usuario
+				AND carrito.ISBN = libro.ISBN
+				AND libro.Id_Autor = autor.Id_Autor
+				LIMIT ' .$pag .',10';
 		$res = mysql_query( $cons);
 	}
 	// AGREGAR LIBRO-ISBN A CARRITO CON ID //
@@ -531,8 +714,10 @@
 	// ALTA DE LIBRO //
 	function AltaLibro(&$Con, $IS, $Tit, $Aut, $CPag, $Pre, $Idio, $Fec, $Etiq, &$AltMsg){
 		ComprobarISBN ($IS,$Flag);
+		$date = str_replace('/', '-', $Fec);
+		$datefin = date('Y-d-m', strtotime($date));
 		if ($Flag){
-			$AltMsg = "Ya se encuentra registrado un libro con dicho ISBN";
+			$AltMsg = "El Libro no se agrego correctamente, ya se encuentra registrado un libro con dicho ISBN";
 		}
 		else{
 			$RAut = mysql_query('SELECT Id_Autor
@@ -544,7 +729,7 @@
 								WHERE Descripcion = "'. $Idio .'"');
 			$Irow = mysql_fetch_assoc($RIdio);
 			$cons1 ='INSERT INTO `cookbook`.`libro` (`ISBN` ,`Titulo` ,`Id_Autor` ,`CantidadPaginas` ,`Precio` ,`Id_Idioma` ,`Fecha` ,`Id_Disponibilidad` ,`Visible` ,`Hojear`)
-				VALUES (' .$IS .', "' .$Tit .'", ' .$Arow['Id_Autor'] .',' .$CPag .' , ' .$Pre .', ' .$Irow['Id_Idioma'] .', "' .$Fec .'", 1, 1, NULL)';
+				VALUES (' .$IS .', "' .$Tit .'", ' .$Arow['Id_Autor'] .',' .$CPag .' , ' .$Pre .', ' .$Irow['Id_Idioma'] .', "' .$datefin .'", 1, 1, NULL)';
 			$res1 = mysql_query ($cons1);
 			if (!empty($Etiq)){		
 				foreach ($Etiq as &$valor){
@@ -637,23 +822,41 @@
 // GESTION DE AUTOR //	
 	// CONSULTAR AUTORES //
 	function ConsultaAutores (&$res){
-		$cons = 'SELECT Id_Autor AS ID, NombreApellido AS Autor
+		$cons = 'SELECT Id_Autor AS ID, NombreApellido AS Autor, Visible AS Estado
 		FROM autor
+		ORDER BY Id_Autor ASC';
+		$res = mysql_query( $cons);
+	}
+	// CONSULTAR AUTORES BUSQUEDA //
+	function ConsultaAutoresBus (&$res, $bus){
+		$cons = 'SELECT Id_Autor AS ID, NombreApellido AS Autor, Visible AS Estado
+		FROM autor
+		WHERE autor.NombreApellido LIKE "%' .$bus .'%" 
 		ORDER BY Id_Autor ASC';
 		$res = mysql_query( $cons);
 	}
 	// CONSULTAR AUTORES PAGINADO //
 	function ConsultaAutoresPag (&$res, $NroPag){
 		$pag = (10*$NroPag);
-		$cons = 'SELECT Id_Autor AS ID, NombreApellido AS Autor
+		$cons = 'SELECT Id_Autor AS ID, NombreApellido AS Autor, Visible AS Estado
 				FROM autor
+				ORDER BY Id_Autor ASC
+				LIMIT ' .$pag .',10';
+		$res = mysql_query( $cons);
+	}
+	// CONSULTAR AUTORES PAGINADO BUSQUEDA //
+	function ConsultaAutoresPagBus (&$res, $NroPag, $bus){
+		$pag = (10*$NroPag);
+		$cons = 'SELECT Id_Autor AS ID, NombreApellido AS Autor, Visible AS Estado
+				FROM autor
+				WHERE autor.NombreApellido LIKE "%' .$bus .'%"
 				ORDER BY Id_Autor ASC
 				LIMIT ' .$pag .',10';
 		$res = mysql_query( $cons);
 	}
 	// CONSULTAR AUTOR POR NOMBRE //
 	function ConsultaAutor (&$res, $AutorNom){
-		$cons = 'SELECT Id_Autor AS ID, NombreApellido AS Autor
+		$cons = 'SELECT Id_Autor AS ID, NombreApellido AS Autor, Visible AS Estado
 				FROM autor
 				WHERE NombreApellido = "'.$AutorNom. '"';
 		$res = mysql_query( $cons);
@@ -662,7 +865,7 @@
 	function AgregarAutor ($NomApe, &$AltMsg){
 		ComprobarAutor ($NomApe,$Flag);
 		if ($Flag){
-			$AltMsg = "Ya se encuentra registrado un Autor con dicho Nombre";
+			$AltMsg = "El alta del autor no se pudo realizar, ya se encuentra registrado un Autor con dicho Nombre";
 		}
 		else{
 			$cons = 'INSERT INTO autor (`Id_Autor` ,`NombreApellido`)
@@ -676,39 +879,62 @@
 			}
 		}
 	}	
-	// BAJA AUTOR //
+	// BAJA LOGICA DE AUTOR //
 	function BajaAutor ($ID, &$AltMsg){
-		$Comp = 'SELECT * FROM libro WHERE Id_Autor = ' .$ID;
-		$RComp = mysql_query ($Comp);
-		$num1 = mysql_num_rows($RComp);
-		if($num1 != 0){
-			$AltMsg = "La baja del autor no se pudo realizar, existen libros con dicho autor registrado";
-		}
+		$cons = 'UPDATE autor
+				 SET Visible = 0
+				 WHERE Id_Autor = ' .$ID;
+		$res = mysql_query ($cons);
+		if(!$res) {
+			$AltMsg = "La baja del autor no se pudo realizar";
+		}	
 		else{
-			$cons = 'DELETE FROM autor WHERE Id_Autor = ' .$ID;
-			$res = mysql_query ($cons);
-			if(!$res) {
-				$AltMsg = "La baja del autor no se pudo realizar";
-			}	
-			else{
-				$AltMsg = "Autor eliminado Satisfactoriamente";
-			}
+			$AltMsg = "Autor eliminado Satisfactoriamente";
+		}	
+	}
+	// ACTIVAR AUTOR //
+	function ActivarAutor ($ID, &$AltMsg){
+		$cons1 = 'UPDATE autor 
+					SET Visible = 1 
+					WHERE Id_Autor = ' .$ID;
+		$res1 = mysql_query ($cons1);
+		if(!$res1) {
+			$AltMsg = "Autor no se pudo activar";
+		}	
+		else{
+			$AltMsg = "Activacion satisfactorio";
 		}	
 	}
 	// MODIFICAR AUTOR //
 	function ModAutor ($ID, $AutorNom, &$AltMsg){
-		$cons = 'UPDATE autor 
-		SET NombreApellido = "'.$AutorNom .'"
-			WHERE Id_Autor =' .$ID;
-		$res = mysql_query ($cons);
-		if(!$res) {
-			$AltMsg = "La modificacion del autor no se pudo realizar";
-		}	
-		else{
-			$AltMsg = "Autor modificado Satisfactoriamente";
+		ComprobarAutorID ($ID, $AutorNom,$Flag);
+		if ($Flag){
+			$AltMsg = "La modificacion del autor no se pudo realizar, ya se encuentra registrado un Autor con dicho Nombre";
 		}
-	
+		else{
+			$cons = 'UPDATE autor 
+			SET NombreApellido = "'.$AutorNom .'"
+				WHERE Id_Autor =' .$ID;
+			$res = mysql_query ($cons);
+			if(!$res) {
+				$AltMsg = "La modificacion del autor no se pudo realizar";
+			}	
+			else{
+				$AltMsg = "Autor modificado Satisfactoriamente";
+			}
+		}
 	}
+	// COMPROBAR AUTOR UNICO CON ID //
+	function ComprobarAutorID ($ID, $NomApe, &$correcto){	
+		$res = mysql_query ('SELECT NombreApellido FROM autor WHERE Id_Autor <> ' .$ID);
+		$correcto = false;
+		while($row = mysql_fetch_assoc($res)){
+			if ($NomApe == $row['NombreApellido']){
+				$correcto = true;
+				break;
+			}
+		}
+	}	
 	// COMPROBAR AUTOR UNICO //
 	function ComprobarAutor ($NomApe, &$correcto){	
 		$res = mysql_query ('SELECT NombreApellido FROM autor');
@@ -723,65 +949,95 @@
 //GESTION DE IDIOMA //
 	// CONSULTAR IDIOMA //
 	function ConsultaIdioma (&$res){
-		$cons = 'SELECT Id_Idioma AS ID, Descripcion AS Idioma
+		$cons = 'SELECT Id_Idioma AS ID, Descripcion AS Idioma, Visible AS Estado
 		FROM idioma
+		ORDER BY Id_Idioma ASC';
+		$res = mysql_query( $cons);
+	}
+	// CONSULTAR IDIOMA BUSQUEDA //
+	function ConsultaIdiomaBus (&$res, $bus){
+		$cons = 'SELECT Id_Idioma AS ID, Descripcion AS Idioma, Visible AS Estado
+		FROM idioma
+		WHERE idioma.Descripcion LIKE "%' .$bus .'%"
 		ORDER BY Id_Idioma ASC';
 		$res = mysql_query( $cons);
 	}
 	// CONSULTAR IDIOMA PAGINADO //
 	function ConsultaIdiomaPag (&$res, $NroPag){
 		$pag = (10*$NroPag);
-		$cons = 'SELECT Id_Idioma AS ID, Descripcion AS Idioma
+		$cons = 'SELECT Id_Idioma AS ID, Descripcion AS Idioma, Visible AS Estado
 				FROM idioma
+				ORDER BY Id_Idioma ASC
+				LIMIT ' .$pag .',10';
+		$res = mysql_query( $cons);
+	}
+	// CONSULTAR IDIOMA PAGINADO BUSQUEDA //
+	function ConsultaIdiomaPagBus (&$res, $NroPag, $bus){
+		$pag = (10*$NroPag);
+		$cons = 'SELECT Id_Idioma AS ID, Descripcion AS Idioma, Visible AS Estado
+				FROM idioma
+				WHERE idioma.Descripcion LIKE "%' .$bus .'%"
 				ORDER BY Id_Idioma ASC
 				LIMIT ' .$pag .',10';
 		$res = mysql_query( $cons);
 	}
 	// CONSULTAR IDIOMA POR DESCRIPCION //
 	function ConsultaIdio (&$res, $IdiomaNom){
-		$cons = 'SELECT Id_Idioma AS ID, Descripcion AS Idioma
+		$cons = 'SELECT Id_Idioma AS ID, Descripcion AS Idioma, Visible AS Estado
 				FROM idioma
 				WHERE Descripcion = "'.$IdiomaNom. '"';
 		$res = mysql_query( $cons);
 	}
-	// BAJA IDIOMA //
+	// BAJA LOGICA DE IDIOMA //
 	function BajaIdioma ($ID, &$AltMsg){
-		$Comp = 'SELECT * FROM libro WHERE Id_Idioma = ' .$ID;
-		$RComp = mysql_query ($Comp);
-		$num1 = mysql_num_rows($RComp);
-		if($num1 != 0){
-			$AltMsg = "La baja del idioma no se pudo realizar, existen libros con dicho idioma registrado";
-		}
+		$cons = 'UPDATE idioma
+				 SET Visible = 0
+				 WHERE Id_Idioma = ' .$ID;
+		$res = mysql_query ($cons);
+		if(!$res) {
+			$AltMsg = "La baja del idioma no se pudo realizar";
+		}	
 		else{
-			$cons = 'DELETE FROM idioma WHERE Id_Idioma =' .$ID;
-			$res = mysql_query ($cons);
-			if(!$res) {
-				$AltMsg = "La baja del idioma no se pudo realizar";
-			}	
-			else{
-				$AltMsg = "Idioma eliminado Satisfactoriamente";	
-			}
+			$AltMsg = "Idioma eliminado Satisfactoriamente";	
+		}	
+	}
+	// ACTIVAR IDIOMA //
+	function ActivarIdioma ($ID, &$AltMsg){
+		$cons1 = 'UPDATE idioma 
+					SET Visible = 1 
+					WHERE Id_Idioma = ' .$ID;
+		$res1 = mysql_query ($cons1);
+		if(!$res1) {
+			$AltMsg = "Idioma no se pudo activar";
+		}	
+		else{
+			$AltMsg = "Activacion satisfactorio";
 		}	
 	}
 	// MODIFICAR IDIOMA //
 	function ModIdioma ($ID, $IdiomaNom, &$AltMsg){
-		$cons = 'UPDATE idioma 
-		SET Descripcion = "'.$IdiomaNom .'"
-			WHERE Id_Idioma =' .$ID;
-		$res = mysql_query ($cons);
-		if(!$res) {
-			$AltMsg = "La modificacion del idioma no se pudo realizar";
-		}	
-		else{
-			$AltMsg = "Idioma modificado Satisfactoriamente";
+		ComprobarIdiomaID ($ID, $IdiomaNom,$Flag);
+		if ($Flag){
+			$AltMsg = "La modificacion del idioma no se pudo realizar, ya se encuentra registrado un Idioma con dicha Descripcion";
 		}
-	
+		else{
+			$cons = 'UPDATE idioma 
+			SET Descripcion = "'.$IdiomaNom .'"
+				WHERE Id_Idioma =' .$ID;
+			$res = mysql_query ($cons);
+			if(!$res) {
+				$AltMsg = "La modificacion del idioma no se pudo realizar";
+			}	
+			else{
+				$AltMsg = "Idioma modificado Satisfactoriamente";
+			}
+		}
 	}
 	// AGERGAR UN IDIOMA //
 	function AgregarIdioma ($NomIdo, &$AltMsg){
 		ComprobarIdioma ($NomIdo,$Flag);
 		if ($Flag){
-			$AltMsg = "Ya se encuentra registrado un Idioma con dicha Descripcion";
+			$AltMsg = "El alta del idioma no se pudo realizar, ya se encuentra registrado un Idioma con dicha Descripcion";
 		}
 		else{
 			$cons = 'INSERT INTO idioma (`Id_Idioma` ,`Descripcion`)
@@ -794,6 +1050,17 @@
 				$AltMsg = "Idioma agregado Satisfactoriamente";
 			}
 		}	
+	}
+	// COMPROBAR IDIOMA UNICO CON ID //
+	function ComprobarIdiomaID ($ID, $Desc, &$correcto){	
+		$res = mysql_query ('SELECT Descripcion FROM idioma WHERE Id_Idioma <> ' .$ID);
+		$correcto = false;
+		while($row = mysql_fetch_assoc($res)){
+			if ($Desc == $row['Descripcion']){
+				$correcto = true;
+				break;
+			}
+		}
 	}
 	// COMPROBAR IDIOMA UNICO //
 	function ComprobarIdioma ($Desc, &$correcto){	
@@ -809,23 +1076,41 @@
 // GESTION DE ETIQUETA //	
 	// CONSULTAR ETIQUETA //
 	function ConsultaEtiqueta (&$res){
-		$cons = 'SELECT Id_Etiqueta AS ID, Descripcion AS Etiqueta
+		$cons = 'SELECT Id_Etiqueta AS ID, Descripcion AS Etiqueta, Visible AS Estado
 		FROM etiqueta
+		ORDER BY Id_Etiqueta ASC';
+		$res = mysql_query( $cons);
+	}
+	// CONSULTAR ETIQUETA BUSQUEDA //
+	function ConsultaEtiquetaBus (&$res, $bus){
+		$cons = 'SELECT Id_Etiqueta AS ID, Descripcion AS Etiqueta, Visible AS Estado
+		FROM etiqueta
+		WHERE etiqueta.Descripcion LIKE "%' .$bus .'%"
 		ORDER BY Id_Etiqueta ASC';
 		$res = mysql_query( $cons);
 	}
 	// CONSULTAR ETIQUETA PAGINADO //
 	function ConsultaEtiquetaPag (&$res, $NroPag){
 		$pag = (10*$NroPag);
-		$cons = 'SELECT Id_Etiqueta AS ID, Descripcion AS Etiqueta
+		$cons = 'SELECT Id_Etiqueta AS ID, Descripcion AS Etiqueta, Visible AS Estado
 			FROM etiqueta
 			ORDER BY Id_Etiqueta ASC
 			LIMIT ' .$pag .',10';
 		$res = mysql_query( $cons);
 	}
-	// CONSULTAR IDIOMA POR DESCRIPCION //
+	// CONSULTAR ETIQUETA PAGINADO BUSQUEDA//
+	function ConsultaEtiquetaPagBus (&$res, $NroPag, $bus){
+		$pag = (10*$NroPag);
+		$cons = 'SELECT Id_Etiqueta AS ID, Descripcion AS Etiqueta, Visible AS Estado
+			FROM etiqueta
+			WHERE etiqueta.Descripcion LIKE "%' .$bus .'%"
+			ORDER BY Id_Etiqueta ASC
+			LIMIT ' .$pag .',10';
+		$res = mysql_query( $cons);
+	}
+	// CONSULTAR ETIQUETA POR DESCRIPCION //
 	function ConsultaEtiq (&$res, $EtiqNom){
-		$cons = 'SELECT Id_Etiqueta AS ID, Descripcion AS Etiqueta
+		$cons = 'SELECT Id_Etiqueta AS ID, Descripcion AS Etiqueta, Visible AS Estado
 				FROM etiqueta
 				WHERE Descripcion = "'.$EtiqNom. '"';
 		$res = mysql_query( $cons);
@@ -834,7 +1119,7 @@
 	function AgregarEtiqueta ($NomEtq, &$AltMsg){
 		ComprobarEtiqueta ($NomEtq,$Flag);
 		if ($Flag){
-			$AltMsg = "Ya se encuentra registrado una Etiqueta con dicha Descripcion";
+			$AltMsg = "El alta de la etiqueta no se pudo realizar, ya se encuentra registrado una Etiqueta con dicha Descripcion";
 		}
 		else{
 			$cons = 'INSERT INTO etiqueta (`Id_Etiqueta` ,`Descripcion`)
@@ -848,38 +1133,61 @@
 			}
 		}	
 	}
-	// BAJA ETIQUETA //
+	// BAJA LOGICA DE ETIQUETA //
 	function BajaEtiqueta ($ID, &$AltMsg){
-		$Comp = 'SELECT * FROM etiqueta_Libro WHERE Id_Etiqueta = ' .$ID;
-		$RComp = mysql_query ($Comp);
-		$num1 = mysql_num_rows($RComp);
-		if($num1 != 0){
-			$AltMsg = "La baja de la etiqueta no se pudo realizar, existen libros con dicho etiqueta registrada";
-		}
+		$cons = 'UPDATE etiqueta
+				 SET Visible = 0
+				 WHERE Id_Etiqueta = ' .$ID;
+		$res = mysql_query ($cons);
+		if(!$res) {
+			$AltMsg = "La baja de la etiqueta no se pudo realizar";
+		}	
 		else{
-			$cons = 'DELETE FROM etiqueta WHERE Id_Etiqueta =' .$ID;
-			$res = mysql_query ($cons);
-			if(!$res) {
-				$AltMsg = "La baja de la etiqueta no se pudo realizar";
-			}	
-			else{
-				$AltMsg = "Etiqueta eliminada Satisfactoriamente";
-			}
+			$AltMsg = "Etiqueta eliminada Satisfactoriamente";
+		}	
+	}
+	// ACTIVAR ETIQUQTA //
+	function ActivarEtiqueta ($ID, &$AltMsg){
+		$cons1 = 'UPDATE etiqueta 
+					SET Visible = 1 
+					WHERE Id_Etiqueta = ' .$ID;
+		$res1 = mysql_query ($cons1);
+		if(!$res1) {
+			$AltMsg = "Etiqueta no se pudo activar";
+		}	
+		else{
+			$AltMsg = "Activacion satisfactorio";
 		}	
 	}
 	// MODIFICAR ETIQUETA //
 	function ModEtiqueta ($ID, $EtiqNom, &$AltMsg){
-		$cons = 'UPDATE etiqueta 
-		SET Descripcion = "'.$EtiqNom .'"
-			WHERE Id_Etiqueta =' .$ID;
-		$res = mysql_query ($cons);
-		if(!$res) {
-			$AltMsg = "La modificacion de la etiqueta no se pudo realizar";
-		}	
-		else{
-			$AltMsg = "Etiqueta modificado Satisfactoriamente";
+		ComprobarEtiquetaID ($ID, $EtiqNom,$Flag);
+		if ($Flag){
+			$AltMsg = "La modificacion de la etiqueta no se pudo realizar, ya se encuentra registrado una Etiqueta con dicha Descripcion";
 		}
-	
+		else{
+			$cons = 'UPDATE etiqueta 
+			SET Descripcion = "'.$EtiqNom .'"
+				WHERE Id_Etiqueta =' .$ID;
+			$res = mysql_query ($cons);
+			if(!$res) {
+				$AltMsg = "La modificacion de la etiqueta no se pudo realizar";
+			}	
+			else{
+				$AltMsg = "Etiqueta modificado Satisfactoriamente";
+			}
+		}	
+	}
+	// COMPROBAR ETIQUETA UNICO CON ID//
+	function ComprobarEtiquetaID ($ID, $Desc, &$correcto){	
+		$res = mysql_query ('SELECT Descripcion FROM etiqueta WHERE Id_Etiqueta <> ' .$ID);
+		$correcto = false;
+		while($row = mysql_fetch_assoc($res)){
+			if ($Desc == $row['Descripcion']){
+				$correcto = true;
+				break;
+			}
+		}
 	}
 	// COMPROBAR ETIQUETA UNICO //
 	function ComprobarEtiqueta ($Desc, &$correcto){	
@@ -901,6 +1209,17 @@
 						AND idioma.Id_Idioma = libro.Id_Idioma
 						AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad');
 	}
+	// CONSULTA POR DEFECTO BUSQUEDA//
+	function ConsultaPorDefectoBus (&$res, $bus){
+		$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado
+						FROM libro, autor, idioma, disponibilidad
+						WHERE autor.Id_Autor = libro.Id_Autor
+						AND idioma.Id_Idioma = libro.Id_Idioma
+						AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
+						AND ( libro.Titulo LIKE "%' .$bus .'%" 
+						OR    autor.NombreApellido LIKE "%' .$bus .'%" 
+						OR	  libro.ISBN LIKE "%'.$bus .'%")');
+	}
 	// CONSULTA POR DEFECTO PAGINADA//
 	function ConsultaPorDefectoPag (&$res, $NroPag){
 		$pag = (10*$NroPag);
@@ -909,6 +1228,20 @@
 				WHERE autor.Id_Autor = libro.Id_Autor
 				AND idioma.Id_Idioma = libro.Id_Idioma
 				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
+				LIMIT ' .$pag .',10';
+		$res = mysql_query($cons);
+	}
+	// CONSULTA POR DEFECTO PAGINADA BUSQUEDA//
+	function ConsultaPorDefectoPagBus (&$res, $NroPag, $bus){
+		$pag = (10*$NroPag);
+		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado
+				FROM libro, autor, idioma, disponibilidad
+				WHERE autor.Id_Autor = libro.Id_Autor
+				AND idioma.Id_Idioma = libro.Id_Idioma
+				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
+				AND ( libro.Titulo LIKE "%' .$bus .'%" 
+				OR    autor.NombreApellido LIKE "%' .$bus .'%" 
+				OR	  libro.ISBN LIKE "%'.$bus .'%")
 				LIMIT ' .$pag .',10';
 		$res = mysql_query($cons);
 	}
@@ -1019,16 +1352,16 @@
 	}
 	// GENERADOR DE SELECT //
 	function ConsultasSelect (&$residiomas, &$resdisp, &$resetiquetas, &$resautor, &$restitulo, &$resisbn){
-		$residiomas = mysql_query('SELECT idioma.Descripcion as Idioma
+		$residiomas = mysql_query('SELECT idioma.Descripcion as Idioma, idioma.Visible AS Estado
 								FROM idioma
 								ORDER BY idioma.Descripcion');						
 		$resdisp = mysql_query('SELECT disponibilidad.Descripcion as Disponibilidad
 								FROM disponibilidad
 								ORDER BY disponibilidad.Descripcion');
-		$resetiquetas = mysql_query('SELECT etiqueta.Descripcion as Etiqueta
+		$resetiquetas = mysql_query('SELECT etiqueta.Descripcion as Etiqueta, etiqueta.Visible AS Estado
 								FROM etiqueta
 								ORDER BY etiqueta.Descripcion');
-		$resautor = mysql_query('SELECT autor.NombreApellido as Autor
+		$resautor = mysql_query('SELECT autor.NombreApellido as Autor, autor.Visible AS Estado
 								FROM autor
 								ORDER BY autor.NombreApellido');
 		$restitulo = mysql_query('SELECT libro.Titulo as Titulo

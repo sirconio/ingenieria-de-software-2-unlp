@@ -62,7 +62,7 @@
 			<!-- ACTIVACION DEL FLAG DE MODIFICAR USUARIO CON ID -->
 			function modUsuario2(ID){
 				if (confirm("Desea modificar este usuario?")){
-					location.href="AdmUsuarios.php?flag=mod&ID=" + ID;
+					location.href="AdmUsuarios.php?flag=mod&NomUs=" + ID;
 				}
 				else{
 					alert("La operacion no se realizo");
@@ -100,6 +100,13 @@
 			function NumerosPunto(e){
 				var keynum = window.event ? window.event.keyCode : e.which;
 				if ((keynum == 8) || (keynum == 46))
+				return true;
+				 
+				return /\d/.test(String.fromCharCode(keynum));
+			}
+			function Numeros(e){
+				var keynum = window.event ? window.event.keyCode : e.which;
+				if ((keynum == 8))
 				return true;
 				 
 				return /\d/.test(String.fromCharCode(keynum));
@@ -215,8 +222,21 @@
 	<?php	
 					// OPCION LISTAR USUARIOS //
 					if (!empty($_GET['flag']) && $_GET['flag'] == 'lista'){	
-						echo '<div id="textoadmped"><samp>Listado de todos los usuarios:</samp></div>';
-						ConsultarUsuarios ($restam);
+						echo '<div id="textoadmped"><samp>Listado de todos los usuarios:</samp></div>
+						<div id="barrabusquedaABM" action="Busqueda.php" method="GET">
+						<form>
+							<input size="40" type="text" name="BusRap" placeholder="Usuario, Nombre Apellido, DNI" required>
+							<input type="hidden" name="flag" value="lista" required readonly>
+							<input id="BusRapBotABM" type="submit" value="Buscar"/>
+						</form>
+						</div>';
+						echo '<div id="TablaUser">';
+						if (!empty($_GET['BusRap'])){
+							ConsultarUsuariosBus ($restam, $_GET['BusRap']);
+						}
+						else{
+							ConsultarUsuarios ($restam);
+						}
 						if(!$restam) {
 							$message= 'Consulta invalida: ' .mysql_error() ."\n";
 							die($message);
@@ -232,18 +252,21 @@
 							else{
 								$NroPag = $_GET['numpag'];
 							}
-							ConsultarUsuariosPag ($res, ($NroPag-1));
+							if (!empty($_GET['BusRap'])){
+								ConsultarUsuariosPagBus ($res, ($NroPag-1), $_GET['BusRap']);
+							}
+							else{
+								ConsultarUsuariosPag ($res, ($NroPag-1));
+							}
 							$num2 = mysql_num_rows($res);
 							if($num2 == 0){
 								echo 'No se localizo ningun usuario';
 							}
 							else{
 								// GENERAR TABLA //
-								echo '<div id="TablaUser">';
 								echo 'Pagina Numero: ' .$NroPag;	
 								echo "<table border='1' >
-									<tr>
-										<th>ID</th>
+									<tr>										
 										<th>Usuario</th>
 										<th>DNI</th>
 										<th>NombreApellido</th>
@@ -256,8 +279,7 @@
 								$ant = ' ';
 								while($row = mysql_fetch_assoc($res)) {
 									if ($row['DNI'] != $ant){
-										echo "<tr>";
-											echo "<td>", $row['ID'], "</td>";
+										echo "<tr>";											
 											echo "<td>", $row['Usuario'], "</td>";
 											echo "<td>", $row['DNI'], "</td>";
 											echo "<td>", $row['NombreApellido'], "</td>";
@@ -268,13 +290,13 @@
 											echo '<td>'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '</td>';
 											if ($row['Estado'] == 1){
 		?>
-												<td><input class="botones" type='button' value='Modificar' onclick='modUsuario2("<?=$row['ID']?>")' /></td>
+												<td><input class="botones" type='button' value='Modificar' onclick='modUsuario2("<?=$row['Usuario']?>")' /></td>
 												<td><input class="botones" type='button' value='Eliminar' onclick='bajaUsuario2("<?=$row['ID']?>")' /></td>
 		<?php
 											}
 											else{
 		?>					
-												<td><input class="botones" type='button' value='Modificar' onclick='modUsuario2("<?=$row['ID']?>")' disabled /></td>
+												<td><input class="botones" type='button' value='Modificar' onclick='modUsuario2("<?=$row['Usuario']?>")' disabled /></td>
 												<td><input class="botones" type='button' value='ReActivar' onclick='activarUsuario2("<?=$row['ID']?>")' /></td>
 		<?php
 											}
@@ -296,66 +318,60 @@
 								$num1 = $num1-10;
 							}
 						echo '</div>';		
-						mysql_free_result($res);
 					}
 					// OPCION BAJA/ACTIVAR USUARIOS //
 					elseif (!empty($_GET['flag']) && $_GET['flag'] == 'baja'){
 						echo '<div id="textoadmped"><samp>Baja/Activacion de usuarios:</samp></div>';
 	?>
 						<div id='ABMDiv'>
-							<!-- FORMULARIO DE BUSQUEDA POR ID -->
+							<!-- FORMULARIO DE BUSQUEDA POR NOMUS -->
 							<form class='FAbm' action="" method="GET">
-									<label for="ID">Id del Usuario a Borrar/Activar:</label>
-									<input type="text" name="ID" placeholder="Ej: 9" maxlength="10" onkeypress="return Numeros(event);" required>
+									<label for="ID">Nombre de Usuario a Borrar/Activar:</label>
+									<input type="text" name="NomUs" placeholder="Ej: Usuario" maxlength="10"  required>
 									<input type="hidden" name="flag" value="baja" required readonly>
 									<input class="botones" type="submit" value="Buscar">
 							</form>
 	<?php	
-							if (!empty($_GET['ID'])){
-								if ($_GET['ID'] == 0){
-									echo 'No se localizo ningun usuario con esa ID';
+							if (!empty($_GET['NomUs'])){
+								DatosUsuario ($res, $_GET['NomUs']);
+								$num1 = mysql_num_rows($res);
+								if($num1 == 0){
+									echo 'No se localizo ningun usuario con ese Nombre';
 								}
 								else{
-									DatosUsuario ($res, $_GET['ID']);
-									$num1 = mysql_num_rows($res);
-									if($num1 == 0){
-										echo 'No se localizo ningun usuario con esa ID';
-									}
-									else{
-										while($row = mysql_fetch_assoc($res)){
-											// FORMULARIO DE BAJA/ACTIVAR //	
-											echo '<form class="FAbm" action="" method="GET">
-												<input class="Reginput" type="hidden" name="ID" value="', $row['ID'], '" required readonly>	
-												<label class="Reginput" for="Visble">Estado:</label>
-												<input class="Reginput" type="text" name="Estad" value="'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '" required readonly><br>
-												<label class="Reginput" for="NombreUsuario">Nombre Usuario:</label>
-												<input class="Reginput" type="text" name="NomUs" value="', $row['Nombre'], '" required readonly><br>
-												<label class="Reginput" for="NombreApellido">Nombre y Apellido:</label>
-												<input class="Reginput" type="text" name="NomApe"  value="', $row['NombreApellido'], '" required readonly><br>
-												<label class="Reginput" for="DNI">DNI:</label>
-												<input class="Reginput" type="text" name="DNI" value="', $row['DNI'], '" required readonly><br>
-												<label class="Reginput" for="Telefono">Telefono:</label>
-												<input class="Reginput" type="text" name="Tel" value="', $row['Telefono'], '" required readonly><br>
-												<label class="Reginput" for="Direccion">Direccion:</label>
-												<input class="Reginput" type="text" name="Dir" value="', $row['Direccion'], '" required readonly><br>
-												<label class="Reginput" for="Mail">Mail:</label>
-												<input class="Reginput" type="text" name="Mail" value="', $row['Contacto'], '" required readonly><br>';	
-												if ($row['Estado'] == 1){ 
-													echo '<input class="Reginput" type="hidden" name="accion" value="borrar" required readonly>';	
-	?>
-													<input class="botones" type="button" value="Borrar" onclick='bajaUsuario2("<?=$row['ID']?>")' />
-	<?php												
-												}
-												else{ 
-													echo '<input class="Reginput" type="hidden" name="accion" value="activar" required readonly>';	
-	?>
-													<input class="botones" type="button" value="Activar" onclick='activarUsuario2("<?=$row['ID']?>")' />
-	<?php	
-												}	
-											echo '</form>';
-										}					
-									}	
-								}		
+									while($row = mysql_fetch_assoc($res)){
+										// FORMULARIO DE BAJA/ACTIVAR //	
+										echo '<form class="FAbm" action="" method="GET">
+											<input class="Reginput" type="hidden" name="ID" value="', $row['ID'], '" required readonly>	
+											<label class="Reginput" for="Visble">Estado:</label>
+											<input class="Reginput" type="text" name="Estad" value="'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '" required readonly><br>
+											<label class="Reginput" for="NombreUsuario">Nombre Usuario:</label>
+											<input class="Reginput" type="text" name="NomUs" value="', $row['Nombre'], '" required readonly><br>
+											<label class="Reginput" for="NombreApellido">Nombre y Apellido:</label>
+											<input class="Reginput" type="text" name="NomApe"  value="', $row['NombreApellido'], '" required readonly><br>
+											<label class="Reginput" for="DNI">DNI:</label>
+											<input class="Reginput" type="text" name="DNI" value="', $row['DNI'], '" required readonly><br>
+											<label class="Reginput" for="Telefono">Telefono:</label>
+											<input class="Reginput" type="text" name="Tel" value="', $row['Telefono'], '" required readonly><br>
+											<label class="Reginput" for="Direccion">Direccion:</label>
+											<input class="Reginput" type="text" name="Dir" value="', $row['Direccion'], '" required readonly><br>
+											<label class="Reginput" for="Mail">Mail:</label>
+											<input class="Reginput" type="text" name="Mail" value="', $row['Contacto'], '" required readonly><br>';	
+											if ($row['Estado'] == 1){ 
+												echo '<input class="Reginput" type="hidden" name="accion" value="borrar" required readonly>';	
+?>
+												<input class="botones" type="button" value="Borrar" onclick='bajaUsuario2("<?=$row['ID']?>")' />
+<?php												
+											}
+											else{ 
+												echo '<input class="Reginput" type="hidden" name="accion" value="activar" required readonly>';	
+?>
+												<input class="botones" type="button" value="Activar" onclick='activarUsuario2("<?=$row['ID']?>")' />
+<?php	
+											}	
+										echo '</form>';
+									}					
+								}	
 							}
 						echo '</div>';
 					}
@@ -364,10 +380,10 @@
 						echo '<div id="textoadmped"><samp>Modificacion de usuarios:</samp></div>';
 	?>
 						<div id='ABMDiv'>
-							<!-- FORMULARIO DE BUSQUEDA POR ID -->
+							<!-- FORMULARIO DE BUSQUEDA POR NomUs -->
 							<form class='FAbm' action="" method="GET">
-									<label for="ID">Id del Usuario a modificar:</label>
-									<input type="text" name="ID" placeholder="Ej: 9" maxlength="10" onkeypress="return Numeros(event);" required>
+									<label for="ID">Nombe de Usuario a modificar:</label>
+									<input type="text" name="NomUs" placeholder="Ej: Usuario" maxlength="10" required>
 									<input type="hidden" name="flag" value="mod" required readonly>
 									<input class="botones" type="submit" value="Buscar">
 							</form>
@@ -383,7 +399,7 @@
 									<label class="Reginput" for="NombreApellido">Nombre y Apellido:</label>
 									<input class="Reginput" type="text" name="NomApe"  value="', $_GET['NomApe'], '" placeholder="Nombre Apellido" maxlength="45" onkeypress="return LetrasEspacio(event)"  required><br>
 									<label class="Reginput" for="DNI">DNI:</label>
-									<input class="Reginput" type="text" name="DNI" value="', $_GET['DNI'], '" placeholder="Ej: 37.148.135" maxlength="10" onkeypress="return NumerosPunto(event);"  required readonly><br>
+									<input class="Reginput" type="text" name="DNI" value="', $_GET['DNI'], '" placeholder="Ej: 37148135" maxlength="10" onkeypress="return Numeros(event);"  required readonly><br>
 									<label class="Reginput" for="Telefono">Telefono:</label>
 									<input class="Reginput" type="text" name="Tel" value="', $_GET['Tel'], '" placeholder="Ej: 011-4189054" maxlength="10" onkeypress="return NumerosGuion(event);" required><br>
 									<label class="Reginput" for="Direccion">Direccion:</label>
@@ -400,55 +416,50 @@
 								echo '</form>';
 							}
 							else{
-								echo 'El usuario: Id = ' .$_GET['ID'] .', Nombre = ' . $_Get['NomUs'] .'; no es un usuario activo y sus datos no son modificables';
+								echo 'El usuario: Nombre = ' . $_Get['NomUs'] .'; no es un usuario activo y sus datos no son modificables';
 							}
 						}
 						else{
-							if (!empty($_GET['ID'])){
-								if ($_GET['ID'] == 0){
-									echo 'No se localizo ningun usuario con esa ID';
+							if (!empty($_GET['NomUs'])){
+								DatosUsuario ($res, $_GET['NomUs']);
+								$num1 = mysql_num_rows($res);
+								if($num1 == 0){
+									echo 'No se localizo ningun usuario con ese Nombre';
 								}
 								else{
-									DatosUsuario ($res, $_GET['ID']);
-									$num1 = mysql_num_rows($res);
-									if($num1 == 0){
-										echo 'No se localizo ningun usuario con esa ID';
-									}
-									else{
-										while($row = mysql_fetch_assoc($res)){
-											if ($row['Estado'] == 1){
-												// FORMULARIO DE MODIFICACION //
-												echo '<form class="FAbm" action="" method="GET">
-													<label class="Reginput" for="Visble">Estado:</label>
-													<input class="Reginput" type="hidden" name="ID" value="', $row['ID'], '" required readonly>	
-													<input class="Reginput" type="text" name="Estad" value="'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '" required readonly><br>
-													<label class="Reginput" for="NombreUsuario">Nombre Usuario:</label>
-													<input class="Reginput" type="text" name="NomUs" value="', $row['Nombre'], '" placeholder="Usuario" maxlength="10" required><br>
-													<label class="Reginput" for="NombreApellido">Nombre y Apellido:</label>
-													<input class="Reginput" type="text" name="NomApe"  value="', $row['NombreApellido'], '" placeholder="Nombre Apellido" maxlength="45" onkeypress="return LetrasEspacio(event)"  required><br>
-													<label class="Reginput" for="DNI">DNI:</label>
-													<input class="Reginput" type="text" name="DNI" value="', $row['DNI'], '" placeholder="Ej: 37.148.135" maxlength="10" onkeypress="return NumerosPunto(event);"  required readonly><br>
-													<label class="Reginput" for="Telefono">Telefono:</label>
-													<input class="Reginput" type="text" name="Tel" value="', $row['Telefono'], '" placeholder="Ej: 011-4189054" maxlength="10" onkeypress="return NumerosGuion(event);" required><br>
-													<label class="Reginput" for="Direccion">Direccion:</label>
-													<input class="Reginput" type="text" name="Dir" value="', $row['Direccion'], '" placeholder="Ej: Calle #Numero" maxlength="45" required><br>
-													<label class="Reginput" for="Mail">Mail:</label>
-													<input class="Reginput" id="id_mail4" type="text" name="Mail" value="', $row['Contacto'], '" placeholder="Ej: nombre@correo.com" maxlength="45" onblur="validarEmail()" required><br>';									
-													if ($row['Estado'] == 1){ 
-														echo '<input class="Reginput" type="hidden" name="accion" value="modificar" required readonly>	
-														<input class="botones" type="submit" value="Modificar">';
-													}
-													else{ 
-														echo '<input class="botones" type="submit" value="Modificar" disabled>';
-													}	
-												echo '</form>';
-											}
-											else{
-												echo 'El usuario: Id = ' .$_GET['ID'] .', Nombre = ' . $row['Nombre'] .'; no es un usuario activo y sus datos no son modificables';
-											}
-										}	
-									}
-								}	
+									while($row = mysql_fetch_assoc($res)){
+										if ($row['Estado'] == 1){
+											// FORMULARIO DE MODIFICACION //
+											echo '<form class="FAbm" action="" method="GET">
+												<label class="Reginput" for="Visble">Estado:</label>
+												<input class="Reginput" type="hidden" name="ID" value="', $row['ID'], '" required readonly>	
+												<input class="Reginput" type="text" name="Estad" value="'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '" required readonly><br>
+												<label class="Reginput" for="NombreUsuario">Nombre Usuario:</label>
+												<input class="Reginput" type="text" name="NomUs" value="', $row['Nombre'], '" placeholder="Usuario" maxlength="10" required><br>
+												<label class="Reginput" for="NombreApellido">Nombre y Apellido:</label>
+												<input class="Reginput" type="text" name="NomApe"  value="', $row['NombreApellido'], '" placeholder="Nombre Apellido" maxlength="45" onkeypress="return LetrasEspacio(event)"  required><br>
+												<label class="Reginput" for="DNI">DNI:</label>
+												<input class="Reginput" type="text" name="DNI" value="', $row['DNI'], '" placeholder="Ej: 37148135" maxlength="10" onkeypress="return Numeros(event);"  required readonly><br>
+												<label class="Reginput" for="Telefono">Telefono:</label>
+												<input class="Reginput" type="text" name="Tel" value="', $row['Telefono'], '" placeholder="Ej: 011-4189054" maxlength="10" onkeypress="return NumerosGuion(event);" required><br>
+												<label class="Reginput" for="Direccion">Direccion:</label>
+												<input class="Reginput" type="text" name="Dir" value="', $row['Direccion'], '" placeholder="Ej: Calle #Numero" maxlength="45" required><br>
+												<label class="Reginput" for="Mail">Mail:</label>
+												<input class="Reginput" id="id_mail4" type="text" name="Mail" value="', $row['Contacto'], '" placeholder="Ej: nombre@correo.com" maxlength="45" onblur="validarEmail()" required><br>';									
+												if ($row['Estado'] == 1){ 
+													echo '<input class="Reginput" type="hidden" name="accion" value="modificar" required readonly>	
+													<input class="botones" type="submit" value="Modificar">';
+												}
+												else{ 
+													echo '<input class="botones" type="submit" value="Modificar" disabled>';
+												}	
+											echo '</form>';
+										}
+										else{
+											echo 'El usuario: Nombre = ' . $row['Nombre'] .'; no es un usuario activo y sus datos no son modificables';
+										}
+									}	
+								}								
 							}	
 						}	
 						echo '</div>';
@@ -481,8 +492,7 @@
 									// GENERADOR DE TABLA RESULTANTE //
 									echo '<div id="TablaUserPeriodo">';
 									echo"<table border='1'>
-										<tr>
-											<th>ID</th>
+										<tr>										
 											<th>Usuario</th>
 											<th>DNI</th>
 											<th>NombreApellido</th>
@@ -492,8 +502,7 @@
 									$ant = ' ';
 									while($row = mysql_fetch_assoc($res)){
 										if ($row['DNI'] != $ant){
-												echo "<tr>";
-													echo "<td>", $row['ID'], "</td>";
+												echo "<tr>";												
 													echo "<td>", $row['Usuario'], "</td>";
 													echo "<td>", $row['DNI'], "</td>";
 													echo "<td>", $row['NombreApellido'], "</td>";

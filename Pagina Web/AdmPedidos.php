@@ -124,9 +124,21 @@
 	<?php	
 					// OPCION LISTAR PEDIDOS //
 					if (!empty($_GET['flag']) && $_GET['flag'] == 'lista'){	
-						echo '<div id="textoadmped"><samp>Listado de todos los pedidos:</samp></div>';
+						echo '<div id="textoadmped"><samp>Listado de todos los pedidos:</samp></div>
+						<div id="barrabusquedaABM" action="Busqueda.php" method="GET">
+						<form>
+							<input size="40" type="text" name="BusRap" placeholder="ISBN, DNI, Estado" required>
+							<input type="hidden" name="flag" value="lista" required readonly>
+							<input id="BusRapBotABM" type="submit" value="Buscar"/>
+						</form>
+						</div>';
 						echo '<div id="TablaPedido">';
-						ConsultarPedidos ($restam);
+						if (!empty($_GET['BusRap'])){
+							ConsultarPedidosBus ($restam, $_GET['BusRap']);
+						}
+						else{
+							ConsultarPedidos ($restam);
+						}
 						if(!$restam) {
 							$message= 'Consulta invalida: ' .mysql_error() ."\n";
 							die($message);
@@ -142,7 +154,12 @@
 							else{
 								$NroPag = $_GET['numpag'];
 							}
-							ConsultarPedidosPag ($res, ($NroPag-1));
+							if (!empty($_GET['BusRap'])){
+								ConsultarPedidosPagBus ($res, ($NroPag-1), $_GET['BusRap']);
+							}
+							else{	
+								ConsultarPedidosPag ($res, ($NroPag-1));
+							}
 							echo 'Pagina Numero: ' .$NroPag;
 							$num2 = mysql_num_rows($res);
 							if($num2 == 0){
@@ -198,7 +215,6 @@
 								$num1 = $num1-10;
 							}
 						echo '</div>';	
-						mysql_free_result($res);
 					}
 					// OPCION LISTAR PEDIDOS PENDIENTES //
 					elseif (!empty($_GET['flag']) && $_GET['flag'] == 'pend'){	
@@ -277,7 +293,6 @@
 								$num1 = $num1-10;
 							}
 						echo '</div>';
-						mysql_free_result($res);
 					}
 					// OPCION LISTAR PEDIDOS ENVIADOS //
 					elseif (!empty($_GET['flag']) && $_GET['flag'] == 'env'){		
@@ -354,7 +369,6 @@
 								$num1 = $num1-10;
 							}
 						echo '</div>';	
-						mysql_free_result($res);
 					}
 					// OPCION LISTAR PEDIDOS ENTREGADOS //
 					elseif (!empty($_GET['flag']) && $_GET['flag'] == 'ent'){		
@@ -432,7 +446,6 @@
 								$num1 = $num1-10;
 							}
 						echo '</div>';
-						mysql_free_result($res);
 					}
 					// CIERRE SERVIDOR //
 					CerrarServidor ($con)

@@ -32,6 +32,15 @@
 			function busqueda (bus){
 				location.href="Busqueda.php?BusRap=" + bus;
 			}
+			<!-- ACTIVACION DEL FLAG DE ELIMNAR CUENTA -->
+			function Elimnar(){
+				if (confirm("Desea elimnar su cuenta?")){
+					location.href="PerfilCuenta.php?eliminar=true";
+				}
+				else{
+					alert("La operacion no se realizo");
+				}
+			}
 		</script>	
 	</head>
 	<body>
@@ -109,8 +118,11 @@
 	<?php
 						if ($_SESSION['categoria'] == 'Normal'){
 	?>
-							<li><a href="PerfilPedidos.php">Mis Pedidos</a></li>
-							<li><a href="PerfilCuenta.php?elminar=true">Eliminar Cuenta</a><li>
+							<li><a href="PerfilPedidos.php?flag=lista">Todos mis Pedidos</a></li>
+							<li><a href="PerfilPedidos.php?flag=pend">Mis Pedidos Pendientes</a></li>
+							<li><a href="PerfilPedidos.php?flag=env">Mis Pedidos Enviados</a></li>
+							<li><a href="PerfilPedidos.php?flag=ent">Mis Pedidos Entregados</a></li>
+							<li><a href="PerfilCuenta.php?eliminar=true">Eliminar Cuenta</a><li>
 	<?php	
 						}
 	?>

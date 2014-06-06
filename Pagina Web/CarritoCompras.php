@@ -162,41 +162,74 @@
 	<?php
 				ConsultaCarrito ($res, $_SESSION["ID"]);
 				echo '<div id="TablaCarrito">';
-					// GENERAR TABLA //
-					echo"<table border='1'>
-						<tr>
-							<th>DNI</th>
-							<th>Nombre</th>
-							<th>ISBN</th>
-							<th>Titulo</th>							
-							<th>Autor</th>
-							<th>Precio</th>
-						</tr>";
-					$ant = ' ';
-					while($row = mysql_fetch_assoc($res)) {
-						if ($row['ISBN'] != $ant){
-							echo "<tr>";
-								echo "<td>", $row['DNI'], "</td>";
-								echo "<td>", $row['Nombre'], "</td>";
-								echo "<td>", $row['ISBN'], "</td>";
-								echo "<td>", $row['Titulo'], "</td>";
-								echo "<td>", $row['NombreApellido'], "</td>";
-								echo "<td>", $row['Precio'], "</td>";
-	?>																	
-								<td><input class="botones" type='button' value='Retirar' onclick='Retirar("<?=$row['ISBN']?>","<?=$_SESSION['ID']?>")' /></td>
-	<?php													
-							echo "</tr>";
-							$ant = $row['ISBN'];							
-						}
+				if(!$res) {
+						$message= 'Consulta invalida: ' .mysql_error() ."\n";
+						die($message);
+					}		
+					$num1 = mysql_num_rows($res);
+					if($num1 == 0){
+						echo 'No se localizo ningun libro en el carrito';
 					}
-					echo "</table>";
+					else{
+						if (empty($_GET['numpag'])){
+							$NroPag = 1;
+						}
+						else{
+							$NroPag = $_GET['numpag'];
+						}
+						ConsultaCarritoPag ($res, $_SESSION["ID"], ($NroPag-1) );
+						echo 'Pagina Numero: ' .$NroPag;
+						$num2 = mysql_num_rows($res);
+						if($num2 == 0){
+							echo 'No se localizo ningun libro en el carrito';
+						}
+						else{
+							// GENERAR TABLA //
+							echo"<table border='1'>
+								<tr>
+									<th>DNI</th>
+									<th>Nombre</th>
+									<th>ISBN</th>
+									<th>Titulo</th>							
+									<th>Autor</th>
+									<th>Precio</th>
+								</tr>";
+							$ant = ' ';
+							while($row = mysql_fetch_assoc($res)) {
+								if ($row['ISBN'] != $ant){
+									echo "<tr>";
+										echo "<td>", $row['DNI'], "</td>";
+										echo "<td>", $row['Nombre'], "</td>";
+										echo "<td>", $row['ISBN'], "</td>";
+										echo "<td>", $row['Titulo'], "</td>";
+										echo "<td>", $row['NombreApellido'], "</td>";
+										echo "<td>", $row['Precio'], "</td>";
+			?>																	
+										<td><input class="botones" type='button' value='Retirar' onclick='Retirar("<?=$row['ISBN']?>","<?=$_SESSION['ID']?>")' /></td>
+			<?php													
+									echo "</tr>";
+									$ant = $row['ISBN'];							
+								}
+							}
+							echo "</table>";
+						}	
+					}	
+					echo '</div>';
+					echo '<div id="PaginasPed">';
+						$pag = 1;
+						echo 'Paginas: ';
+						while ( $num1 > 0 ) {
+							echo '<li><a href="CarritoCompras.php?numpag=' .$pag .'">' .$pag .'</a></li>
+							<li> - </li>';
+							$pag ++;
+							$num1 = $num1-10;
+						}
 					echo '</div>';
 	?>
 				<input class="botones" id='carritobot1' type='button' value='Vaciar' onclick='Vaciar("<?=$_SESSION['ID']?>")' />
 				<input class="botones" id='carritobot2' type='button' value='Comprar' onclick='Comprar("<?=$_SESSION['ID']?>")' />
 			</div>
 	<?php
-			mysql_free_result($res);
 			// CIERRE SERVIDOR //
 			CerrarServidor ($con);
 	?>

@@ -46,6 +46,15 @@
 				alert(Msj);
 				location.href="PerfilPedidos.php";
 			}
+			<!-- ACTIVACION DEL FLAG DE ELIMNAR CUENTA -->
+			function Eliminar(){
+				if (confirm("Desea elimnar su cuenta?")){
+					location.href="PerfilCuenta.php?borrar=true";
+				}
+				else{
+					alert("La operacion no se realizo");
+				}
+			}
 		</script>	
 	</head>
 	<body>
@@ -135,8 +144,11 @@
 	<?php
 						if ($_SESSION['categoria'] == 'Normal'){
 	?>
-							<li><a href="PerfilPedidos.php">Mis Pedidos</a></li>
-							<li><a href="PerfilCuenta.php?elminar=true">Eliminar Cuenta</a><li>
+							<li><a href="PerfilPedidos.php?flag=lista">Todos mis Pedidos</a></li>
+							<li><a href="PerfilPedidos.php?flag=pend">Mis Pedidos Pendientes</a></li>
+							<li><a href="PerfilPedidos.php?flag=env">Mis Pedidos Enviados</a></li>
+							<li><a href="PerfilPedidos.php?flag=ent">Mis Pedidos Entregados</a></li>
+							<li><a href="PerfilCuenta.php?eliminar=true">Eliminar Cuenta</a><li>
 	<?php	
 						}
 	?>
@@ -145,49 +157,317 @@
 			</div>
 			<!-- CONTENIDO PERFIL PEDIDOS -->
 			<div id='contenidoperfil'> 
-				<!-- TEXTO -->
-				<div id='textoperfil'><samp>Lista de pedidos:</samp></div>
-	<?php
-				ConsultaPedidos ($res, $_SESSION["ID"]);
-				// GENERAR TABLA //	
-				echo '<div id="PedidosUsuario">';
-					echo "<table border='1'>
-						<tr>
-							<th>ISBN</th>
-							<th>Titulo</th>
-							<th>DNI</th>
-							<th>NombreApellido</th>
-							<th>FechaPedido</th>
-							<th>Estado</th>
-							
-						</tr>";
-					$ant = ' ';
-					while($row = mysql_fetch_assoc($res)) {
-						if ($row['ISBN'] != $ant){
-							echo "<tr>";
-								echo "<td>", $row['ISBN'], "</td>";
-								echo "<td>", $row['Titulo'], "</td>";
-								echo "<td>", $row['DNI'], "</td>";
-								echo "<td>", $row['NombreApellido'], "</td>";
-								echo "<td>", $row['FechaPedido'], "</td>";
-								echo "<td>", $row['Estado'], "</td>";
-								if ($row['Estado'] == "Enviado"){							
-	?>																	
-									<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
 	<?php		
-								}
-								else{
-	?>		
-									<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
-	<?php
-								}
-							echo "</tr>";
-							$ant = $row['ISBN'];
-						}
+				if (!empty($_GET['flag']) && $_GET['flag'] == 'lista'){
+	?>
+					<!-- TEXTO -->
+					<div id='textoperfil'><samp>Lista de todos los pedidos:</samp></div>
+		<?php
+					echo '<div id="PedidosUsuario">';
+					ConsultaPedidos ($res, $_SESSION["ID"]);
+					if(!$res) {
+						$message= 'Consulta invalida: ' .mysql_error() ."\n";
+						die($message);
+					}		
+					$num1 = mysql_num_rows($res);
+					if($num1 == 0){
+						echo 'No se localizo ningun pedido';
 					}
-					echo "</table>";
-				echo '</div>';
-				mysql_free_result($res);
+					else{
+						if (empty($_GET['numpag'])){
+							$NroPag = 1;
+						}
+						else{
+							$NroPag = $_GET['numpag'];
+						}
+						ConsultaPedidosPag ($res, ($NroPag-1), $_SESSION["ID"]);
+						echo 'Pagina Numero: ' .$NroPag;
+						$num2 = mysql_num_rows($res);
+						if($num2 == 0){
+							echo 'No se localizo ningun pedido';
+						}
+						else{
+							// GENERAR TABLA //	
+							echo "<table border='1'>
+								<tr>
+									<th>ISBN</th>
+									<th>Titulo</th>
+									<th>DNI</th>
+									<th>NombreApellido</th>
+									<th>FechaPedido</th>
+									<th>Estado</th>
+									
+								</tr>";
+							$ant = ' ';
+							while($row = mysql_fetch_assoc($res)) {
+								if ($row['ISBN'] != $ant){
+									echo "<tr>";
+										echo "<td>", $row['ISBN'], "</td>";
+										echo "<td>", $row['Titulo'], "</td>";
+										echo "<td>", $row['DNI'], "</td>";
+										echo "<td>", $row['NombreApellido'], "</td>";
+										echo "<td>", $row['FechaPedido'], "</td>";
+										echo "<td>", $row['Estado'], "</td>";
+										if ($row['Estado'] == "Enviado"){							
+			?>																	
+											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
+			<?php		
+										}
+										else{
+			?>		
+											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
+			<?php
+										}
+									echo "</tr>";
+									$ant = $row['ISBN'];
+								}
+							}
+							echo "</table>";
+						}	
+					}	
+					echo '</div>';
+					echo '<div id="PaginasPed">';
+						$pag = 1;
+						echo 'Paginas: ';
+						while ( $num1 > 0 ) {
+							echo '<li><a href="PerfilPedidos.php?flag=lista&numpag=' .$pag .'">' .$pag .'</a></li>
+							<li> - </li>';
+							$pag ++;
+							$num1 = $num1-10;
+						}
+					echo '</div>';
+				}
+				// OPCION LISTAR PEDIDOS PENDIENTES //
+				elseif (!empty($_GET['flag']) && $_GET['flag'] == 'pend'){	
+					echo '<div id="textoadmped"><samp>Listado de los pedidos pendientes:</samp></div>';
+					echo '<div id="TablaPedido">';
+					ConsultarPedidosPendId ($res, $_SESSION["ID"]);
+					if(!$res) {
+						$message= 'Consulta invalida: ' .mysql_error() ."\n";
+						die($message);
+					}		
+					$num1 = mysql_num_rows($res);
+					if($num1 == 0){
+						echo 'No se localizo ningun pedido pendiente';
+					}
+					else{
+						if (empty($_GET['numpag'])){
+							$NroPag = 1;
+						}
+						else{
+							$NroPag = $_GET['numpag'];
+						}
+						ConsultarPedidosPendPagId ($res, ($NroPag-1), $_SESSION["ID"]);
+						echo 'Pagina Numero: ' .$NroPag;
+						$num2 = mysql_num_rows($res);
+						if($num2 == 0){
+							echo 'No se localizo ningun pedido pendiente';
+						}
+						else{
+							// GENERAR TABLA //							
+							echo"<table border='1'>
+								<tr>
+									<th>ISBN</th>
+									<th>Titulo</th>
+									<th>DNI</th>
+									<th>NombreApellido</th>
+									<th>FechaPedido</th>
+									<th>Estado</th>
+									
+								</tr>";
+							$ant = ' ';
+							while($row = mysql_fetch_assoc($res)) {
+								if ($row['ISBN'] != $ant){
+									echo "<tr>";
+										echo "<td>", $row['ISBN'], "</td>";
+										echo "<td>", $row['Titulo'], "</td>";
+										echo "<td>", $row['DNI'], "</td>";
+										echo "<td>", $row['NombreApellido'], "</td>";
+										echo "<td>", $row['FechaPedido'], "</td>";
+										echo "<td>", $row['Estado'], "</td>";										
+										if ($row['Estado'] == "Enviado"){							
+			?>																	
+											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
+			<?php		
+										}
+										else{
+			?>		
+											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
+			<?php
+										}	
+									echo "</tr>";
+									$ant = $row['ISBN'];
+							
+								}
+							}
+							echo "</table>";
+						}	
+					}	
+					echo '</div>';
+					echo '<div id="PaginasPed">';
+						$pag = 1;
+						echo 'Paginas: ';
+						while ( $num1 > 0 ) {
+							echo '<li><a href="PerfilPedidos.php?flag=pend&numpag=' .$pag .'">' .$pag .'</a></li>
+							<li> - </li>';
+							$pag ++;
+							$num1 = $num1-10;
+						}
+					echo '</div>';
+				}
+				// OPCION LISTAR PEDIDOS ENVIADOS //
+				elseif (!empty($_GET['flag']) && $_GET['flag'] == 'env'){		
+					echo '<div id="textoadmped"><samp>Listado de los pedidos enviados:</samp></div>';
+					echo '<div id="TablaPedido">';
+					ConsultarPedidosEnvId ($res, $_SESSION["ID"]);
+					if(!$res) {
+						$message= 'Consulta invalida: ' .mysql_error() ."\n";
+						die($message);
+					}	
+					$num1 = mysql_num_rows($res);
+					if($num1 == 0){
+						echo 'No se localizo ningun pedido enviado';
+					}
+					else{
+						if (empty($_GET['numpag'])){
+							$NroPag = 1;
+						}
+						else{
+							$NroPag = $_GET['numpag'];
+						}
+						ConsultarPedidosEnvPagId ($res, ($NroPag-1), $_SESSION["ID"]);
+						echo 'Pagina Numero: ' .$NroPag;
+						$num2 = mysql_num_rows($res);
+						if($num2 == 0){
+							echo 'No se localizo ningun pedido enviado';
+						}
+						else{
+							// GENERAR TABLA //
+							echo "<table border='1'>
+								<tr>
+									<th>ISBN</th>
+									<th>Titulo</th>
+									<th>DNI</th>
+									<th>NombreApellido</th>
+									<th>FechaPedido</th>
+									<th>Estado</th>									
+								</tr>";
+							$ant = ' ';
+							while($row = mysql_fetch_assoc($res)) {
+								if ($row['ISBN'] != $ant){
+									echo "<tr>";
+										echo "<td>", $row['ISBN'], "</td>";
+										echo "<td>", $row['Titulo'], "</td>";
+										echo "<td>", $row['DNI'], "</td>";
+										echo "<td>", $row['NombreApellido'], "</td>";
+										echo "<td>", $row['FechaPedido'], "</td>";
+										echo "<td>", $row['Estado'], "</td>";										
+										if ($row['Estado'] == "Enviado"){							
+			?>																	
+											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
+			<?php		
+										}
+										else{
+			?>		
+											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
+			<?php
+										}
+									echo "</tr>";
+									$ant = $row['ISBN'];
+								}
+							}
+							echo "</table>";
+						}	
+					}	
+					echo '</div>';
+					echo '<div id="PaginasPed">';
+						$pag = 1;
+						echo 'Paginas: ';
+						while ( $num1 > 0 ) {
+							echo '<li><a href="PerfilPedidos.php?flag=env&numpag=' .$pag .'">' .$pag .'</a></li>
+							<li> - </li>';
+							$pag ++;
+							$num1 = $num1-10;
+						}
+					echo '</div>';	
+				}
+				// OPCION LISTAR PEDIDOS ENTREGADOS //
+				elseif (!empty($_GET['flag']) && $_GET['flag'] == 'ent'){		
+					echo '<div id="textoadmped"><samp>Listado de los pedidos entregados:</samp></div>';
+					echo '<div id="TablaPedido">';
+					ConsultarPedidosEntId ($res, $_SESSION["ID"]);
+					if(!$res) {
+						$message= 'Consulta invalida: ' .mysql_error() ."\n";
+						die($message);
+					}		
+					$num1 = mysql_num_rows($res);
+					if($num1 == 0){
+						echo 'No se localizo ningun pedido entregado';
+					}
+					else{
+						if (empty($_GET['numpag'])){
+							$NroPag = 1;
+						}
+						else{
+							$NroPag = $_GET['numpag'];
+						}
+						ConsultarPedidosEntPagId ($res, ($NroPag-1),$_SESSION["ID"]);
+						echo 'Pagina Numero: ' .$NroPag;
+						$num2 = mysql_num_rows($res);
+						if($num2 == 0){
+							echo 'No se localizo ningun pedido entregado';
+						}
+						else{
+							// GENERAR TABLA //
+							echo "<table border='1'>
+								<tr>
+									<th>ISBN</th>
+									<th>Titulo</th>
+									<th>DNI</th>
+									<th>NombreApellido</th>
+									<th>FechaPedido</th>
+									<th>Estado</th>
+									
+								</tr>";
+							$ant = ' ';
+							while($row = mysql_fetch_assoc($res)) {
+								if ($row['ISBN'] != $ant){
+									echo "<tr>";
+										echo "<td>", $row['ISBN'], "</td>";
+										echo "<td>", $row['Titulo'], "</td>";
+										echo "<td>", $row['DNI'], "</td>";
+										echo "<td>", $row['NombreApellido'], "</td>";
+										echo "<td>", $row['FechaPedido'], "</td>";
+										echo "<td>", $row['Estado'], "</td>";
+										if ($row['Estado'] == "Enviado"){							
+			?>																	
+											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
+			<?php		
+										}
+										else{
+			?>		
+											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
+			<?php
+										}
+									echo "</tr>";
+									$ant = $row['ISBN'];
+								}
+							}
+							echo "</table>";
+						}	
+					}	
+					echo '</div>';
+					echo '<div id="PaginasPed">';
+						$pag = 1;
+						echo 'Paginas: ';
+						while ( $num1 > 0 ) {
+							echo '<li><a href="PerfilPedidos.php?flag=ent&numpag=' .$pag .'">' .$pag .'</a></li>
+							<li> - </li>';
+							$pag ++;
+							$num1 = $num1-10;
+						}
+					echo '</div>';
+				}
 				// CIERRE  SERVIDOR//
 				CerrarServidor ($con);
 	?>

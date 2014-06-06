@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS `CookBook`.`Autor` ;
 CREATE TABLE IF NOT EXISTS `CookBook`.`Autor` (
   `Id_Autor` INT NOT NULL AUTO_INCREMENT,
   `NombreApellido` VARCHAR(45) NOT NULL,
+  `Visible` TINYINT(1) NOT NULL,
   PRIMARY KEY (`Id_Autor`))
 ENGINE = InnoDB;
 
@@ -25,6 +26,7 @@ DROP TABLE IF EXISTS `CookBook`.`Idioma` ;
 CREATE TABLE IF NOT EXISTS `CookBook`.`Idioma` (
   `Id_Idioma` INT NOT NULL AUTO_INCREMENT,
   `Descripcion` VARCHAR(45) NOT NULL,
+  `Visible` TINYINT(1) NOT NULL,
   PRIMARY KEY (`Id_Idioma`))
 ENGINE = InnoDB;
 
@@ -72,6 +74,7 @@ DROP TABLE IF EXISTS `CookBook`.`Etiqueta` ;
 CREATE TABLE IF NOT EXISTS `CookBook`.`Etiqueta` (
   `Id_Etiqueta` INT NOT NULL AUTO_INCREMENT,
   `Descripcion` VARCHAR(45) NOT NULL,
+  `Visible` TINYINT(1) NOT NULL,
   PRIMARY KEY (`Id_Etiqueta`))
 ENGINE = InnoDB;
 
@@ -82,7 +85,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `CookBook`.`Cliente` ;
 
 CREATE TABLE IF NOT EXISTS `CookBook`.`Cliente` (
-  `DNI` VARCHAR(10) NOT NULL,
+  `DNI` INT NOT NULL,
   `NombreApellido` VARCHAR(45) NOT NULL,
   `FechaAlta` DATE NOT NULL,
   `Telefono` VARCHAR(10) NULL,
@@ -112,7 +115,7 @@ DROP TABLE IF EXISTS `CookBook`.`Pedidos` ;
 CREATE TABLE IF NOT EXISTS `CookBook`.`Pedidos` (
   `Id_Pedido` INT NOT NULL AUTO_INCREMENT,
   `ISBN` INT NOT NULL,
-  `DNI` VARCHAR(10) NOT NULL,
+  `DNI` INT NOT NULL,
   `FechaPedido` DATE NOT NULL,
   `Id_Estado` INT NOT NULL,
   PRIMARY KEY (`Id_Pedido`),
@@ -131,7 +134,7 @@ CREATE TABLE IF NOT EXISTS `CookBook`.`Usuario` (
   `Nombre` VARCHAR(10) NOT NULL,
   `Password` VARCHAR(45) NOT NULL,
   `Categoria` VARCHAR(45) NOT NULL,
-  `DNI` VARCHAR(10) NOT NULL,
+  `DNI` INT NOT NULL,
   `Visible` TINYINT(1) NOT NULL,
   `CantCarrito` INT NOT NULL,
   PRIMARY KEY (`Id_Usuario`),
@@ -177,13 +180,13 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `CookBook`;
-INSERT INTO `CookBook`.`Autor` (`Id_Autor`, `NombreApellido`) VALUES (1, 'Carmen Valldejuli');
-INSERT INTO `CookBook`.`Autor` (`Id_Autor`, `NombreApellido`) VALUES (2, 'Kristen Feola');
-INSERT INTO `CookBook`.`Autor` (`Id_Autor`, `NombreApellido`) VALUES (3, 'Mirta G. Carabajal');
-INSERT INTO `CookBook`.`Autor` (`Id_Autor`, `NombreApellido`) VALUES (4, 'Petrona C. de Gandulfo');
-INSERT INTO `CookBook`.`Autor` (`Id_Autor`, `NombreApellido`) VALUES (5, 'Christine Bailey');
-INSERT INTO `CookBook`.`Autor` (`Id_Autor`, `NombreApellido`) VALUES (6, 'Toni Rodriguez');
-INSERT INTO `CookBook`.`Autor` (`Id_Autor`, `NombreApellido`) VALUES (7, 'Cecilia Fassardi');
+INSERT INTO `CookBook`.`Autor` (`Id_Autor`, `NombreApellido`, `Visible`) VALUES (1, 'Carmen Valldejuli', True);
+INSERT INTO `CookBook`.`Autor` (`Id_Autor`, `NombreApellido`, `Visible`) VALUES (2, 'Kristen Feola', True);
+INSERT INTO `CookBook`.`Autor` (`Id_Autor`, `NombreApellido`, `Visible`) VALUES (3, 'Mirta G. Carabajal', True);
+INSERT INTO `CookBook`.`Autor` (`Id_Autor`, `NombreApellido`, `Visible`) VALUES (4, 'Petrona C. de Gandulfo', True);
+INSERT INTO `CookBook`.`Autor` (`Id_Autor`, `NombreApellido`, `Visible`) VALUES (5, 'Christine Bailey', True);
+INSERT INTO `CookBook`.`Autor` (`Id_Autor`, `NombreApellido`, `Visible`) VALUES (6, 'Toni Rodriguez', True);
+INSERT INTO `CookBook`.`Autor` (`Id_Autor`, `NombreApellido`, `Visible`) VALUES (7, 'Cecilia Fassardi', True);
 
 COMMIT;
 
@@ -193,7 +196,7 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `CookBook`;
-INSERT INTO `CookBook`.`Idioma` (`Id_Idioma`, `Descripcion`) VALUES (1, 'Espaniol');
+INSERT INTO `CookBook`.`Idioma` (`Id_Idioma`, `Descripcion`, `Visible`) VALUES (1, 'Espaniol', True);
 
 COMMIT;
 
@@ -230,14 +233,14 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `CookBook`;
-INSERT INTO `CookBook`.`Etiqueta` (`Id_Etiqueta`, `Descripcion`) VALUES (1, 'Criolla');
-INSERT INTO `CookBook`.`Etiqueta` (`Id_Etiqueta`, `Descripcion`) VALUES (2, 'Guia');
-INSERT INTO `CookBook`.`Etiqueta` (`Id_Etiqueta`, `Descripcion`) VALUES (3, 'Recetas');
-INSERT INTO `CookBook`.`Etiqueta` (`Id_Etiqueta`, `Descripcion`) VALUES (4, 'Rustica');
-INSERT INTO `CookBook`.`Etiqueta` (`Id_Etiqueta`, `Descripcion`) VALUES (5, 'Zumos');
-INSERT INTO `CookBook`.`Etiqueta` (`Id_Etiqueta`, `Descripcion`) VALUES (6, 'Jugos');
-INSERT INTO `CookBook`.`Etiqueta` (`Id_Etiqueta`, `Descripcion`) VALUES (7, 'Cupcakes');
-INSERT INTO `CookBook`.`Etiqueta` (`Id_Etiqueta`, `Descripcion`) VALUES (8, 'Viandas');
+INSERT INTO `CookBook`.`Etiqueta` (`Id_Etiqueta`, `Descripcion`, `Visible`) VALUES (1, 'Criolla', True);
+INSERT INTO `CookBook`.`Etiqueta` (`Id_Etiqueta`, `Descripcion`, `Visible`) VALUES (2, 'Guia', True);
+INSERT INTO `CookBook`.`Etiqueta` (`Id_Etiqueta`, `Descripcion`, `Visible`) VALUES (3, 'Recetas', True);
+INSERT INTO `CookBook`.`Etiqueta` (`Id_Etiqueta`, `Descripcion`, `Visible`) VALUES (4, 'Rustica', True);
+INSERT INTO `CookBook`.`Etiqueta` (`Id_Etiqueta`, `Descripcion`, `Visible`) VALUES (5, 'Zumos', True);
+INSERT INTO `CookBook`.`Etiqueta` (`Id_Etiqueta`, `Descripcion`, `Visible`) VALUES (6, 'Jugos', True);
+INSERT INTO `CookBook`.`Etiqueta` (`Id_Etiqueta`, `Descripcion`, `Visible`) VALUES (7, 'Cupcakes', True);
+INSERT INTO `CookBook`.`Etiqueta` (`Id_Etiqueta`, `Descripcion`, `Visible`) VALUES (8, 'Viandas', True);
 
 COMMIT;
 
@@ -247,13 +250,13 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `CookBook`;
-INSERT INTO `CookBook`.`Cliente` (`DNI`, `NombreApellido`, `FechaAlta`, `Telefono`, `Direccion`, `Contacto`) VALUES ('11.454.789', 'Carlos Sanchez', '1983-03-31', '0221-4515151', '60 N512', 'carlos@hotmail.com');
-INSERT INTO `CookBook`.`Cliente` (`DNI`, `NombreApellido`, `FechaAlta`, `Telefono`, `Direccion`, `Contacto`) VALUES ('10.222.333', 'Roberto Juarez', '2001-08-25', '0221-4678912', '13 N212', 'roberto@hotmail.com');
-INSERT INTO `CookBook`.`Cliente` (`DNI`, `NombreApellido`, `FechaAlta`, `Telefono`, `Direccion`, `Contacto`) VALUES ('30.876.961', 'Ariel Pasini', '2012-07-24', '0221-4641232', '15 N754', 'ariel@hotmail.com');
-INSERT INTO `CookBook`.`Cliente` (`DNI`, `NombreApellido`, `FechaAlta`, `Telefono`, `Direccion`, `Contacto`) VALUES ('2.968.741', 'Nicolas Galdamez', '2006-06-06', '0221-4986754', '64 N521', 'nicolas@hotmail.com');
-INSERT INTO `CookBook`.`Cliente` (`DNI`, `NombreApellido`, `FechaAlta`, `Telefono`, `Direccion`, `Contacto`) VALUES ('3.478.987', 'Sebastian Eguren', '1999-05-03', '0221-4907814', '16 N242', 'sebastian@hotmail.com');
-INSERT INTO `CookBook`.`Cliente` (`DNI`, `NombreApellido`, `FechaAlta`, `Telefono`, `Direccion`, `Contacto`) VALUES ('12.547.897', 'Maria Lopez', '2011-01-02', '0221-4537659', '60 N512', 'maria@hotmail.com');
-INSERT INTO `CookBook`.`Cliente` (`DNI`, `NombreApellido`, `FechaAlta`, `Telefono`, `Direccion`, `Contacto`) VALUES ('14.879.564', 'Catalina Perez', '2012-01-01', '0221-4093421', '34 N812', 'catalina@hotmail.com');
+INSERT INTO `CookBook`.`Cliente` (`DNI`, `NombreApellido`, `FechaAlta`, `Telefono`, `Direccion`, `Contacto`) VALUES (11454789, 'Carlos Sanchez', '1983-03-31', '0221-4515151', '60 N512', 'carlos@hotmail.com');
+INSERT INTO `CookBook`.`Cliente` (`DNI`, `NombreApellido`, `FechaAlta`, `Telefono`, `Direccion`, `Contacto`) VALUES (10222333, 'Roberto Juarez', '2001-08-25', '0221-4678912', '13 N212', 'roberto@hotmail.com');
+INSERT INTO `CookBook`.`Cliente` (`DNI`, `NombreApellido`, `FechaAlta`, `Telefono`, `Direccion`, `Contacto`) VALUES (30876961, 'Ariel Pasini', '2012-07-24', '0221-4641232', '15 N754', 'ariel@hotmail.com');
+INSERT INTO `CookBook`.`Cliente` (`DNI`, `NombreApellido`, `FechaAlta`, `Telefono`, `Direccion`, `Contacto`) VALUES (2968741, 'Nicolas Galdamez', '2006-06-06', '0221-4986754', '64 N521', 'nicolas@hotmail.com');
+INSERT INTO `CookBook`.`Cliente` (`DNI`, `NombreApellido`, `FechaAlta`, `Telefono`, `Direccion`, `Contacto`) VALUES (3478987, 'Sebastian Eguren', '1999-05-03', '0221-4907814', '16 N242', 'sebastian@hotmail.com');
+INSERT INTO `CookBook`.`Cliente` (`DNI`, `NombreApellido`, `FechaAlta`, `Telefono`, `Direccion`, `Contacto`) VALUES (12547897, 'Maria Lopez', '2011-01-02', '0221-4537659', '60 N512', 'maria@hotmail.com');
+INSERT INTO `CookBook`.`Cliente` (`DNI`, `NombreApellido`, `FechaAlta`, `Telefono`, `Direccion`, `Contacto`) VALUES (14879564, 'Catalina Perez', '2012-01-01', '0221-4093421', '34 N812', 'catalina@hotmail.com');
 
 COMMIT;
 
@@ -275,13 +278,13 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `CookBook`;
-INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (1, 882894293, '11.454.789', '2013-03-31', 1);
-INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (2, 124356789, '10.222.333', '2013-08-25', 1);
-INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (3, 879548481, '30.876.961', '2013-07-24', 1);
-INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (4, 888444777, '2.968.741', '2013-06-06', 1);
-INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (5, 878987655, '3.478.987', '2013-05-03', 1);
-INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (6, 1478523698, '12.547.897', '2011-01-02', 3);
-INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (7, 8521479632, '14.879.564', '2012-01-01', 3);
+INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (1, 882894293, 11454789, '2013-03-31', 1);
+INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (2, 124356789, 10222333, '2013-08-25', 1);
+INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (3, 879548481, 30876961, '2013-07-24', 1);
+INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (4, 888444777, 2968741, '2013-06-06', 1);
+INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (5, 878987655, 3478987, '2013-05-03', 1);
+INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (6, 1478523698, 12547897, '2011-01-02', 3);
+INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (7, 8521479632, 14879564, '2012-01-01', 3);
 
 COMMIT;
 
@@ -291,14 +294,14 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `CookBook`;
-INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (1, 'Ruben', 'admin', 'Administrador', '0', True, 0);
-INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (2, 'Carlos', 'carlos', 'Normal', '11.454.789', True, 0);
-INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (3, 'Roberto', 'roberto', 'Normal', '10.222.333', True, 0);
-INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (4, 'Ariel', 'ariel', 'Normal', '30.876.961', True, 0);
-INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (5, 'Nicolas', 'nicolas', 'Normal', '29.68.741', True, 0);
-INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (6, 'Sebastian', 'sebastian', 'Normal', '3.478.987', True, 0);
-INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (7, 'Maria', 'maria', 'Normal', '12.547.897', True, 0);
-INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (8, 'Catalina', 'catalina', 'Normal', '14.879.564', True, 0);
+INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (1, 'Ruben', 'admin', 'Administrador', 0, True, 0);
+INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (2, 'Carlos', 'carlos', 'Normal', 11454789, True, 0);
+INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (3, 'Roberto', 'roberto', 'Normal', 10222333, True, 0);
+INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (4, 'Ariel', 'ariel', 'Normal', 30876961, True, 0);
+INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (5, 'Nicolas', 'nicolas', 'Normal', 2968741, True, 0);
+INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (6, 'Sebastian', 'sebastian', 'Normal', 3478987, True, 0);
+INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (7, 'Maria', 'maria', 'Normal', 12547897, True, 0);
+INSERT INTO `CookBook`.`Usuario` (`Id_Usuario`, `Nombre`, `Password`, `Categoria`, `DNI`, `Visible`, `CantCarrito`) VALUES (8, 'Catalina', 'catalina', 'Normal', 14879564, True, 0);
 
 COMMIT;
 
