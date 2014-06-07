@@ -32,7 +32,7 @@
 			<!-- ACTIVACION DEL FLAG DE CAMBIAR ESTADO A ENVIADO -->
 			function Enviado (ISBN, DNI){
 				if (confirm("Desea cambiar el estado del pedido a enviado?")){
-					location.href="AdmPedidos.php?pedido=true&Is=" + ISBN + "&Dn=" + DNI;
+					location.href="AdmPedidos.php?flag=lista&pedido=true&Is=" + ISBN + "&Dn=" + DNI;
 				}
 				else{
 					alert("La operacion no se realizo");

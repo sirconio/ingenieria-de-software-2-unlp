@@ -35,8 +35,12 @@
 				location.href="Busqueda.php?carrito=true&Is=" + ISBN + "&Dn=" + ID;
 			}
 			<!-- VENTANA DE DETALLES -->
-			function Hojear(){
-			
+			function Hojear(ISBN, Titulo, NombreApellido, Precio, CantPag, Idioma, Fecha, Disp, Etiq, Ind){
+				Ventana = window.open('','Detalles','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=600,height=400');
+				Ventana.moveTo(100,100);
+				Ventana.document.innerHTML = "";
+				Ventana.document.write("<html><head></head><body background='Fondo8.jpg' background-size='cover' style='color:white' onblur='self.close()' ><p>ISBN: " + ISBN + " - Autor: " + NombreApellido + " - Titulo: " + Titulo + "</p><p>Idioma: " + Idioma + " - Cantidad de Paginas: " + CantPag + " - Fecha Publicacion: " + Fecha + "</p><p>Precio: $" + Precio + "</p><p>Etiquetas: " + Etiq + "</p><p>Indice: <p>&nbsp;&nbsp;&nbsp;&nbsp;" + Ind + "</p></p><p>------------------------------</p></body></html>");
+				myWindow.focus();
 			}
 			<!-- MENSAJE DE ALTA AL CARRITO -->
 			function MensajeAlta(Msj){
@@ -224,12 +228,8 @@
 							<tr>
 								<th>ISBN</th>
 								<th>Titulo</th>
-								<th>Autor</th>
-								<th>CantidadPaginas</th>
+								<th>Autor</th>								
 								<th>Precio</th>
-								<th>Idioma</th>
-								<th>Fecha</th>
-								<th>Disponibilidad</th>
 							</tr>";
 					$ant = ' ';
 					while($row = mysql_fetch_assoc($res)) {
@@ -237,15 +237,12 @@
 							echo "<tr>";
 								echo "<td>", $row['ISBN'], "</td>";
 								echo "<td>", $row['Titulo'], "</td>";
-								echo "<td>", $row['NombreApellido'], "</td>";
-								echo "<td>", $row['CantidadPaginas'], "</td>";
-								echo "<td>", $row['Precio'], "</td>";
-								echo "<td>", $row['Idioma'], "</td>";
-								echo "<td>", $row['Fecha'], "</td>";
-								echo "<td>", $row['Disponibilidad'], "</td>";		
-	?>																	
-								<td><input class="botones" type='button' value='Detalle' onclick='Hojear()' /></td>
-	<?php
+								echo "<td>", $row['NombreApellido'], "</td>";							
+								echo "<td>", $row['Precio'], "</td>";								
+								BuscarEtiquetas($row['ISBN'], $Etiq);
+		?>																	
+								<td><input class="botones" type='button' value='Detalle' onclick='Hojear("<?=$row['ISBN']?>", "<?=$row['Titulo']?>", "<?=$row['NombreApellido']?>", "<?=$row['Precio']?>", "<?=$row['CantidadPaginas']?>", "<?=$row['Idioma']?>", "<?=$row['Fecha']?>", "<?=$row['Disponibilidad']?>", "<?=$Etiq?>", "<?=$row['Indice']?>")' /></td>
+		<?php
 								if ($_SESSION['categoria'] == 'Administrador'){
 	?>
 									<td><input class="botones" type='button' value='Agregar a Carrito' onclick='AgregarCarrito("<?=$row['ISBN']?>","<?=$_SESSION["ID"]?>")' disabled /></td>

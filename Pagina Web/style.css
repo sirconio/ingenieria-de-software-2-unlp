@@ -566,6 +566,14 @@
 					font-family:Georgia,"Times New Roman",Serif;
 					color: white;
 				}	
+					#AdminIndice{
+						position: absolute;
+						top:10%;
+						right:5%;
+						height:45%;
+						width:40%;
+						overflow: auto;
+					}
 					#barrabusquedaABM{
 					position: absolute;
 					left:10%;

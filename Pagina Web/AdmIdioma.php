@@ -286,7 +286,7 @@
 										<input type="hidden" name="ID" value="', $row['ID'], '" required readonly>
 										<label class="Reginput" for="Visble">Estado:</label>		
 										<input class="Reginput" type="text" name="Estad" value="'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '" required readonly><br>
-										<label for="Nombre">Nombre y Apellido del Autor:</label>
+										<label for="Nombre">Descripcion del Idioma:</label>
 										<input type="text" name="IdiomaNom" placeholder="Descripcion" maxlength="45" onkeypress="return LetrasEspacio(event)" value="', $row['Idioma'], '" required readonly></br>';													
 										if ($row['Estado'] == 1){ 
 											echo '<input type="hidden" name="accion" value="Borrar" required readonly>';	

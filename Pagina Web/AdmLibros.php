@@ -32,6 +32,15 @@
 					selectOtherMonths: true
 				});
 			});
+			<!-- DATAPICKER MODIFICAR -->
+			$(function() {	
+				$("#datepickerModLibro").datepicker({
+					changeMonth: true,
+					changeYear: true,
+					showOtherMonths: true,
+					selectOtherMonths: true
+				});
+			});
 			<!-- VENTANA EMERGENTE DE INICIO DE SESION -->
 			function acceso(){
 				window.open("InicioSesion.php","myWindow","status = 1, height = 150, width = 350, resizable = no" );
@@ -100,6 +109,8 @@
 				Precio = document.getElementsByName("Precio")[0].value;
 				Idioma = document.getElementsByName("Idioma")[0].value;
 				Fecha = document.getElementsByName("Fecha")[0].value;
+				Disp = document.getElementsByName("Disp")[0].value;
+				Ind = document.getElementsByName("Ind")[0].value;
 				divCont = document.getElementById('AdminEtiq');
 				checks  = divCont.getElementsByTagName('input');
 				Et = "&Etiquetas[]=";
@@ -109,16 +120,16 @@
 						Et = Et + "&Etiquetas[]=";
 					}
 				}
-				Et = Et + "none";
+				Et = Et + "none";				
 				if ( flag == 'alta'){
-					location.href="AdmLibros.php?flag=AgAu&F="+flag+"&ISBN="+ISBN+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et;
+					location.href="AdmLibros.php?flag=AgAu&F="+flag+"&ISBN="+ISBN+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et+"&Disp="+Disp+"&Indice="+Ind;
 				}
 				else{
-					location.href="AdmLibros.php?flag=AgAu&F="+flag+"&ISBN="+IS+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et;
+					location.href="AdmLibros.php?flag=AgAu&F="+flag+"&ISBN="+IS+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et+"&Disp="+Disp+"&Indice="+Ind;
 				}
 			}
 			<!-- ACTIVACION DE LA ACCION ALTA AUTOR -->
-			function AltaAutor(flag, ISBN, Titulo , Autor, CantPag, Precio, Idioma, Fecha, Etiquetas){
+			function AltaAutor(flag, ISBN, Titulo , Autor, CantPag, Precio, Idioma, Fecha, Etiquetas, Disp, Ind){
 				accion = document.getElementsByName("accion")[0].value;
 				AutorNom = document.getElementsByName("AutorNom")[0].value;
 				if ( Etiquetas == 0){
@@ -132,7 +143,7 @@
 					}
 					Et = Et + "none";
 				}
-				location.href="AdmLibros.php?flag="+flag+"&accion="+accion+"&AutorNom="+AutorNom+"&ISBN="+ISBN+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et;
+				location.href="AdmLibros.php?flag="+flag+"&accion="+accion+"&AutorNom="+AutorNom+"&ISBN="+ISBN+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et+"&Disp="+Disp+"&Indice="+Ind;
 			}
 			<!-- ACTIVACION DEL FLAG DE AGREGAR IDIOMA -->
 			function agregarIdioma(flag, IS){
@@ -143,6 +154,8 @@
 				Precio = document.getElementsByName("Precio")[0].value;
 				Idioma = document.getElementsByName("Idioma")[0].value;
 				Fecha = document.getElementsByName("Fecha")[0].value;
+				Disp = document.getElementsByName("Disp")[0].value;
+				Ind = document.getElementsByName("Ind")[0].value;
 				divCont = document.getElementById('AdminEtiq');
 				checks  = divCont.getElementsByTagName('input');
 				Et = "&Etiquetas[]=";
@@ -154,14 +167,14 @@
 				}
 				Et = Et + "none";
 				if ( flag == 'alta'){
-					location.href="AdmLibros.php?flag=AgId&F="+flag+"&ISBN="+ISBN+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et;
+					location.href="AdmLibros.php?flag=AgId&F="+flag+"&ISBN="+ISBN+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et+"&Disp="+Disp+"&Indice="+Ind;
 				}
 				else{
-					location.href="AdmLibros.php?flag=AgId&F="+flag+"&ISBN="+IS+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et;
+					location.href="AdmLibros.php?flag=AgId&F="+flag+"&ISBN="+IS+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et+"&Disp="+Disp+"&Indice="+Ind;
 				}
 			}
 			<!-- ACTIVACION DE LA ACCION ALTA IDIOMA -->
-			function AltaIdioma(flag, ISBN, Titulo , Autor, CantPag, Precio, Idioma, Fecha, Etiquetas){
+			function AltaIdioma(flag, ISBN, Titulo , Autor, CantPag, Precio, Idioma, Fecha, Etiquetas, Disp, Ind){
 				accion = document.getElementsByName("accion")[0].value;
 				IdiomaNom = document.getElementsByName("IdiomaNom")[0].value;
 				if ( Etiquetas == 0){
@@ -175,7 +188,7 @@
 					}
 					Et = Et + "none";
 				}
-				location.href="AdmLibros.php?flag="+flag+"&accion="+accion+"&IdiomaNom="+IdiomaNom+"&ISBN="+ISBN+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et;
+				location.href="AdmLibros.php?flag="+flag+"&accion="+accion+"&IdiomaNom="+IdiomaNom+"&ISBN="+ISBN+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et+"&Disp="+Disp+"&Indice="+Ind;
 			}
 			<!-- ACTIVACION DEL FLAG DE AGREGAR ETIQUETA -->
 			function agregarEtiqueta(flag, IS){
@@ -186,6 +199,8 @@
 				Precio = document.getElementsByName("Precio")[0].value;
 				Idioma = document.getElementsByName("Idioma")[0].value;
 				Fecha = document.getElementsByName("Fecha")[0].value;
+				Disp = document.getElementsByName("Disp")[0].value;
+				Ind = document.getElementsByName("Ind")[0].value;
 				divCont = document.getElementById('AdminEtiq');
 				checks  = divCont.getElementsByTagName('input');
 				Et = "&Etiquetas[]=";
@@ -197,14 +212,14 @@
 				}
 				Et = Et + "none";
 				if ( flag == 'alta'){
-					location.href="AdmLibros.php?flag=AgEt&F="+flag+"&ISBN="+ISBN+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et;
+					location.href="AdmLibros.php?flag=AgEt&F="+flag+"&ISBN="+ISBN+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et+"&Disp="+Disp+"&Indice="+Ind;
 				}
 				else{
-					location.href="AdmLibros.php?flag=AgEt&F="+flag+"&ISBN="+IS+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et;
+					location.href="AdmLibros.php?flag=AgEt&F="+flag+"&ISBN="+IS+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et+"&Disp="+Disp+"&Indice="+Ind;
 				}
 			}
 			<!-- ACTIVACION DE LA ACCION ALTA ETIQUETA -->
-			function AltaEtiqueta(flag, ISBN, Titulo , Autor, CantPag, Precio, Idioma, Fecha, Etiquetas){
+			function AltaEtiqueta(flag, ISBN, Titulo , Autor, CantPag, Precio, Idioma, Fecha, Etiquetas, Disp, Ind){
 				accion = document.getElementsByName("accion")[0].value;
 				EtiquetaNom = document.getElementsByName("EtiquetaNom")[0].value;
 				if ( Etiquetas == 0){
@@ -218,7 +233,7 @@
 					}
 					Et = Et + "none";
 				}
-				location.href="AdmLibros.php?flag="+flag+"&accion="+accion+"&EtiquetaNom="+EtiquetaNom+"&ISBN="+ISBN+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et;
+				location.href="AdmLibros.php?flag="+flag+"&accion="+accion+"&EtiquetaNom="+EtiquetaNom+"&ISBN="+ISBN+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et+"&Disp="+Disp+"&Indice="+Ind;
 			}
 			<!-- MENSAJE DE RESPUESTA A CONSULTAS SOBRE LIBROS -->
 			function MensajeResp(Msj){
@@ -226,7 +241,7 @@
 				location.href="AdmLibros.php?flag=lista";
 			}
 			<!-- RETORNA A PAGINA DE ALTA LIBRO -->
-			function Atras(flag, ISBN, Titulo , Autor, CantPag, Precio, Idioma, Fecha, Etiquetas){
+			function Atras(flag, ISBN, Titulo , Autor, CantPag, Precio, Idioma, Fecha, Etiquetas, Disp, Ind){
 				if ( Etiquetas == 0){
 					Et = "";
 				}
@@ -238,10 +253,10 @@
 					}
 					Et = Et + "none";
 				}
-				location.href="AdmLibros.php?flag="+flag+"&tip=err&ISBN="+ISBN+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et;
+				location.href="AdmLibros.php?flag="+flag+"&tip=err&ISBN="+ISBN+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et+"&Disp="+Disp+"&Indice="+Ind;
 			}
 			<!-- MENSAJE DE ALTA DE AUTRO,IDIOMA Y ETIQUETA -->
-			function MensajeResp2(Msj, flag, ISBN, Titulo , Autor, CantPag, Precio, Idioma, Fecha, Etiquetas){
+			function MensajeResp2(Msj, flag, ISBN, Titulo , Autor, CantPag, Precio, Idioma, Fecha, Etiquetas, Disp, Ind){
 				alert(Msj);
 				if ( Etiquetas == 0){
 					Et = "";
@@ -254,10 +269,10 @@
 					}
 					Et = Et + "none";
 				}
-				location.href="AdmLibros.php?flag="+flag+"&tip=err&ISBN="+ISBN+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et;
+				location.href="AdmLibros.php?flag="+flag+"&tip=err&ISBN="+ISBN+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et+"&Disp="+Disp+"&Indice="+Ind;
 			}
 			<!-- MENSAJE DE ERROR -->
-			function MensajeErr(Msj, ISBN, Titulo , Autor, CantPag, Precio, Idioma, Fecha, Etiquetas){
+			function MensajeErr(Msj, ISBN, Titulo , Autor, CantPag, Precio, Idioma, Fecha, Etiquetas, Ind){
 				alert(Msj);
 				if ( Etiquetas == 0){
 					Et = "";
@@ -270,10 +285,17 @@
 					}
 					Et = Et + "none";
 				}
-				location.href="AdmLibros.php?flag=alta&tip=err&ISBN="+ISBN+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et;
+				location.href="AdmLibros.php?flag=alta&tip=err&ISBN="+ISBN+"&Titulo="+Titulo+"&Autor="+Autor+"&CantPag="+CantPag+"&Precio="+Precio+"&Idioma="+Idioma+"&Fecha="+Fecha+Et+"&Indice="+Ind;
 			}
 			<!-- VENTANA DE DETALLES -->
-			function Hojear(){
+			function Hojear(ISBN, Titulo, NombreApellido, Precio, CantPag, Idioma, Fecha, Disp, Etiq, Nro){
+				Ventana = window.open('','Detalles','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=600,height=400');
+				Ventana.moveTo(100,100);
+				Ventana.document.innerHTML = "";
+				var Indice = "Ind"+Nro;
+				Ind = document.getElementsByName(Indice)[0].value;			
+				Ventana.document.write("<html><head></head><body background='Fondo8.jpg' background-size='cover' style='color:white' onblur='self.close()' ><p>ISBN: " + ISBN + " - Autor: " + NombreApellido + " - Titulo: " + Titulo + "</p><p>Idioma: " + Idioma + " - Cantidad de Paginas: " + CantPag + " - Fecha Publicacion: " + Fecha + "</p><p>Precio: $" + Precio + "</p><p>Etiquetas: " + Etiq + "</p><p>Indice: <p>&nbsp;&nbsp;&nbsp;&nbsp;</p>" + Ind + "</p><p>------------------------------</p></body></html>");
+				myWindow.focus();
 			}
 			<!-- VALIDACIONES DE CAMPOS -->
 			function Numeros(e){
@@ -319,7 +341,7 @@
 				// ACCION = AGREGAR, INDICA QUE SE DARA DE ALTA UN LIBRO
 				if (!empty($_GET['accion']) && $_GET['accion'] == 'agregar'){
 					$Cons = false;
-					AltaLibro($Cons, $_GET['ISBN'], $_GET['Titulo'], $_GET['Autor'], $_GET['CantPag'], $_GET['Precio'], $_GET['Idioma'], $_GET['Fecha'], $_GET['Etiquetas'], $AltMsg);
+					AltaLibro($Cons, $_GET['ISBN'], $_GET['Titulo'], $_GET['Autor'], $_GET['CantPag'], $_GET['Precio'], $_GET['Idioma'], $_GET['Fecha'], $_GET['Etiquetas'], $_GET['Ind'], $AltMsg);
 					if ($Cons){
 	?>
 						<script languaje="javascript"> 	
@@ -344,7 +366,7 @@
 						}
 	?>
 						<script languaje="javascript"> 	
-							MensajeErr("<?=$AltMsg?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs);	
+							MensajeErr("<?=$AltMsg?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs, "<?=$_GET['Ind']?>");	
 						</script>
 	<?php				
 					}
@@ -369,7 +391,7 @@
 				}
 				// ACCION = MODIFICAR, INDICA QUE SE DARA LA MODIFICACION DE UN LIBRO
 				if (!empty($_GET['accion']) && $_GET['accion'] == 'modificar'){
-					ModLibro ($_GET['ISBN'], $_GET['Titulo'], $_GET['Autor'], $_GET['CantPag'], $_GET['Precio'], $_GET['Idioma'], $_GET['Fecha'], $_GET['Etiquetas'], $_GET['Disp'], $AltMsg);
+					ModLibro ($_GET['ISBN'], $_GET['Titulo'], $_GET['Autor'], $_GET['CantPag'], $_GET['Precio'], $_GET['Idioma'], $_GET['Fecha'], $_GET['Etiquetas'], $_GET['Disp'], $_GET['Ind'], $AltMsg);
 	?>
 					<script languaje="javascript"> 	
 						MensajeResp("<?=$AltMsg?>");	
@@ -395,7 +417,7 @@
 					}
 	?>
 					<script languaje="javascript"> 	
-						MensajeResp2("<?=$AltMsg?>", "<?=$_GET['flag']?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs);	
+						MensajeResp2("<?=$AltMsg?>", "<?=$_GET['flag']?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs, "<?=$_GET['Disp']?>", "<?=$_GET['Indice']?>");	
 					</script>
 	<?php				
 				}		
@@ -418,7 +440,7 @@
 					}
 	?>
 					<script languaje="javascript"> 	
-						MensajeResp2("<?=$AltMsg?>", "<?=$_GET['flag']?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs);	
+						MensajeResp2("<?=$AltMsg?>", "<?=$_GET['flag']?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs, "<?=$_GET['Disp']?>", "<?=$_GET['Indice']?>");	
 					</script>
 	<?php				
 				}	
@@ -441,7 +463,7 @@
 					}
 	?>
 					<script languaje="javascript"> 	
-						MensajeResp2("<?=$AltMsg?>", "<?=$_GET['flag']?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs);	
+						MensajeResp2("<?=$AltMsg?>", "<?=$_GET['flag']?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs, "<?=$_GET['Disp']?>", "<?=$_GET['Indice']?>");	
 					</script>
 	<?php				
 				}						
@@ -533,20 +555,23 @@
 										<th>ISBN</th>
 										<th>T&iacutetulo</th>
 										<th>Autor</th>
-										<th>Precio</th>
+										<th>Precio</th>										
 										<th>Detalle</th>
 										<th>Estado</th>
 									</tr>";
 								$ant = ' ';
+								$Nro = 0;
 								while($row = mysql_fetch_assoc($res)) {
 									if ($row['ISBN'] != $ant){
 										echo "<tr>";
 											echo "<td>", $row['ISBN'], "</td>";
 											echo "<td>", $row['Titulo'], "</td>";
 											echo "<td>", $row['NombreApellido'], "</td>";									
-											echo "<td>", $row['Precio'], "</td>";
+											echo "<td>", $row['Precio'], "</td>";											
+											BuscarEtiquetas($row['ISBN'], $Etiq);
+											echo '<textarea hidden name="Ind' .$Nro .'" rows="10" cols="10">' .$row['Indice'] .'</textarea>';											
 		?>																	
-											<td><input class="botones" type='button' value='Detalle' onclick='Hojear()' /></td>
+											<td><input class="botones" type='button' value='Detalle' onclick='Hojear("<?=$row['ISBN']?>", "<?=$row['Titulo']?>", "<?=$row['NombreApellido']?>", "<?=$row['Precio']?>", "<?=$row['CantidadPaginas']?>", "<?=$row['Idioma']?>", "<?=$row['Fecha']?>", "<?=$row['Disponibilidad']?>", "<?=$Etiq?>", "<?=$Nro?>")' /></td>
 		<?php
 											echo '<td>'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '</td>';
 											if ($row['Estado'] == 1){
@@ -562,6 +587,7 @@
 		<?php
 											}								
 										echo "</tr>";
+										$Nro = $Nro + 1;
 										$ant = $row['ISNB'];
 									}
 								}
@@ -594,9 +620,9 @@
 	<?php										
 								echo '<form class="FAbm" action="" method="GET">
 									<label for="ISNB">ISBN:</label>
-									<input type="text" name="ISBN" value="', $_GET['ISBN'], '" placeholder="Ej: 1234567890" maxlength="15" onkeypress="return Numeros(event);" required><br>
+									<input type="text" name="ISBN" value="', $_GET['ISBN'], '" placeholder="Ej: 1234567890" maxlength="10" onkeypress="return Numeros(event);" required><br>
 									<label for="Titulo">T&iacutetulo:</label>
-									<input type="text" name="Titulo" value="', $_GET['Titulo'], '" placeholder="Ej: Titulo" maxlength="45" required><br>
+									<input type="text" name="Titulo" value="', $_GET['Titulo'], '" size="40" placeholder="Ej: Titulo" maxlength="45" required><br>
 									<label for="Autor">Autor:</label>			
 									<select class="botones" name="Autor" required>';
 									if (!empty($_GET['Autor'])){
@@ -636,7 +662,10 @@
 									<input class="botones" type="button" value="Agregar Idioma" onclick="agregarIdioma('alta', '0')"></br>
 	<?php
 									echo '<label for="Fecha">Fecha:</label>
-									<input type="text" name="Fecha" value="', $_GET['Fecha'], '" required><br>
+									<input type="text" name="Fecha" value="', $_GET['Fecha'], '" id="datepickerAltaLibro" required><br>
+									<select hidden class="botones" name="Disp" required>
+										<option  value="0"></option>';
+									echo '</select></br>
 									<label for="Etiquetas">Etiquetas:</label>
 									<div id="AdminEtiq">';	
 									if (!empty($_GET['Etiquetas'])){
@@ -664,6 +693,10 @@
 	?>								
 									<input class="botones" type="button" value="Agregar Etiqueta" onclick="agregarEtiqueta('alta','0')"></br>
 	<?php
+									echo '<div id="AdminIndice">
+										<label for="Fecha">Indice:</label></br>
+										<textarea name="Ind" rows="10" cols="37" maxlength="255" placeholder="Indice del libro..."  required>' .$_GET['Indice']. '</textarea> 
+									</div>';
 									echo '<input type="hidden" name="accion" value="agregar" required readonly>
 									<input class="botones" type="submit" value="Cargar">
 								</form>';
@@ -673,9 +706,9 @@
 								<!-- FROMULARIO DE ALTA -->
 								<form class='FAbm' action="" method="GET">
 									<label for="ISNB">ISBN:</label>
-									<input type="text" name="ISBN" placeholder="Ej: 1234567890" maxlength="15" onkeypress="return Numeros(event);" required><br>
+									<input type="text" name="ISBN" placeholder="Ej: 1234567890" maxlength="10" onkeypress="return Numeros(event);" required><br>
 									<label for="Titulo">T&iacutetulo:</label>
-									<input type="text" name="Titulo" placeholder="Ej: Titulo" maxlength="45" required><br>
+									<input type="text" name="Titulo" size="40" placeholder="Ej: Titulo" maxlength="45" required><br>
 									<label for="Autor">Autor:</label>
 		<?php						
 									echo '<select class="botones" name="Autor" required>
@@ -707,6 +740,9 @@
 	<?php
 									echo '<label for="Fecha">Fecha:</label>
 									<input type="text" name="Fecha" id="datepickerAltaLibro" required><br>
+									<select hidden class="botones" name="Disp" required>
+										<option  value="0"></option>';
+									echo '</select></br>
 									<label for="Etiquetas">Etiquetas:</label>
 									<div id="AdminEtiq">';								
 									while($row = mysql_fetch_assoc($resetiquetas)){	
@@ -718,6 +754,10 @@
 	?>								
 									<input class="botones" type="button" value="Agregar Etiqueta" onclick="agregarEtiqueta('alta', '0')"></br>
 	<?php
+									echo '<div id="AdminIndice">
+										<label for="Fecha">Indice:</label></br>
+										<textarea name="Ind" rows="10" cols="37" maxlength="255" placeholder="Indice del libro..."  required></textarea> 
+									</div>';
 									echo '<input type="hidden" name="accion" value="agregar" required readonly>
 									<input class="botones" type="submit" value="Cargar">
 								</form>';
@@ -732,7 +772,7 @@
 							<!-- FORMULARIO DE BUSQUEDA POR ISBN -->
 							<form class='FAbm' action="" method="GET">
 								<label for="ISNB">ISBN del Libro a Borrar/Activar:</label>
-								<input type="text" name="ISBN" placeholder="Ej: 1234567890" maxlength="15" onkeypress="return Numeros(event);" required>
+								<input type="text" name="ISBN" placeholder="Ej: 1234567890" maxlength="10" onkeypress="return Numeros(event);" required>
 								<input type="hidden" name="flag" value="baja" required readonly>
 								<input class="botones" class="botones" type="submit" value="Buscar">
 							</form>
@@ -791,7 +831,7 @@
 							<!-- FORMULARIO DE BUSQUEDA POR ISBN -->
 							<form class='FAbm' action="" method="GET">
 								<label for="ISNB">ISBN del Libro modificar:</label>
-								<input type="text" name="ISBN" placeholder="Ej: 1234567890" maxlength="15" onkeypress="return Numeros(event);" required>
+								<input type="text" name="ISBN" placeholder="Ej: 1234567890" maxlength="10" onkeypress="return Numeros(event);" required>
 								<input type="hidden" name="flag" value="mod" required readonly>
 								<input class="botones" class="botones" type="submit" value="Buscar">
 							</form>
@@ -847,9 +887,9 @@
 													<input class="botones" type="button" value="Agregar Idioma" onclick="agregarIdioma('mod', '<?=$_GET['ISBN']?>')"></br>			
 		<?php
 													echo '<label for="Fecha">Fecha:</label>';
-													//$date = str_replace('-', '/', $_GET['Fecha']);
-													//$datefin = date('d/m/Y', strtotime($date));
-													echo '<input type="text" name="Fecha" value="', $_GET['Fecha'], '" required ><br>
+													$date = date('m-d-Y', strtotime($_GET['Fecha']));
+													$datefin = str_replace('-', '/', $date);
+													echo '<input type="text" name="Fecha" value="', $datefin, '" id="datepickerModLibro" required ><br>
 													<label for="Dis">Disponibilidad:</label>
 													<select class="botones" name="Disp" required>
 														<option value="' .$_GET['Disp']. '">' .$_GET['Disp']. '</option>';
@@ -885,6 +925,10 @@
 		?>											
 													<input class="botones" type="button" value="Agregar Etiqueta" onclick="agregarEtiqueta('mod', '<?=$_GET['ISBN']?>')"></br>
 		<?php
+													echo '<div id="AdminIndice">
+														<label for="Fecha">Indice:</label></br>
+														<textarea name="Ind" rows="10" cols="37" maxlength="255" placeholder="Indice del libro..."  required>' .$_GET['Indice'].'</textarea> 
+													</div>';
 													if ($row['Estado'] == 1){ 
 														echo '<input type="hidden" name="accion" value="modificar" required readonly>	
 														<input class="botones" type="submit" value="Modificar">';
@@ -928,8 +972,10 @@
 		?>											
 													<input class="botones" type="button" value="Agregar Idioma" onclick="agregarIdioma('mod', '<?=$_GET['ISBN']?>')"></br>			
 		<?php
-													echo '<label for="Fecha">Fecha:</label>
-													<input type="text" name="Fecha" value="', $row['Fecha'], '" required ><br>
+													echo '<label for="Fecha">Fecha:</label>';
+													$date = date('m-d-Y', strtotime($row['Fecha']));
+													$datefin = str_replace('-', '/', $date);
+													echo '<input type="text" name="Fecha" value="', $datefin, '" id="datepickerModLibro" required ><br>
 													<label for="Dis">Disponibilidad:</label>
 													<select class="botones" name="Disp" required>
 														<option value="' .$row['Disponibilidad']. '">' .$row['Disponibilidad']. '</option>';
@@ -963,6 +1009,10 @@
 		?>											
 													<input class="botones" type="button" value="Agregar Etiqueta" onclick="agregarEtiqueta('mod', '<?=$_GET['ISBN']?>')"></br>
 		<?php
+													echo '<div id="AdminIndice">
+														<label for="Fecha">Indice:</label></br>
+														<textarea name="Ind" rows="10" cols="37" maxlength="255" placeholder="Indice del libro..."  required> ' .$row['Indice'] .'</textarea> 
+													</div>';
 													if ($row['Estado'] == 1){ 
 														echo '<input type="hidden" name="accion" value="modificar" required readonly>	
 														<input class="botones" type="submit" value="Modificar">';
@@ -1066,8 +1116,8 @@
 	<?php
 								}
 	?>								
-								<input class="botones" type="button" value="Agregar" onclick='AltaAutor("<?=$_GET['F']?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs)'/>
-								<input class="botones" type="button" value="Atras" onclick='Atras("<?=$_GET['F']?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs)'/>
+								<input class="botones" type="button" value="Agregar" onclick='AltaAutor("<?=$_GET['F']?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs, "<?=$_GET['Disp']?>", "<?=$_GET['Indice']?>")'/>
+								<input class="botones" type="button" value="Atras" onclick='Atras("<?=$_GET['F']?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs, "<?=$_GET['Disp']?>", "<?=$_GET['Indice']?>")'/>
 							</form>
 						</div>
 	<?php	
@@ -1098,8 +1148,8 @@
 	<?php
 								}
 	?>								
-								<input class="botones" type="button" value="Agregar" onclick='AltaIdioma("<?=$_GET['F']?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs)'/>
-								<input class="botones" type="button" value="Atras" onclick='Atras("<?=$_GET['F']?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs)'/>
+								<input class="botones" type="button" value="Agregar" onclick='AltaIdioma("<?=$_GET['F']?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs, "<?=$_GET['Disp']?>", "<?=$_GET['Indice']?>")'/>
+								<input class="botones" type="button" value="Atras" onclick='Atras("<?=$_GET['F']?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs, "<?=$_GET['Disp']?>", "<?=$_GET['Indice']?>")'/>
 							</form>
 						</div>	
 	<?php		
@@ -1130,8 +1180,8 @@
 	<?php
 								}
 	?>								
-								<input class="botones" type="button" value="Agregar" onclick='AltaEtiqueta("<?=$_GET['F']?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs)'/>
-								<input class="botones" type="button" value="Atras" onclick='Atras("<?=$_GET['F']?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs)'/>						
+								<input class="botones" type="button" value="Agregar" onclick='AltaEtiqueta("<?=$_GET['F']?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs, "<?=$_GET['Disp']?>", "<?=$_GET['Indice']?>")'/>
+								<input class="botones" type="button" value="Atras" onclick='Atras("<?=$_GET['F']?>", "<?=$_GET['ISBN']?>", "<?=$_GET['Titulo']?>" , "<?=$_GET['Autor']?>", "<?=$_GET['CantPag']?>", "<?=$_GET['Precio']?>", "<?=$_GET['Idioma']?>", "<?=$_GET['Fecha']?>", Etiquetasjs, "<?=$_GET['Disp']?>", "<?=$_GET['Indice']?>")'/>						
 							</form>
 						</div>
 	<?php										

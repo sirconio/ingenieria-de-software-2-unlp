@@ -217,13 +217,13 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `CookBook`;
-INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (882894293, 'Cocina Criolla', 1, 87, 59.99, 1, '1983-03-31', 1, True, NULL);
-INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (123456789, 'La guia optima para el ayuno de Daniel', 2, 68, 69.00, 1, '2001-08-25', 1, True, NULL);
-INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (879548481, 'Las mejores recetas de rico y abundante', 3, 70, 87.45, 1, '2012-07-24', 1, True, NULL);
-INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (888444777, 'Cocina con calor de hogar - rustica', 4, 154, 152.21, 1, '2006-06-06', 1, True, NULL);
-INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (878987655, 'La dieta de los zumos', 5, 54, 99.99, 1, '1999-05-03', 1, True, NULL);
-INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (1478523698, 'Cupcakes veganos', 6, 55, 47.80, 1, '2011-01-02', 1, True, NULL);
-INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (8521479632, 'El libro de las viandas para pequenios', 7, 87, 79.84, 1, '2012-01-01', 1, True, NULL);
+INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (882894293, 'Cocina Criolla', 1, 87, 59.99, 1, '1983-03-31', 1, True, 'Introduccion Pagina 1-9');
+INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (123456789, 'La guia optima para el ayuno de Daniel', 2, 68, 69.00, 1, '2001-08-25', 1, True, 'Introduccion Pagina 1-4');
+INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (879548481, 'Las mejores recetas de rico y abundante', 3, 70, 87.45, 1, '2012-07-24', 1, True, 'Introduccion Pagina 1-10');
+INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (888444777, 'Cocina con calor de hogar - rustica', 4, 154, 152.21, 1, '2006-06-06', 1, True, 'Introduccion Pagina 1-6');
+INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (878987655, 'La dieta de los zumos', 5, 54, 99.99, 1, '1999-05-03', 1, True, 'Introduccion Pagina 1-2');
+INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (1478523698, 'Cupcakes veganos', 6, 55, 47.80, 1, '2011-01-02', 1, True, 'Introduccion Pagina 1-5');
+INSERT INTO `CookBook`.`Libro` (`ISBN`, `Titulo`, `Id_Autor`, `CantidadPaginas`, `Precio`, `Id_Idioma`, `Fecha`, `Id_Disponibilidad`, `Visible`, `Hojear`) VALUES (8521479632, 'El libro de las viandas para pequenios', 7, 87, 79.84, 1, '2012-01-01', 1, True, 'Introduccion Pagina 1-3');
 
 COMMIT;
 

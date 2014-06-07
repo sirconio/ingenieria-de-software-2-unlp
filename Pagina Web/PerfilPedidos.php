@@ -34,7 +34,7 @@
 			}
 			<!-- ACTIVACION DEL FLAG DE CAMBIAR ESTADO A RECIBIDO -->
 			function Recibido (ISBN, DNI){				
-				if (confirm("Desea cambiar el estado del pedido a recibido?")){
+				if (confirm("Desea cambiar el estado del pedido a entregado?")){
 					location.href="PerfilPedidos.php?pedido=true&Is=" + ISBN + "&Dn=" + DNI;
 				}
 				else{
