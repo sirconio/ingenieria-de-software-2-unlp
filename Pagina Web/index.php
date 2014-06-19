@@ -29,6 +29,15 @@
 			function busqueda (bus){
 				location.href="Busqueda.php?BusRap=" + bus;
 			}
+			<!-- VALIDACIONES DE CAMPOS -->
+			function validarbusrap (){
+				if (document.fbusrap.BusRap.value.length==0){
+				   alert("Tiene que completar el campo de busqueda")
+				   document.fbusrap.BusRap.focus()
+				   return 0;
+				}			
+				document.fbusrap.submit(); 		
+			}
 		</script>	
 	</head>
 	<body>
@@ -48,9 +57,9 @@
 			<div id='imglogo'><a href="index.php"><img src="Logo1.gif" width="85%" height="475%"></a></div> 
 			<!-- BARRA DE BUSQUEDA RAPIDA -->
 			<div id='barrabusqueda' action="Busqueda.php" method="GET">
-				<form>
+				<form name="fbusrap">
 					<input size="40" type="text" name="BusRap" placeholder="Autor, Titulo, ISBN" required>
-					<input id="BusRapBot" type='submit' value='Busqueda Rapida'/>
+					<input id="BusRapBot" type="button" value="Busqueda Rapida" onclick="validarbusrap()">
 				</form>
 			</div>
 			<!-- CONTROL DE SESIONES -->

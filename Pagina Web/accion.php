@@ -18,7 +18,7 @@
 	}
 // GESTION DE SESIONES //
 	// INICIO DE SESION //
-	function IniciarSesion (&$usuario, &$clave, &$msg){
+	function IniciarSesion (&$usuario, &$clave, &$msg, &$flag){
 		session_start();
 		$cons = 'SELECT usuario.Nombre, usuario.Password, usuario.Categoria, usuario.Id_Usuario, usuario.Visible, usuario.CantCarrito
 								FROM usuario
@@ -35,7 +35,8 @@
 					$_SESSION['categoria'] = $row['Categoria'];
 					$_SESSION['ID'] = $row['Id_Usuario'];
 					$_SESSION['CarritoCant'] = $row['CantCarrito'];
-					$msg = "Acceso Permitido, Haga Click en el Boton para Ingresar</br><button onclick='Entrar()'>Entrar</button>";
+					$msg = "Acceso Permitido, se logeo correctamente";
+					$flag = true;
 					break;
 				}
 			}
@@ -115,7 +116,7 @@
 		$res = mysql_query ($cons);
 	}
 	// BAJA LOGICA DE USUARIO //
-	function BajaUsuario($ID, &$AltMsg){
+	function BajaUsuario($ID, &$AltMsg, &$Comp){
 		$cons1 = 'UPDATE usuario 
 					SET Visible = 0 
 					WHERE Id_Usuario = ' .$ID;
@@ -125,10 +126,11 @@
 		}	
 		else{
 			$AltMsg = "Borrado satisfactorio";
+			$Comp = true;
 		}
 	}
 	// ACTIVACION DE USUARIO //
-	function ActivarUsuario($ID, &$AltMsg){
+	function ActivarUsuario($ID, &$AltMsg, &$Comp){
 		$cons1 = 'UPDATE usuario 
 					SET Visible = 1 
 					WHERE Id_Usuario = ' .$ID;
@@ -137,7 +139,8 @@
 			$AltMsg = "Usuario no se pudo activar";
 		}	
 		else{
-			$AltMsg = "Activacion satisfactorio";
+			$AltMsg = "Activacion satisfactoria";
+			$Comp = true;
 		}	
 	}
 	// MODIFICAR USUARIO CON ID //
@@ -174,7 +177,7 @@
 		}
 	}
 	// CAMBIAR CLAVE //
-	function ModClaves ($ID, $PassActual, $Pass1, $Pass2, &$AltMsg){
+	function ModClaves (&$Comp, $ID, $PassActual, $Pass1, $Pass2, &$AltMsg){
 		$cons = ('SELECT usuario.Password 
 					FROM usuario
 					WHERE usuario.Id_Usuario = ' .$ID); 
@@ -187,13 +190,14 @@
 					WHERE usuario.Id_Usuario =' .$ID;
 				$res = mysql_query ($cons);
 				$AltMsg = "La contraseña fue modificada";
+				$Comp = true;
 			}
 			else{
 				$AltMsg = "Las Contraseña no coinciden";
 			}
 		}
 		else{
-			$AltMsg = "Contraseña incorrecta";
+			$AltMsg = "Contraseña actual incorrecta";
 		}
 	}
 	// ALTA DE USUARIOS //
@@ -276,10 +280,12 @@
 	}
 	// USUARIOS REGISTRADOS EN UN PERIODO //
 	function UsuarioPeriodo (&$res, $Fini, $Ffin){
+		$dateini = date('Y-m-d', strtotime($Fini));
+		$datefin = date('Y-m-d', strtotime($Ffin));
 		$cons = ('SELECT usuario.Id_Usuario as ID, usuario.Nombre as Usuario, cliente.DNI, cliente.NombreApellido, cliente.FechaAlta,usuario.Visible as Estado 
 					FROM usuario, cliente
 					WHERE usuario.DNI = cliente.DNI
-					AND	cliente.FechaAlta BETWEEN "' .$Fini. '" AND "' .$Ffin. '"
+					AND	cliente.FechaAlta BETWEEN "' .$dateini. '" AND "' .$datefin. '"
 					ORDER BY ID'); 
 		$res = mysql_query ($cons);
 	}
@@ -527,7 +533,7 @@
 		$res = mysql_query( $cons);
 	}
 	// CAMBIAR PEDIDO A ENTREGADO //
- 	function PedidoEntregado ($ISBN, $DNI, &$Msj){
+ 	function PedidoEntregado ($ISBN, $DNI, &$Msj, &$Comp){
 		$cons = 'UPDATE pedidos 
 					SET Id_Estado = 3 
 					WHERE ISBN = ' .$ISBN. '
@@ -538,10 +544,11 @@
 		}
 		else{
 			$Msj = "Estado modificado con exito";
+			$Comp = true;
 		}
 	}
 	// CAMBIAR PEDIDO A ENVIADO //
-	function PedidoEnviado($ISBN, $DNI, &$Msj){
+	function PedidoEnviado($ISBN, $DNI, &$Msj, &$Comp){
 		$cons = 'UPDATE pedidos 
 					SET Id_Estado = 2 
 					WHERE ISBN = ' .$ISBN. '
@@ -552,12 +559,13 @@
 		}
 		else{
 			$Msj = "Estado modificado con exito";
+			$Comp = true;
 		}
 	}
 // GESTION DEL CARRITO DE COMPRAS //
 	// CONSULTAR CARRITO CON ID //
 	function ConsultaCarrito (&$res, $ID){
-		$cons = 'SELECT usuario.DNI, usuario.Nombre, libro.ISBN, libro.Titulo, autor.NombreApellido, libro.Precio
+		$cons = 'SELECT carrito.Id_Carrito AS ID, usuario.DNI, usuario.Nombre, libro.ISBN, libro.Titulo, autor.NombreApellido, libro.Precio
 				FROM usuario, carrito, libro, autor
 				WHERE usuario.Id_Usuario =' .$ID .'
 				AND usuario.Id_Usuario = carrito.Id_Usuario
@@ -568,7 +576,7 @@
 	// CONSULTAR CARRITO PAGINADO CON ID //
 	function ConsultaCarritoPag (&$res, $ID, $NroPag){
 		$pag = (10*$NroPag);
-		$cons = 'SELECT usuario.DNI, usuario.Nombre, libro.ISBN, libro.Titulo, autor.NombreApellido, libro.Precio
+		$cons = 'SELECT carrito.Id_Carrito AS ID, usuario.DNI, usuario.Nombre, libro.ISBN, libro.Titulo, autor.NombreApellido, libro.Precio
 				FROM usuario, carrito, libro, autor
 				WHERE usuario.Id_Usuario =' .$ID .'
 				AND usuario.Id_Usuario = carrito.Id_Usuario
@@ -601,72 +609,112 @@
 		}
 	}
 	// RETIRAR LIBRO-ISBN DEL CARRITO CON ID //
-	function RetirarCarrito($ISBN, $ID, &$Msj){
-		$cons =	'DELETE FROM `carrito` WHERE `carrito`.`Id_Usuario` = ' .$ID. ' AND `carrito`.`ISBN` = ' .$ISBN;
+	function RetirarCarrito($ID, $IDUs, &$Msj, &$Comp){
+		$cons =	'DELETE FROM `carrito` WHERE `carrito`.`Id_Carrito` = ' .$ID;
 		$res = mysql_query( $cons);
-		$cons1 = 'SELECT usuario.CantCarrito 
-					FROM usuario 
-					WHERE Id_Usuario = ' .$ID;
-		$res1 = mysql_query ($cons1);
-		while($row = mysql_fetch_assoc($res1)){
-			$cant = $row['CantCarrito'] - 1;
-			$cons2 = 'UPDATE usuario 
-						SET CantCarrito = ' .$cant. ' 
-						WHERE Id_Usuario = ' .$ID;
-			$res2 = mysql_query ($cons2);
-			$_SESSION['CarritoCant'] = $cant;
-		}
 		if (!$res){
 			$Msj = "No se pudo borrar del carrito";
 		}
 		else{
+			$cons1 = 'SELECT usuario.CantCarrito 
+					FROM usuario 
+					WHERE Id_Usuario = ' .$IDUs;
+			$res1 = mysql_query ($cons1);
+			while($row = mysql_fetch_assoc($res1)){
+				$cant = $row['CantCarrito'] - 1;
+				$cons2 = 'UPDATE usuario 
+							SET CantCarrito = ' .$cant. ' 
+							WHERE Id_Usuario = ' .$IDUs;
+				$res2 = mysql_query ($cons2);
+				$_SESSION['CarritoCant'] = $cant;
+			}
 			$Msj = "Borrado con exito del carrito";
+			$Comp = true;
 		}
 	}
 	// VACIAR CARRITO CON ID //
-	function VaciarCarrito($ID, &$Msj){
-		$cons =	'DELETE FROM carrito WHERE carrito.Id_Usuario = ' .$ID;
-		$res = mysql_query( $cons);
-		$cons2 = 'UPDATE usuario 
-					SET CantCarrito = 0 
-					WHERE Id_Usuario = ' .$ID;
-		$res2 = mysql_query ($cons2);
-		$_SESSION['CarritoCant'] = 0;
-		if (!$res){
-			$Msj = "No se pudo vaciar el carrito";
+	function VaciarCarrito($ID, &$Msj, &$Comp){
+		$cons3 = 'SELECT carrito.ISBN, carrito.Id_Carrito AS ID
+		FROM carrito
+		WHERE carrito.ID_Usuario = ' .$ID;
+		$res3 = mysql_query( $cons3);
+		$num = mysql_num_rows($res3);
+		if ($num != 0){
+			$cons =	'DELETE FROM carrito WHERE carrito.Id_Usuario = ' .$ID;
+			$res = mysql_query( $cons);
+			$cons2 = 'UPDATE usuario 
+						SET CantCarrito = 0 
+						WHERE Id_Usuario = ' .$ID;
+			$res2 = mysql_query ($cons2);
+			$_SESSION['CarritoCant'] = 0;
+			if (!$res){
+				$Msj = "No se pudo vaciar el carrito";
+			}
+			else{
+				$Msj = "Carrito vaciado con exito";
+				$Comp = true;
+			}
 		}
 		else{
-			$Msj = "Carrito vaciado con exito";
+			$Msj = 'No hay nada en el carrito por vaciar';
+		}		
+	}
+	// VERIFICAR CARRITO VACIO //
+	function verificarCarrito(&$Comp, $ID, &$AltMsg){
+		$cons3 = 'SELECT carrito.ISBN, carrito.Id_Carrito AS ID
+		FROM carrito
+		WHERE carrito.ID_Usuario = ' .$ID;
+		$res3 = mysql_query( $cons3);
+		$num = mysql_num_rows($res3);
+		if ($num != 0){
+			$Comp = true;
+		}
+		else{
+			$AltMsg = 'No hay nada en el carrito por comprar';
 		}
 	}
 	// EFECTIVIZAR COMPRA DEL CARRITO //
-	function ComprarCarrito($ID, &$AltMsg){
-		$cons = 'SELECT carrito.ISBN
+	function ComprarCarrito($ID, &$AltMsg, &$Comp){
+		$cons = 'SELECT carrito.ISBN, carrito.Id_Carrito AS ID
 				FROM carrito
 				WHERE carrito.ID_Usuario = ' .$ID;
 		$res = mysql_query( $cons);
-		$cons1 = 'SELECT usuario.DNI
-				FROM usuario
-				WHERE usuario.ID_Usuario = ' .$ID;
-		$res1 = mysql_query( $cons1);
-		$today = getdate();
-		$Fecha = $today[year]. '-' .$today[mon]. '-'. $today[mday];
-		$Msg = 'Libros comprados con exito: ';
-		$Msg2 = 'Operaciones Fallidas: ';
-		while($row1 = mysql_fetch_assoc($res1)){
-			while($row = mysql_fetch_assoc($res)){
-				$cons2 = 'INSERT INTO `cookbook`.`pedidos` (`ISBN` ,`DNI` ,`FechaPedido` ,`Id_Estado`)VALUES (' .$row['ISBN']. ', ' .$row1['DNI'].', "' .$Fecha. '", 1)';
-				$res2 = mysql_query( $cons2);
-				if ($res2) {
-					$Msg = $Msg .'' .$row['ISBN']. '; ';
-					RetirarCarrito($row['ISBN'], $ID, $Msj);
-				}
-				else{
-					$Msg2 = $Msg2 .'' .$row['ISBN']. '; ';
+		$num = mysql_num_rows($res);
+		if ($num != 0){
+			$cons1 = 'SELECT usuario.DNI
+					FROM usuario
+					WHERE usuario.ID_Usuario = ' .$ID;
+			$res1 = mysql_query( $cons1);
+			$today = getdate();
+			$Fecha = $today[year]. '-' .$today[mon]. '-'. $today[mday];
+			$Msg = 'Libros comprados con exito: ';
+			$Msg2 = 'Operaciones Fallidas: ';
+			$entro = false;
+			while($row1 = mysql_fetch_assoc($res1)){
+				while($row = mysql_fetch_assoc($res)){
+					$cons2 = 'INSERT INTO `cookbook`.`pedidos` (`ISBN` ,`DNI` ,`FechaPedido` ,`Id_Estado`)VALUES (' .$row['ISBN']. ', ' .$row1['DNI'].', "' .$Fecha. '", 1)';
+					$res2 = mysql_query( $cons2);
+					if ($res2) {
+						$Msg = $Msg .'' .$row['ISBN']. '; ';
+						RetirarCarrito($row['ID'], $ID, $Msj, $Comp);
+					}
+					else{
+						$Msg2 = $Msg2 .'' .$row['ISBN']. '; ';
+						$entro = true;
+					}
 				}
 			}
+			if ($entro){
+				$AltMsg = $Msg. ' /// ' .$Msg2;
+			}
+			else{
+				$AltMsg = 'Libros comprados con exito!';
+				$Comp = true;
+			}
 		}
-		$AltMsg = $Msg. ' /// ' .$Msg2;
+		else{
+			$AltMsg = 'No hay nada en el carrito por comprar';
+		}
 	}
 // GESTION DE LIBROS //
 	// CONSULTA LIBRO CON ISBN //
@@ -679,7 +727,7 @@
 						AND libro.ISBN=' .$ISBN);
 	}
 	// BAJA LOGICA DE LIBRO CON ISBN //
-	function BajaLibro($ISBN, &$AltMsg){
+	function BajaLibro($ISBN, &$AltMsg, &$Comp){
 		$cons1 = 'UPDATE libro 
 					SET Visible = 0 
 					WHERE ISBN = ' .$ISBN;
@@ -689,10 +737,11 @@
 		}	
 		else{
 			$AltMsg = "Borrado satisfactorio";
+			$Comp = true;
 		}	
 	}
 	// ACTIVAR LIBRO //
-	function ActivarLibro($ISBN, &$AltMsg){
+	function ActivarLibro($ISBN, &$AltMsg, &$Comp){
 		$cons1 = 'UPDATE libro 
 					SET Visible = 1 
 					WHERE ISBN = ' .$ISBN;
@@ -702,6 +751,7 @@
 		}	
 		else{
 			$AltMsg = "Activacion satisfactorio";
+			$Comp = true;
 		}	
 	}
 	// CONSULTA ETIQUETAS DE UN ISBN //
@@ -761,7 +811,7 @@
 		}
 	}
 	// MODIFICACION DE LIBRO //
-	function ModLibro ($IS, $Tit, $Aut, $CPag, $Pre, $Idio, $Fec, $Etiq, $Disp, $Ind, &$AltMsg){
+	function ModLibro (&$Comp, $IS, $Tit, $Aut, $CPag, $Pre, $Idio, $Fec, $Etiq, $Disp, $Ind, &$AltMsg){
 		$datefin = date('Y-m-d', strtotime($Fec));
 		$RAut = mysql_query('SELECT Id_Autor
 							FROM autor
@@ -808,16 +858,19 @@
 		}	
 		else{
 			$AltMsg = "Modificacion Satisfactoria";
+			$Comp = true;
 		}
 	}
 	// TOP 10 LIBROS MAS VENDIDOS EN UN PERIODO //	
 	function LibroPeriodo (&$res, $Fini, $Ffin){
+		$dateini = date('Y-m-d', strtotime($Fini));
+		$datefin = date('Y-m-d', strtotime($Ffin));
 		$cons = 'SELECT pedidos.ISBN, libro.Titulo, autor.NombreApellido AS Autor, pedidos.DNI, cliente.NombreApellido AS Cliente, pedidos.FechaPedido
 				FROM cliente, pedidos, libro, autor
 				WHERE cliente.DNI = pedidos.DNI
 				AND libro.Id_Autor = autor.Id_Autor
 				AND pedidos.ISBN = libro.ISBN
-				AND	pedidos.FechaPedido BETWEEN "' .$Fini. '" AND "' .$Ffin. '"';
+				AND	pedidos.FechaPedido BETWEEN "' .$dateini. '" AND "' .$datefin. '"';
 		$res = mysql_query( $cons);
 	}
 // GESTION DE AUTOR //	
@@ -863,7 +916,7 @@
 		$res = mysql_query( $cons);
 	}
 	// AGERGAR UN AUTOR //
-	function AgregarAutor ($NomApe, &$AltMsg){
+	function AgregarAutor ($NomApe, &$AltMsg, &$Comp){
 		ComprobarAutor ($NomApe,$Flag);
 		if ($Flag){
 			$AltMsg = "El alta del autor no se pudo realizar, ya se encuentra registrado un Autor con dicho Nombre";
@@ -877,11 +930,12 @@
 			}	
 			else{
 				$AltMsg = "Autor agregado Satisfactoriamente";
+				$Comp = true;
 			}
 		}
 	}	
 	// BAJA LOGICA DE AUTOR //
-	function BajaAutor ($ID, &$AltMsg){
+	function BajaAutor ($ID, &$AltMsg, &$Comp){
 		$cons = 'UPDATE autor
 				 SET Visible = 0
 				 WHERE Id_Autor = ' .$ID;
@@ -891,10 +945,11 @@
 		}	
 		else{
 			$AltMsg = "Autor eliminado Satisfactoriamente";
+			$Comp = true;
 		}	
 	}
 	// ACTIVAR AUTOR //
-	function ActivarAutor ($ID, &$AltMsg){
+	function ActivarAutor ($ID, &$AltMsg, &$Comp){
 		$cons1 = 'UPDATE autor 
 					SET Visible = 1 
 					WHERE Id_Autor = ' .$ID;
@@ -904,10 +959,11 @@
 		}	
 		else{
 			$AltMsg = "Activacion satisfactorio";
+			$Comp =true;
 		}	
 	}
 	// MODIFICAR AUTOR //
-	function ModAutor ($ID, $AutorNom, &$AltMsg){
+	function ModAutor ($ID, $AutorNom, &$AltMsg, &$Comp){
 		ComprobarAutorID ($ID, $AutorNom,$Flag);
 		if ($Flag){
 			$AltMsg = "La modificacion del autor no se pudo realizar, ya se encuentra registrado un Autor con dicho Nombre";
@@ -922,6 +978,7 @@
 			}	
 			else{
 				$AltMsg = "Autor modificado Satisfactoriamente";
+				$Comp = true;
 			}
 		}
 	}
@@ -990,7 +1047,7 @@
 		$res = mysql_query( $cons);
 	}
 	// BAJA LOGICA DE IDIOMA //
-	function BajaIdioma ($ID, &$AltMsg){
+	function BajaIdioma ($ID, &$AltMsg, &$Comp){
 		$cons = 'UPDATE idioma
 				 SET Visible = 0
 				 WHERE Id_Idioma = ' .$ID;
@@ -1000,10 +1057,11 @@
 		}	
 		else{
 			$AltMsg = "Idioma eliminado Satisfactoriamente";	
+			$Comp = true;
 		}	
 	}
 	// ACTIVAR IDIOMA //
-	function ActivarIdioma ($ID, &$AltMsg){
+	function ActivarIdioma ($ID, &$AltMsg, &$Comp){
 		$cons1 = 'UPDATE idioma 
 					SET Visible = 1 
 					WHERE Id_Idioma = ' .$ID;
@@ -1013,10 +1071,11 @@
 		}	
 		else{
 			$AltMsg = "Activacion satisfactorio";
+			$Comp = true;
 		}	
 	}
 	// MODIFICAR IDIOMA //
-	function ModIdioma ($ID, $IdiomaNom, &$AltMsg){
+	function ModIdioma ($ID, $IdiomaNom, &$AltMsg, &$Comp){
 		ComprobarIdiomaID ($ID, $IdiomaNom,$Flag);
 		if ($Flag){
 			$AltMsg = "La modificacion del idioma no se pudo realizar, ya se encuentra registrado un Idioma con dicha Descripcion";
@@ -1031,11 +1090,12 @@
 			}	
 			else{
 				$AltMsg = "Idioma modificado Satisfactoriamente";
+				$Comp = true;
 			}
 		}
 	}
 	// AGERGAR UN IDIOMA //
-	function AgregarIdioma ($NomIdo, &$AltMsg){
+	function AgregarIdioma ($NomIdo, &$AltMsg, &$Comp){
 		ComprobarIdioma ($NomIdo,$Flag);
 		if ($Flag){
 			$AltMsg = "El alta del idioma no se pudo realizar, ya se encuentra registrado un Idioma con dicha Descripcion";
@@ -1049,6 +1109,7 @@
 			}	
 			else{
 				$AltMsg = "Idioma agregado Satisfactoriamente";
+				$Comp = true;
 			}
 		}	
 	}
@@ -1117,7 +1178,7 @@
 		$res = mysql_query( $cons);
 	}
 	// AGERGAR UN ETIQUETA //
-	function AgregarEtiqueta ($NomEtq, &$AltMsg){
+	function AgregarEtiqueta ($NomEtq, &$AltMsg, &$Comp){
 		ComprobarEtiqueta ($NomEtq,$Flag);
 		if ($Flag){
 			$AltMsg = "El alta de la etiqueta no se pudo realizar, ya se encuentra registrado una Etiqueta con dicha Descripcion";
@@ -1131,11 +1192,12 @@
 			}	
 			else{
 				$AltMsg = "Etiqueta agregada Satisfactoriamente";
+				$Comp = true;
 			}
 		}	
 	}
 	// BAJA LOGICA DE ETIQUETA //
-	function BajaEtiqueta ($ID, &$AltMsg){
+	function BajaEtiqueta ($ID, &$AltMsg, &$Comp){
 		$cons = 'UPDATE etiqueta
 				 SET Visible = 0
 				 WHERE Id_Etiqueta = ' .$ID;
@@ -1145,10 +1207,11 @@
 		}	
 		else{
 			$AltMsg = "Etiqueta eliminada Satisfactoriamente";
+			$Comp = true;
 		}	
 	}
 	// ACTIVAR ETIQUQTA //
-	function ActivarEtiqueta ($ID, &$AltMsg){
+	function ActivarEtiqueta ($ID, &$AltMsg, &$Comp){
 		$cons1 = 'UPDATE etiqueta 
 					SET Visible = 1 
 					WHERE Id_Etiqueta = ' .$ID;
@@ -1158,10 +1221,11 @@
 		}	
 		else{
 			$AltMsg = "Activacion satisfactorio";
+			$Comp = true;
 		}	
 	}
 	// MODIFICAR ETIQUETA //
-	function ModEtiqueta ($ID, $EtiqNom, &$AltMsg){
+	function ModEtiqueta ($ID, $EtiqNom, &$AltMsg, &$Comp){
 		ComprobarEtiquetaID ($ID, $EtiqNom,$Flag);
 		if ($Flag){
 			$AltMsg = "La modificacion de la etiqueta no se pudo realizar, ya se encuentra registrado una Etiqueta con dicha Descripcion";
@@ -1175,7 +1239,8 @@
 				$AltMsg = "La modificacion de la etiqueta no se pudo realizar";
 			}	
 			else{
-				$AltMsg = "Etiqueta modificado Satisfactoriamente";
+				$AltMsg = "Etiqueta modificada Satisfactoriamente";
+				$Comp = true;
 			}
 		}	
 	}

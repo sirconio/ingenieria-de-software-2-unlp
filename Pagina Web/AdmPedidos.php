@@ -34,14 +34,15 @@
 				if (confirm("Desea cambiar el estado del pedido a enviado?")){
 					location.href="AdmPedidos.php?flag=lista&pedido=true&Is=" + ISBN + "&Dn=" + DNI;
 				}
-				else{
-					alert("La operacion no se realizo");
-				}
 			}	
-			<!-- MENSAJE DE RESPUESTA A MODIFICACION DE PEDIDOS -->
-			function MensajeMod(Msj){
+			<!-- MENSAJE DE RESPUESTA A MODIFICACION DE PEDIDOS SATISFACTORIO -->
+			function MensajeMod(Msj){				
+				location.href="AdmPedidos.php?flag=lista&respmsg="+Msj;
+			}	
+			<!-- MENSAJE DE RESPUESTA A MODIFICACION DE PEDIDOS ERRONEO -->
+			function Error(Msj){
 				alert(Msj);
-				location.href="AdmPedidos.php?flag=lista";
+				location.href="AdmPedidos.php?flag=pend";
 			}	
 			<!-- ACTIVACION DEL FLAG DE LISTAR PEDIDOS -->
 			function listarPedidos(){
@@ -58,6 +59,15 @@
 			<!-- ACTIVACION DEL FLAG DE LISTAR PEDIDOS ENTREGADOS -->
 			function pedidosEntregados(){
 				location.href="AdmPedidos.php?flag=ent";
+			}		
+			<!-- VALIDACIONES DE CAMPOS -->
+			function validarbus (){
+				if (document.fbus.BusRap.value.length==0){
+				   alert("Tiene que completar el campo de busqueda")
+				   document.fbus.BusRap.focus()
+				   return 0;
+				}			
+				document.fbus.submit(); 		
 			}			
 		</script>
 	</head>
@@ -75,12 +85,22 @@
 				ConexionBaseDatos ($bd);
 				// CAMBIAR PEDIDO A ENVIADO, SI PEDIDO = TRUE //
 				if (!empty($_GET['pedido']) && $_GET['pedido'] == 'true'){
-					PedidoEnviado($_GET['Is'], $_GET['Dn'], $AltMsg);
+					$Comp = false;
+					PedidoEnviado($_GET['Is'], $_GET['Dn'], $AltMsg, $Comp);
+					if ($Comp){
 	?>
-					<script languaje="javascript"> 	
-						MensajeMod("<?=$AltMsg?>");	
-					</script>
+						<script languaje="javascript"> 	
+							MensajeMod("<?=$AltMsg?>");	
+						</script>
 	<?php
+					}
+					else{
+	?>
+						<script languaje="javascript"> 	
+							Error("<?=$AltMsg?>");	
+						</script>
+	<?php						
+					}
 				}
 				// FLAG = TRUE, INDICA QUE SE PRESIONO SOBRE EL BOTON CERRAR SESION
 				if (!empty($_GET['flag']) && $_GET['flag'] == 'true'){
@@ -123,13 +143,18 @@
 				<div id='libros'>
 	<?php	
 					// OPCION LISTAR PEDIDOS //
-					if (!empty($_GET['flag']) && $_GET['flag'] == 'lista'){	
-						echo '<div id="textoadmped"><samp>Listado de todos los pedidos:</samp></div>
-						<div id="barrabusquedaABM" action="Busqueda.php" method="GET">
-						<form>
+					if (!empty($_GET['flag']) && $_GET['flag'] == 'lista'){							
+						if(!empty($_GET['respmsg'])){
+							echo '<div id="textoadmped"><samp>>>>>>>' .$_GET['respmsg'] .'<<<<<<</samp></br><samp>Listado de todos los pedidos:</samp></div>';
+						}
+						else{
+							echo '<div id="textoadmped"><samp>Listado de todos los pedidos:</samp></div>';
+						}
+						echo '<div id="barrabusquedaABM" action="Busqueda.php" method="GET">
+						<form name="fbus">
 							<input size="40" type="text" name="BusRap" placeholder="ISBN, DNI, Estado" required>
-							<input type="hidden" name="flag" value="lista" required readonly>
-							<input id="BusRapBotABM" type="submit" value="Buscar"/>
+							<input type="hidden" name="flag" value="lista" required readonly>							
+							<input id="BusRapBotABM" type="button" value="Buscar" onclick="validarbus()">
 						</form>
 						</div>';
 						echo '<div id="TablaPedido">';
@@ -190,11 +215,6 @@
 											if ($row['Estado'] == "Pendiente"){	
 		?>													
 												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
-		<?php		
-											}
-											else {
-		?>													
-												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
 		<?php		
 											}
 										echo "</tr>";
@@ -269,11 +289,6 @@
 												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
 		<?php		
 											}
-											else {
-		?>													
-												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
-		<?php		
-											}	
 										echo "</tr>";
 										$ant = $row['ISBN'];
 								
@@ -346,11 +361,6 @@
 												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
 		<?php		
 											}
-											else {
-		?>													
-												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
-		<?php		
-											}
 										echo "</tr>";
 										$ant = $row['ISBN'];
 									}
@@ -421,11 +431,6 @@
 											if ($row['Estado'] == "Pendiente"){	
 		?>													
 												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
-		<?php		
-											}
-											else {
-		?>													
-												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
 		<?php		
 											}
 										echo "</tr>";

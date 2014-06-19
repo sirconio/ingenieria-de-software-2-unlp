@@ -30,36 +30,39 @@
 				location.href="VerPerfil.php";
 			}
 			<!-- ACTIVACION DEL FLAG DE BAJA DE AUTOR CON ID -->
-			function bajaAutor(ID){				
+			function bajaAutor(ID, Autor){				
 				if (confirm("Desea dar de baja este autor?")){
-					location.href="AdmAutor.php?accion=Borrar&ID=" + ID;
-				}
-				else{
-					alert("La operacion no se realizo");
+					location.href="AdmAutor.php?accion=Borrar&ID=" + ID + "&AutorNomBorr=" + Autor;
 				}
 			}
 			<!-- ACTIVACION DEL FLAG DE ACTIVAR AUTOR CON ID -->
-			function activarAutor(ID){				
+			function activarAutor(ID, Autor){				
 				if (confirm("Desea reactivar este autor?")){
-					location.href="AdmAutor.php?accion=Activar&ID=" + ID;
-				}
-				else{
-					alert("La operacion no se realizo");
+					location.href="AdmAutor.php?accion=Activar&ID=" + ID + "&AutorNomBorr=" + Autor;
 				}
 			}
 			<!-- ACTIVACION DEL FLAG DE MODIFICACION DE AUTOR -->
-			function modAutor(AutorNomMod){
-				if (confirm("Desea modificar este autor?")){
-					location.href="AdmAutor.php?flag=ABM&AutorNomMod=" + AutorNomMod;
-				}
-				else{
-					alert("La operacion no se realizo");
-				}
+			function modAutor(AutorNomMod){			
+				location.href="AdmAutor.php?flag=ABM&AutorNomMod=" + AutorNomMod;				
 			}
-			<!-- MENSAJE DE RESPUESTA A CONSULTAS SOBRE AUTOR -->
-			function MensajeResp(Msj){
+			<!-- MENSAJE DE RESPUESTA A CONSULTAS SOBRE AUTOR SATISFACTORIA-->
+			function MensajeResp(Msj){				
+				location.href="AdmAutor.php?flag=lista&respmsg="+Msj;
+			}
+			<!-- MENSAJE DE RESPUESTA ALTA SOBRE AUTOR ERRONEA -->
+			function AltaError(Msj){
 				alert(Msj);
-				location.href="AdmAutor.php?flag=lista";
+				location.href="AdmAutor.php?flag=ABM";
+			}
+			<!-- MENSAJE DE RESPUESTA MODIFICACION SOBRE AUTOR ERRONEA -->
+			function ModError(Msj, Autor){
+				alert(Msj);
+				location.href="AdmAutor.php?flag=ABM&AutorNomMod="+Autor;
+			}
+			<!-- MENSAJE DE RESPUESTA BAJA/ACTIVAR SOBRE AUTOR ERRONEA -->
+			function Error(Msj, Autor){
+				alert(Msj);
+				location.href="AdmAutor.php?flag=ABM&AutorNomBorr="+Autor;
 			}
 			<!-- VALIDACIONES DE CAMPOS -->
 			function LetrasEspacio(e) {
@@ -68,6 +71,46 @@
 				patron =/[A-Za-z]/;
 				te = String.fromCharCode(tecla);
 				return patron.test(te);
+			}
+			function validarbus (){
+				if (document.fbus.BusRap.value.length==0){
+				   alert("Tiene que completar el campo de busqueda")
+				   document.fbus.BusRap.focus()
+				   return 0;
+				}			
+				document.fbus.submit(); 		
+			}			
+			function validarmod (){
+				if (document.fmod.AutorNom.value.length==0){
+				   alert("Tiene que completar el campo de Nombre y Apellido del autor")
+				   document.fmod.AutorNom.focus()
+				   return 0;
+				}			
+				document.fmod.submit(); 		
+			}					
+			function validarbusmod (){
+				if (document.fbusmod.AutorNomMod.value.length==0){
+				   alert("Tiene que completar el campo de Nombre y Apellido del autor ha modificar")
+				   document.fbusmod.AutorNomMod.focus()
+				   return 0;
+				}			
+				document.fbusmod.submit(); 		
+			}					
+			function validarbusbaja (){
+				if (document.fbusbaja.AutorNomBorr.value.length==0){
+				   alert("Tiene que completar el campo de Nombre y Apellido del autor ha borrar")
+				   document.fbusbaja.AutorNomBorr.focus()
+				   return 0;
+				}			
+				document.fbusbaja.submit(); 		
+			}			
+			function validaralta (){
+				if (document.falta.AutorNom.value.length==0){
+				   alert("Tiene que completar el campo de Nombre y Apellido del autor")
+				   document.falta.AutorNom.focus()
+				   return 0;
+				}			
+				document.falta.submit(); 		
 			}
 			<!-- FIN VALIDACIONES DE CAMPOS -->
 		</script>
@@ -90,39 +133,79 @@
 				}
 				// ACCION = AGREGAR, INDICA QUE SE DARA DE ALTA UN AUTOR
 				if (!empty($_GET['accion']) && $_GET['accion'] == 'Agregar'){
-					AgregarAutor ($_GET['AutorNom'], $AltMsg);		
+					$Comp = false;
+					AgregarAutor ($_GET['AutorNom'], $AltMsg, $Comp);		
+					if ($Comp){
 	?>
-					<script languaje="javascript"> 	
-						MensajeResp("<?=$AltMsg?>");	
-					</script>
-	<?php		
+						<script languaje="javascript"> 	
+							MensajeResp("<?=$AltMsg?>");	
+						</script>
+	<?php
+					}
+					else{
+	?>
+						<script languaje="javascript"> 	
+							AltaError("<?=$AltMsg?>");	
+						</script>
+	<?php					
+					}
 				}
 				// ACCION = BORRAR, INDICA QUE SE DARA DE ALTA UN AUTOR
 				if (!empty($_GET['accion']) && $_GET['accion'] == 'Borrar'){
-					BajaAutor ($_GET['ID'], $AltMsg);		
+					$Comp = false;
+					BajaAutor ($_GET['ID'], $AltMsg, $Comp);		
+					if ($Comp){
 	?>
-					<script languaje="javascript"> 	
-						MensajeResp("<?=$AltMsg?>");	
-					</script>
+						<script languaje="javascript"> 	
+							MensajeResp("<?=$AltMsg?>");	
+						</script>
 	<?php		
+					}
+					else{
+	?>
+						<script languaje="javascript"> 	
+							Error("<?=$AltMsg?>", "<?=$_GET['AutorNomBorr']?>");
+						</script>
+	<?php							
+					}
 				}
 				// ACCION = ACTIVAR, INDICA QUE SE DARA LA ACTIVACION DE UN AUTOR
 				if (!empty($_GET['accion']) && $_GET['accion'] == 'Activar'){
-					ActivarAutor ($_GET['ID'], $AltMsg);		
+					$Comp = false;
+					ActivarAutor ($_GET['ID'], $AltMsg, $Comp);		
+					if ($Comp){
 	?>
-					<script languaje="javascript"> 	
-						MensajeResp("<?=$AltMsg?>");	
-					</script>
+						<script languaje="javascript"> 	
+							MensajeResp("<?=$AltMsg?>");	
+						</script>
 	<?php		
+					}
+					else{
+	?>
+						<script languaje="javascript"> 	
+							Error("<?=$AltMsg?>", "<?=$_GET['AutorNomBorr']?>");	
+						</script>
+	<?php						
+					}		
 				}
 				// ACCION = MODIFICAR, INDICA QUE SE DARA DE ALTA UN AUTOR
 				if (!empty($_GET['accion']) && $_GET['accion'] == 'Modificar'){
-					ModAutor ($_GET['ID'], $_GET['AutorNom'], $AltMsg);		
+					$Comp = false;
+					ModAutor ($_GET['ID'], $_GET['AutorNom'], $AltMsg, $Comp);		
+					if ($Comp){
 	?>
 					<script languaje="javascript"> 	
 						MensajeResp("<?=$AltMsg?>");	
 					</script>
 	<?php		
+					}
+					else{
+	?>
+						<script languaje="javascript"> 	
+							ModError("<?=$AltMsg?>", "<?=$_GET['AutorNomMod']?>");	
+						</script>
+	<?php						
+					}
 				}				
 				// VERIFICA EL ESTADO DE LA SESION
 				if(!empty($_SESSION['estado'])){
@@ -160,13 +243,18 @@
 				<div id='libros'>
 	<?php	
 	 				// OPCION LISTAR AUTORES //
-					if (!empty($_GET['flag']) && $_GET['flag'] == 'lista'){
-						echo '<div id="textoadmped"><samp>Listado de todos los Autores:</samp></div>
-						<div id="barrabusquedaABM" action="Busqueda.php" method="GET">
-						<form>
+					if (!empty($_GET['flag']) && $_GET['flag'] == 'lista'){					
+						if(!empty($_GET['respmsg'])){
+							echo '<div id="textoadmped"><samp>>>>>>>' .$_GET['respmsg'] .'<<<<<<</samp></br><samp>Listado de todos los Autores:</samp></div>';
+						}
+						else{
+								echo '<div id="textoadmped"><samp>Listado de todos los Autores:</samp></div>';
+						}
+						echo '<div id="barrabusquedaABM" action="Busqueda.php" method="GET">
+						<form name="fbus">
 							<input size="40" type="text" name="BusRap" placeholder="Autor" required>
-							<input type="hidden" name="flag" value="lista" required readonly>
-							<input id="BusRapBotABM" type="submit" value="Buscar"/>
+							<input type="hidden" name="flag" value="lista" required readonly>							
+							<input id="BusRapBotABM" type="button" value="Buscar" onclick="validarbus()">
 						</form>
 						</div>';
 						echo '<div id="TablaLibros">';
@@ -218,13 +306,12 @@
 											if ($row['Estado'] == 1){											
 		?>					
 												<td><input class="botones" type='button' value='Modificar' onclick='modAutor("<?=$row['Autor']?>")' /></td>
-												<td><input class="botones" type='button' value='Eliminar' onclick='bajaAutor("<?=$row['ID']?>")' /></td>
+												<td><input class="botones" type='button' value='Eliminar' onclick='bajaAutor("<?=$row['ID']?>", "<?=$row['Autor']?>")' /></td>
 		<?php								
 											}
 											else{
 		?>									
-												<td><input class="botones" type='button' value='Modificar' onclick='modAutor("<?=$row['Autor']?>")' disabled /></td>
-												<td><input class="botones" type='button' value='ReActivar' onclick='activarAutor("<?=$row['ID']?>")' /></td>
+												<td><input class="botones" type='button' value='ReActivar' onclick='activarAutor("<?=$row['ID']?>", "<?=$row['Autor']?>")' /></td>
 		<?php
 											}
 										echo "</tr>";
@@ -253,22 +340,22 @@
 						<div id='ABMAlta'>
 	<?php
 							echo '<div id="textoadmped"><samp>Alta de autores:</samp></div></br></br>';
-							echo '<form class="FAbm" action="" method="GET">
+							echo '<form class="FAbm" name="falta" action="" method="GET">
 									<label for="Nombre">Nombre y Apellido del Autor:</label>
 									<input type="text" name="AutorNom" placeholder="Nombre Apellido" maxlength="45" onkeypress="return LetrasEspacio(event)"  required></br>
 									<input type="hidden" name="accion" value="Agregar" required readonly>
-									<input class="botones" class="botones" type="submit" value="Agregar">
+									<input class="botones" type="button" value="Agregar" onclick="validaralta()">
 							</form>';		
 						echo '</div>';
 	?>			
 						<div id='ABMBaja'>
 	<?php
 							echo '<div id="textoadmped"><samp>Baja de autores:</samp></div></br></br>';
-							echo '<form class="FAbm" action="" method="GET">
+							echo '<form class="FAbm" name="fbusbaja" action="" method="GET">
 									<label for="Nombre">Nombre y Apellido del Autor ha borrar:</label></br>
 									<input type="text" name="AutorNomBorr" placeholder="Nombre Apellido" maxlength="45" onkeypress="return LetrasEspacio(event)"  required></br>
 									<input type="hidden" name="flag" value="ABM" required readonly>
-									<input class="botones" class="botones" type="submit" value="Buscar">		
+									<input class="botones" type="button" value="Buscar" onclick="validarbusbaja()">		
 							</form>';		
 						if (!empty($_GET['AutorNomBorr'])){ 
 							ConsultaAutor ($res, $_GET['AutorNomBorr']);
@@ -291,13 +378,13 @@
 										if ($row['Estado'] == 1){ 
 											echo '<input type="hidden" name="accion" value="Borrar" required readonly>';	
 		?>
-											<input class="botones" type="button" value="Borrar" onclick='bajaAutor("<?=$row['ID']?>")' />
+											<input class="botones" type="button" value="Borrar" onclick='bajaAutor("<?=$row['ID']?>", "<?=$_GET['AutorNomBorr']?>")' />
 		<?php												
 										}
 										else{ 
 											echo '<input type="hidden" name="accion" value="Activar" required readonly>';
 		?>
-											<input class="botones" type="button" value="Activar" onclick='activarAutor("<?=$row['ID']?>")' />
+											<input class="botones" type="button" value="Activar" onclick='activarAutor("<?=$row['ID']?>", "<?=$_GET['AutorNomBorr']?>")' />
 		<?php	
 										}	
 										echo '</form>';	
@@ -309,11 +396,11 @@
 						<div id='ABMMod'>
 	<?php
 							echo '<div id="textoadmped"><samp>Modificacion de autores:</samp></div></br></br></br>';
-							echo '<form class="FAbm" action="" method="GET">
+							echo '<form class="FAbm" name="fbusmod" action="" method="GET">
 									<label for="Nombre">Nombre y Apellido del Autor ha modificar:</label></br>
 									<input type="text" name="AutorNomMod" placeholder="Nombre Apellido" maxlength="45" onkeypress="return LetrasEspacio(event)"  required></br>
 									<input type="hidden" name="flag" value="ABM" required readonly>
-									<input class="botones" class="botones" type="submit" value="Buscar">
+									<input class="botones" type="button" value="Buscar" onclick="validarbusmod()">
 							</form>';	
 							if (!empty($_GET['AutorNomMod'])){ 
 								ConsultaAutor ($res, $_GET['AutorNomMod']);
@@ -328,14 +415,14 @@
 								else{	
 									while($row = mysql_fetch_assoc($res)){
 										if ($row['Estado'] == 1){
-											echo '<form class="FAbm" action="" method="GET">										
-												<input type="hidden" name="ID" value="', $row['ID'], '" required readonly>
-												<label class="Reginput" for="Visble">Estado:</label>												
-												<input class="Reginput" type="text" name="Estad" value="'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '" required readonly><br>
+											echo '<form class="FAbm"  name="fmod" action="" method="GET">										
+												<input type="hidden" name="ID" value="', $row['ID'], '" required readonly>																					
+												<input hidden class="Reginput" type="text" name="Estad" value="'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '" required readonly><br>
 												<label for="Nombre">Nombre y Apellido del Autor:</label>
 												<input type="text" name="AutorNom" placeholder="Nombre Apellido" maxlength="45" onkeypress="return LetrasEspacio(event)" value="', $row['Autor'], '" required></br>
 												<input type="hidden" name="accion" value="Modificar" required readonly>
-												<input class="botones" class="botones" type="submit" value="Modificar">
+												<input type="hidden" name="AutorNomMod" value="' .$_GET['AutorNomMod'] .'" required readonly>
+												<input class="botones" type="button" value="Modificar" onclick="validarmod()">
 											</form>';
 										}
 										else{

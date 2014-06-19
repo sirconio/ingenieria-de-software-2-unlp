@@ -34,32 +34,35 @@
 				if (confirm("Desea dar de baja este idioma?")){
 					location.href="AdmIdioma.php?accion=Borrar&ID=" + ID;
 				}
-				else{
-					alert("La operacion no se realizo");
-				}
 			}
 			<!-- ACTIVACION DEL FLAG DE ACTIVAR IDIOMA CON ID -->
 			function activarIdioma(ID){				
 				if (confirm("Desea reactivar este idioma?")){
 					location.href="AdmIdioma.php?accion=Activar&ID=" + ID;
 				}
-				else{
-					alert("La operacion no se realizo");
-				}
 			}
 			<!-- ACTIVACION DEL FLAG DE MODIFICACION DE IDIOMA -->
-			function modIdioma(IdiomaNomMod){
-				if (confirm("Desea modificar este idioma?")){
-					location.href="AdmIdioma.php?flag=ABM&IdiomaNomMod=" + IdiomaNomMod;
-				}
-				else{
-					alert("La operacion no se realizo");
-				}
+			function modIdioma(IdiomaNomMod){				
+				location.href="AdmIdioma.php?flag=ABM&IdiomaNomMod=" + IdiomaNomMod;				
 			}
 			<!-- MENSAJE DE RESPUESTA A CONSULTAS SOBRE IDIOMA -->
-			function MensajeResp(Msj){
+			function MensajeResp(Msj){			
+				location.href="AdmIdioma.php?flag=lista&respmsg="+Msj;
+			}
+			<!-- MENSAJE DE RESPUESTA ALTA SOBRE IDIOMA ERRONEA -->
+			function AltaError(Msj){
 				alert(Msj);
-				location.href="AdmIdioma.php?flag=lista";
+				location.href="AdmIdioma.php?flag=ABM";
+			}
+			<!-- MENSAJE DE RESPUESTA MODIFICACION SOBRE IDIOMA ERRONEA -->
+			function ModError(Msj, Idio){
+				alert(Msj);
+				location.href="AdmIdioma.php?flag=ABM&IdiomaNomMod="+Idio;
+			}
+			<!-- MENSAJE DE RESPUESTA BAJA/ACTIVAR SOBRE IDIOMA ERRONEA -->
+			function Error(Msj, Idio){
+				alert(Msj);
+				location.href="AdmIdioma.php?flag=ABM&IdiomaNomBorr="+Idio;
 			}
 			<!-- VALIDACIONES DE CAMPOS -->
 			function LetrasEspacio(e) {
@@ -68,6 +71,46 @@
 				patron =/[A-Za-z]/;
 				te = String.fromCharCode(tecla);
 				return patron.test(te);
+			}
+			function validarbus (){
+				if (document.fbus.BusRap.value.length==0){
+				   alert("Tiene que completar el campo de busqueda")
+				   document.fbus.BusRap.focus()
+				   return 0;
+				}			
+				document.fbus.submit(); 		
+			}
+			function validarmod (){
+				if (document.fmod.IdiomaNom.value.length==0){
+				   alert("Tiene que completar el campo de Descripcion del idioma")
+				   document.fmod.IdiomaNom.focus()
+				   return 0;
+				}			
+				document.fmod.submit(); 		
+			}					
+			function validarbusmod (){
+				if (document.fbusmod.IdiomaNomMod.value.length==0){
+				   alert("Tiene que completar el campo de Descripcion del idioma ha modificar")
+				   document.fbusmod.IdiomaNomMod.focus()
+				   return 0;
+				}			
+				document.fbusmod.submit(); 		
+			}					
+			function validarbusbaja (){
+				if (document.fbusbaja.IdiomaNomBorr.value.length==0){
+				   alert("Tiene que completar el campo de Descripcion del idioma ha borrar")
+				   document.fbusbaja.IdiomaNomBorr.focus()
+				   return 0;
+				}			
+				document.fbusbaja.submit(); 		
+			}			
+			function validaralta (){
+				if (document.falta.IdiomaNom.value.length==0){
+				   alert("Tiene que completar el campo de Descripcion del idioma")
+				   document.falta.IdiomaNom.focus()
+				   return 0;
+				}			
+				document.falta.submit(); 		
 			}
 			<!-- FIN VALIDACIONES DE CAMPOS -->
 		</script>
@@ -90,39 +133,79 @@
 				}
 				// ACCION = AGREGAR, INDICA QUE SE DARA DE ALTA UN IDIOMA
 				if (!empty($_GET['accion']) && $_GET['accion'] == 'Agregar'){
-					AgregarIdioma ($_GET['IdiomaNom'], $AltMsg);		
+					$Comp = false;
+					AgregarIdioma ($_GET['IdiomaNom'], $AltMsg, $Comp);		
+					if ($Comp){
 	?>
-					<script languaje="javascript"> 	
-						MensajeResp("<?=$AltMsg?>");	
-					</script>
+						<script languaje="javascript"> 	
+							MensajeResp("<?=$AltMsg?>");	
+						</script>
 	<?php		
+					}
+					else{
+	?>
+						<script languaje="javascript"> 	
+							AltaError("<?=$AltMsg?>");	
+						</script>
+	<?php						
+					}	
 				}
 				// ACCION = BORRAR, INDICA QUE SE DARA DE ALTA UN IDIOMA
 				if (!empty($_GET['accion']) && $_GET['accion'] == 'Borrar'){
-					BajaIdioma ($_GET['ID'], $AltMsg);		
+					$Comp = false;
+					BajaIdioma ($_GET['ID'], $AltMsg, $Comp);		
+					if ($Comp){
 	?>
-					<script languaje="javascript"> 	
-						MensajeResp("<?=$AltMsg?>");	
-					</script>
+						<script languaje="javascript"> 	
+							MensajeResp("<?=$AltMsg?>");	
+						</script>
 	<?php		
+					}
+					else{
+	?>
+						<script languaje="javascript"> 	
+							Error("<?=$AltMsg?>", "<?=$_GET['IdiomaNomBorr']?>");
+						</script>
+	<?php						
+					}	
 				}
 				// ACCION = ACTIVAR, INDICA QUE SE DARA LA ACTIVACION DE UN IDIOMA
 				if (!empty($_GET['accion']) && $_GET['accion'] == 'Activar'){
-					ActivarIdioma ($_GET['ID'], $AltMsg);		
+					$Comp = false;
+					ActivarIdioma ($_GET['ID'], $AltMsg, $Comp);		
+					if ($Comp){
 	?>
-					<script languaje="javascript"> 	
-						MensajeResp("<?=$AltMsg?>");	
-					</script>
+						<script languaje="javascript"> 	
+							MensajeResp("<?=$AltMsg?>");	
+						</script>
 	<?php		
+					}
+					else{
+	?>
+						<script languaje="javascript"> 	
+							Error("<?=$AltMsg?>", "<?=$_GET['IdiomaNomBorr']?>");
+						</script>
+	<?php						
+					}	
 				}
 				// ACCION = MODIFICAR, INDICA QUE SE DARA DE ALTA UN IDIOMA
 				if (!empty($_GET['accion']) && $_GET['accion'] == 'Modificar'){
-					ModIdioma ($_GET['ID'], $_GET['IdiomaNom'], $AltMsg);		
+					$Comp = false;
+					ModIdioma ($_GET['ID'], $_GET['IdiomaNom'], $AltMsg, $Comp);	
+					if ($Comp){
 	?>
-					<script languaje="javascript"> 	
-						MensajeResp("<?=$AltMsg?>");	
-					</script>
+						<script languaje="javascript"> 	
+							MensajeResp("<?=$AltMsg?>");	
+						</script>
 	<?php		
+					}
+					else{
+	?>
+						<script languaje="javascript"> 	
+							ModError("<?=$AltMsg?>", "<?=$_GET['IdiomaNomMod']?>");	
+						</script>
+	<?php												
+					}
 				}					
 				// VERIFICA EL ESTADO DE LA SESION
 				if(!empty($_SESSION['estado'])){
@@ -160,13 +243,18 @@
 				<div id='libros'>
 	<?php	
 	 				// OPCION LISTAR IDIOMA //
-					if (!empty($_GET['flag']) && $_GET['flag'] == 'lista'){
-						echo '<div id="textoadmped"><samp>Listado de todos los idiomas:</samp></div>
-						<div id="barrabusquedaABM" action="Busqueda.php" method="GET">
-						<form>
+					if (!empty($_GET['flag']) && $_GET['flag'] == 'lista'){				
+						if(!empty($_GET['respmsg'])){
+							echo '<div id="textoadmped"><samp>>>>>>>' .$_GET['respmsg'] .'<<<<<<</samp></br><samp>Listado de todos los idiomas:</samp></div>';
+						}
+						else{
+							echo '<div id="textoadmped"><samp>Listado de todos los idiomas:</samp></div>';
+						}
+						echo '<div id="barrabusquedaABM" action="Busqueda.php" method="GET">
+						<form name="fbus">
 							<input size="40" type="text" name="BusRap" placeholder="Idioma" required>
-							<input type="hidden" name="flag" value="lista" required readonly>
-							<input id="BusRapBotABM" type="submit" value="Buscar"/>
+							<input type="hidden" name="flag" value="lista" required readonly>							
+							<input id="BusRapBotABM" type="button" value="Buscar" onclick="validarbus()">
 						</form>
 						</div>';
 						echo '<div id="TablaLibros">';
@@ -218,13 +306,12 @@
 											if ($row['Estado'] == 1){											
 		?>
 												<td><input class="botones" type='button' value='Modificar' onclick='modIdioma("<?=$row['Idioma']?>")' /></td>
-												<td><input class="botones" type='button' value='Eliminar' onclick='bajaIdioma("<?=$row['ID']?>")' /></td>
+												<td><input class="botones" type='button' value='Eliminar' onclick='bajaIdioma("<?=$row['ID']?>", "<?=$row['Idioma']?>")' /></td>
 		<?php									
 											}
 											else{
 		?>
-												<td><input class="botones" type='button' value='Modificar' onclick='modIdioma("<?=$row['Idioma']?>")' disabled /></td>
-												<td><input class="botones" type='button' value='ReActivar' onclick='activarIdioma("<?=$row['ID']?>")' /></td>
+												<td><input class="botones" type='button' value='ReActivar' onclick='activarIdioma("<?=$row['ID']?>", "<?=$row['Idioma']?>")' /></td>
 		<?php							
 											}
 										echo "</tr>";
@@ -253,22 +340,22 @@
 						<div id='ABMAlta'>
 	<?php
 							echo '<div id="textoadmped"><samp>Alta de idiomas:</samp></div></br></br>';
-							echo '<form class="FAbm" action="" method="GET">
+							echo '<form class="FAbm" name="falta" action="" method="GET">
 									<label for="Nombre">Descripcion del idioma</label>
 									<input type="text" name="IdiomaNom" placeholder="Descripcion" maxlength="45" onkeypress="return LetrasEspacio(event)"  required></br>
 									<input type="hidden" name="accion" value="Agregar" required readonly>
-									<input class="botones" class="botones" type="submit" value="Agregar">
+									<input class="botones" type="button" value="Agregar" onclick="validaralta()">
 							</form>';		
 						echo '</div>';
 	?>			
 						<div id='ABMBaja'>
 	<?php
 							echo '<div id="textoadmped"><samp>Baja de idiomas:</samp></div></br></br>';
-							echo '<form class="FAbm" action="" method="GET">
+							echo '<form class="FAbm" name="fbusbaja" action="" method="GET">
 									<label for="Nombre">Descripcion del Idioma ha borrar:</label></br>
 									<input type="text" name="IdiomaNomBorr" placeholder="Descripcion" maxlength="45" onkeypress="return LetrasEspacio(event)"  required></br>
 									<input type="hidden" name="flag" value="ABM" required readonly>
-									<input class="botones" class="botones" type="submit" value="Buscar">
+									<input class="botones" type="button" value="Buscar" onclick="validarbusbaja()">
 							</form>';		
 						if (!empty($_GET['IdiomaNomBorr'])){ 
 							ConsultaIdio ($res, $_GET['IdiomaNomBorr']);
@@ -291,13 +378,13 @@
 										if ($row['Estado'] == 1){ 
 											echo '<input type="hidden" name="accion" value="Borrar" required readonly>';	
 	?>
-											<input class="botones" type="button" value="Borrar" onclick='bajaIdioma("<?=$row['ID']?>")' />
+											<input class="botones" type="button" value="Borrar" onclick='bajaIdioma("<?=$row['ID']?>", "<?=$_GET['IdiomaNomBorr']?>")' />
 	<?php												
 										}
 										else{ 
 											echo '<input type="hidden" name="accion" value="Activar" required readonly>';
 	?>
-											<input class="botones" type="button" value="Activar" onclick='activarIdioma("<?=$row['ID']?>")' />
+											<input class="botones" type="button" value="Activar" onclick='activarIdioma("<?=$row['ID']?>", "<?=$_GET['IdiomaNomBorr']?>")' />
 	<?php	
 										}		
 									echo '</form>';	
@@ -309,11 +396,11 @@
 						<div id='ABMMod'>
 	<?php
 							echo '<div id="textoadmped"><samp>Modificacion de idiomas:</samp></div></br></br></br>';
-							echo '<form class="FAbm" action="" method="GET">
+							echo '<form class="FAbm" name="fbusmod" action="" method="GET">
 									<label for="Nombre">Descripcion del Idioma ha modificar:</label></br>
 									<input type="text" name="IdiomaNomMod" placeholder="Descripcion" maxlength="45" onkeypress="return LetrasEspacio(event)"  required></br>
 									<input type="hidden" name="flag" value="ABM" required readonly>
-									<input class="botones" class="botones" type="submit" value="Buscar">
+									<input class="botones" type="button" value="Buscar" onclick="validarbusmod()">
 							</form>';	
 							if (!empty($_GET['IdiomaNomMod'])){ 
 								ConsultaIdio ($res, $_GET['IdiomaNomMod']);
@@ -328,14 +415,15 @@
 								else{	
 									while($row = mysql_fetch_assoc($res)){
 										if ($row['Estado'] == 1){
-											echo '<form class="FAbm" action="" method="GET">											
+											echo '<form class="FAbm"  name="fmod" action="" method="GET">											
 												<input type="hidden" name="ID" value="', $row['ID'], '" required readonly>
 												<label class="Reginput" for="Visble">Estado:</label>		
 												<input class="Reginput" type="text" name="Estad" value="'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '" required readonly><br>
 												<label for="Nombre">Descripcion del Idioma:</label>
 												<input type="text" name="IdiomaNom" placeholder="Descripcion" maxlength="45" onkeypress="return LetrasEspacio(event)" value="', $row['Idioma'], '" required></br>
 												<input type="hidden" name="accion" value="Modificar" required readonly>
-												<input class="botones" class="botones" type="submit" value="Modificar">
+												<input type="hidden" name="IdiomaNomMod" value="' .$_GET['IdiomaNomMod'] .'" required readonly>												
+												<input class="botones" type="button" value="Modificar" onclick="validarmod()">
 											</form>';
 										}
 										else{

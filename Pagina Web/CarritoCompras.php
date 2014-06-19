@@ -33,21 +33,69 @@
 				location.href="Busqueda.php?BusRap=" + bus;
 			}
 			<!-- ACTIVACION DEL FLAG DE RETIRAR DE CARRITO -->
-			function Retirar (ISBN, ID){
-				location.href="CarritoCompras.php?retirar=true&Is=" + ISBN + "&Dn=" + ID;
+			function Retirar (ID){
+				if (confirm("Desea retirar ese libro del carrito de compras?")){
+					location.href="CarritoCompras.php?retirar=true&ID=" + ID;
+				}					
 			}
 			<!-- ACTIVACION DEL FLAG DE VACIAR CARRITO -->
 			function Vaciar (ID){
-				location.href="CarritoCompras.php?vaciar=true&Dn=" + ID;
+				if (confirm("Desea vaciar el carrito de compras?")){
+					location.href="CarritoCompras.php?vaciar=true&Dn=" + ID;
+				}			
 			}
 			<!-- ACTIVACION DEL FLAG DE COMPRAR CARRITO -->
 			function Comprar (ID){
-				location.href="CarritoCompras.php?comprar=true&Dn=" + ID;
+				location.href="CarritoCompras.php?flag=compra";
+			}		
+			<!-- TRASLADA LA PAGINA ANTERIOR -->
+			function Atras (){
+				location.href="CarritoCompras.php";
 			}
-			<!-- MENSAJE DE RESPUESTA A ACCIONES CON EL CARRITO -->
-			function MensajeRet(Msj){
+			<!-- MENSAJE DE RESPUESTA A ACCIONES CON EL CARRITO SATISFACTORIA -->
+			function MensajeRet(Msj){				
+				location.href="CarritoCompras.php?respmsg="+Msj;
+			}
+			<!-- MENSAJE DE RESPUESTA A ACCIONES CON EL CARRITO ERRONEA -->
+			function ErrorRet(Msj){
 				alert(Msj);
 				location.href="CarritoCompras.php";
+			}
+			<!-- VALIDACIONES DE CAMPOS -->
+			function Numeros(e){
+				var keynum = window.event ? window.event.keyCode : e.which;
+				if ((keynum == 8))
+				return true;
+				 
+				return /\d/.test(String.fromCharCode(keynum));
+			}
+			function validarbusrap (){
+				if (document.fbusrap.BusRap.value.length==0){
+				   alert("Tiene que completar el campo de busqueda")
+				   document.fbusrap.BusRap.focus()
+				   return 0;
+				}			
+				document.fbusrap.submit(); 		
+			}
+			function validarpass (){
+				entro = false;
+				msg = "Tiene que completar el/los campo/s de: ";
+				if (document.fpass.NumTarj.value.length==0){
+				   	msg = msg + "Numero de Tarjeta; "
+					entro = true;
+				}	
+				if (document.fpass.Pass.value.length==0){
+				   	msg = msg + "Clave; "
+					entro = true;
+				}						
+				if(entro){
+				   alert(msg)
+				   document.fpass.PassActual.focus()
+				   return 0;
+				}
+				else{
+					location.href="CarritoCompras.php?comprar=true";
+				}				
 			}
 		</script>	
 	</head>
@@ -68,9 +116,9 @@
 			<div id='imglogo'><a href="index.php"><img src="Logo1.gif" width="85%" height="475%"></a></div> 
 			<!-- BARRA DE BUSQUEDA RAPIDA -->
 			<div id='barrabusqueda' action="Busqueda.php" method="GET">
-				<form>
+				<form name="fbusrap">
 					<input size="40" type="text" name="BusRap" placeholder="Autor, Titulo, ISBN" required>
-					<input id="BusRapBot"  type='submit' value='Busqueda Rapida'/>
+					<input id="BusRapBot" type="button" value="Busqueda Rapida" onclick="validarbusrap()">
 				</form>
 			</div>
 			<!-- CONTROL DE SESIONES -->
@@ -82,30 +130,60 @@
 				ConexionBaseDatos ($bd);
 				// RETIRAR DEL CARRITO, SI RETIRAR = TRUE //
 				if (!empty($_GET['retirar']) && $_GET['retirar'] == 'true'){
-					RetirarCarrito($_GET['Is'], $_GET['Dn'], $AltMsg);
+					$Comp = false;
+					RetirarCarrito($_GET['ID'], $_SESSION['ID'], $AltMsg , $Comp);
+					if ($Comp){
 	?>
-					<script languaje="javascript"> 	
-						MensajeRet("<?=$AltMsg?>");	
-					</script>
+						<script languaje="javascript"> 	
+							MensajeRet("<?=$AltMsg?>");	
+						</script>
 	<?php
+					}
+					else{
+	?>
+						<script languaje="javascript"> 	
+							ErrorRet("<?=$AltMsg?>");	
+						</script>
+	<?php
+					}
 				}
 				// VACIAR CARRITO, SI VACIAR = TRUE //
 				if (!empty($_GET['vaciar']) && $_GET['vaciar'] == 'true'){
-					VaciarCarrito($_GET['Dn'], $AltMsg);
+					$Comp = false;
+					VaciarCarrito($_GET['Dn'], $AltMsg, $Comp);
+					if ($Comp){
 	?>
-					<script languaje="javascript"> 	
-						MensajeRet("<?=$AltMsg?>");	
-					</script>
+						<script languaje="javascript"> 	
+							MensajeRet("<?=$AltMsg?>");	
+						</script>
 	<?php
+					}
+					else{
+	?>
+						<script languaje="javascript"> 	
+							ErrorRet("<?=$AltMsg?>");	
+						</script>
+	<?php
+					}
 				}
 				// CAMPRAR CARRITO, SI COMPRAR = TRUE //
 				if (!empty($_GET['comprar']) && $_GET['comprar'] == 'true'){
-					ComprarCarrito($_GET['Dn'], $AltMsg);
+					$Comp = false;
+					ComprarCarrito($_SESSION['ID'], $AltMsg, $Comp);
+					if ($Comp){
 	?>
-					<script languaje="javascript"> 	
-						MensajeRet("<?=$AltMsg?>");	
-					</script>
+						<script languaje="javascript"> 	
+							MensajeRet("<?=$AltMsg?>");	
+						</script>
 	<?php
+					}
+					else{
+	?>
+						<script languaje="javascript"> 	
+							ErrorRet("<?=$AltMsg?>");	
+						</script>
+	<?php
+					}
 				}
 				// FLAG = TRUE, INDICA QUE SE PRESIONO SOBRE EL BOTON CERRAR SESION
 				if (!empty($_GET['flag']) && $_GET['flag'] == 'true'){
@@ -157,46 +235,73 @@
 			</div>
 			<!-- CONTENIDO CARRITO COMPRAS -->
 			<div id='contenidocarrito'> 
-				<!-- TEXTO -->
-				<div id='textocarrito'><samp>Lista Carrito de Compras:</samp></div>
+				<!-- TEXTO -->				
 	<?php
-				ConsultaCarrito ($res, $_SESSION["ID"]);
-				echo '<div id="TablaCarrito">';
-				if(!$res) {
-						$message= 'Consulta invalida: ' .mysql_error() ."\n";
-						die($message);
-					}		
-					$num1 = mysql_num_rows($res);
-					if($num1 == 0){
-						echo 'No se localizo ningun libro en el carrito';
+				if (!empty($_GET['flag']) && $_GET['flag'] == 'compra'){
+					$Comp = false;
+					verificarCarrito($Comp, $_SESSION['ID'], $Msj);
+					if ($Comp){
+						echo '<div id="textocarrito"><samp>Verificando su tarjeta:</samp></div>
+						<form id="FRegPerfilClave" name="fpass" action="" method="POST">						
+							<label class="Reginput" for="NroTarjeta">Numero de Tarjeta</label>
+							<input class="Reginput" type="text" name="NumTarj" placeholder="Ej: 1234567890" maxlength="8"  onkeypress="return Numeros(event);" required><br>
+							<label class="Reginput" for="PassTarjeta">Clave:</label>
+							<input class="Reginput" type="password" name="Pass" placeholder="Ej: Clave" maxlength="30" required><br>
+							<input class="botones" type="button" value="Enviar" onclick="validarpass()">
+							<input class="botones" type="button" value="Atras" onclick="Atras()">
+						</form>';	
 					}
 					else{
-						if (empty($_GET['numpag'])){
-							$NroPag = 1;
-						}
-						else{
-							$NroPag = $_GET['numpag'];
-						}
-						ConsultaCarritoPag ($res, $_SESSION["ID"], ($NroPag-1) );
-						echo 'Pagina Numero: ' .$NroPag;
-						$num2 = mysql_num_rows($res);
-						if($num2 == 0){
+	?>
+						<script languaje="javascript"> 	
+							ErrorRet("<?=$Msj?>");	
+						</script>
+	<?php					
+					}
+				}
+				else{
+					if(!empty($_GET['respmsg'])){
+						echo '<div id="textocarrito"><samp>>>>>>>' .$_GET['respmsg'] .'<<<<<<</samp></br><samp>Lista Carrito de Compras:</samp></div>';
+					}
+					else{
+						echo '<div id="textocarrito"><samp>Lista Carrito de Compras:</samp></div>';
+					}
+					ConsultaCarrito ($res, $_SESSION["ID"]);
+					echo '<div id="TablaCarrito">';
+					if(!$res) {
+							$message= 'Consulta invalida: ' .mysql_error() ."\n";
+							die($message);
+						}		
+						$num1 = mysql_num_rows($res);
+						if($num1 == 0){
 							echo 'No se localizo ningun libro en el carrito';
 						}
 						else{
-							// GENERAR TABLA //
-							echo"<table border='1'>
-								<tr>
-									<th>DNI</th>
-									<th>Nombre</th>
-									<th>ISBN</th>
-									<th>Titulo</th>							
-									<th>Autor</th>
-									<th>Precio</th>
-								</tr>";
-							$ant = ' ';
-							while($row = mysql_fetch_assoc($res)) {
-								if ($row['ISBN'] != $ant){
+							if (empty($_GET['numpag'])){
+								$NroPag = 1;
+							}
+							else{
+								$NroPag = $_GET['numpag'];
+							}
+							ConsultaCarritoPag ($res, $_SESSION["ID"], ($NroPag-1) );
+							echo 'Pagina Numero: ' .$NroPag;
+							$num2 = mysql_num_rows($res);
+							if($num2 == 0){
+								echo 'No se localizo ningun libro en el carrito';
+							}
+							else{
+								// GENERAR TABLA //
+								echo"<table border='1'>
+									<tr>
+										<th>DNI</th>
+										<th>Nombre</th>
+										<th>ISBN</th>
+										<th>Titulo</th>							
+										<th>Autor</th>
+										<th>Precio</th>
+									</tr>";		
+								$Total = 0;
+								while($row = mysql_fetch_assoc($res)) {								
 									echo "<tr>";
 										echo "<td>", $row['DNI'], "</td>";
 										echo "<td>", $row['Nombre'], "</td>";
@@ -204,32 +309,33 @@
 										echo "<td>", $row['Titulo'], "</td>";
 										echo "<td>", $row['NombreApellido'], "</td>";
 										echo "<td>", $row['Precio'], "</td>";
-			?>																	
-										<td><input class="botones" type='button' value='Retirar' onclick='Retirar("<?=$row['ISBN']?>","<?=$_SESSION['ID']?>")' /></td>
-			<?php													
+				?>																	
+										<td><input class="botones" type='button' value='Retirar' onclick='Retirar("<?=$row['ID']?>")' /></td>
+				<?php													
 									echo "</tr>";
-									$ant = $row['ISBN'];							
+									$Total = $Total + $row['Precio'];		
 								}
-							}
-							echo "</table>";
+								echo '</br>Monto Total: $' .$Total;
+								echo "</table>";
+							}	
 						}	
-					}	
-					echo '</div>';
-					echo '<div id="PaginasPed">';
-						$pag = 1;
-						echo 'Paginas: ';
-						while ( $num1 > 0 ) {
-							echo '<li><a href="CarritoCompras.php?numpag=' .$pag .'">' .$pag .'</a></li>
-							<li> - </li>';
-							$pag ++;
-							$num1 = $num1-10;
-						}
-					echo '</div>';
-	?>
-				<input class="botones" id='carritobot1' type='button' value='Vaciar' onclick='Vaciar("<?=$_SESSION['ID']?>")' />
-				<input class="botones" id='carritobot2' type='button' value='Comprar' onclick='Comprar("<?=$_SESSION['ID']?>")' />
-			</div>
+						echo '</div>';					
+						echo '<div id="PaginasPed">';						
+							$pag = 1;
+							echo 'Paginas: ';
+							while ( $num1 > 0 ) {
+								echo '<li><a href="CarritoCompras.php?numpag=' .$pag .'">' .$pag .'</a></li>
+								<li> - </li>';
+								$pag ++;
+								$num1 = $num1-10;
+							}
+						echo '</div>';
+		?>
+					<input class="botones" id='carritobot1' type='button' value='Vaciar' onclick='Vaciar("<?=$_SESSION['ID']?>")' />
+					<input class="botones" id='carritobot2' type='button' value='Comprar' onclick='Comprar()' />				
 	<?php
+				}
+			echo '</div>';
 			// CIERRE SERVIDOR //
 			CerrarServidor ($con);
 	?>

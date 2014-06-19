@@ -16,7 +16,31 @@
 	<head>
 		<title>CookBook</title>
 		<link type="text/css" rel="stylesheet" href="style.css">
+		
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+		<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+		<link rel="stylesheet" href="/resources/demos/style.css">
+		
 		<script>
+			<!-- DATAPICKER LIMITE INF -->
+			$(function() {	
+				$("#datepickerLimInf").datepicker({
+					changeMonth: true,
+					changeYear: true,
+					showOtherMonths: true,
+					selectOtherMonths: true
+				});
+			});
+			<!-- DATAPICKER LIMITE SUP -->
+			$(function() {	
+				$("#datepickerLimSup").datepicker({
+					changeMonth: true,
+					changeYear: true,
+					showOtherMonths: true,
+					selectOtherMonths: true
+				});
+			});
 			<!-- VENTANA EMERGENTE DE INICIO DE SESION -->
 			function acceso(){
 				window.open("InicioSesion.php","myWindow","status = 1, height = 150, width = 350, resizable = no" );
@@ -45,37 +69,30 @@
 			function bajaUsuario2(ID){
 				if (confirm("Desea dar de baja este usuario?")){
 					location.href="AdmUsuarios.php?accion=borrar&ID=" + ID;
-				}
-				else{
-					alert("La operacion no se realizo");
-				}
+				}			
 			} 
 			<!-- ACTIVACION DEL FLAG DE ACTIVACION DE USUARIO CON ID -->
 			function activarUsuario2(ID){
 				if (confirm("Desea reactivar este usuario?")){
 					location.href="AdmUsuarios.php?accion=activar&ID=" + ID;
 				}
-				else{
-					alert("La operacion no se realizo");
-				}
 			} 
 			<!-- ACTIVACION DEL FLAG DE MODIFICAR USUARIO CON ID -->
-			function modUsuario2(ID){
-				if (confirm("Desea modificar este usuario?")){
-					location.href="AdmUsuarios.php?flag=mod&NomUs=" + ID;
-				}
-				else{
-					alert("La operacion no se realizo");
-				}
+			function modUsuario2(ID){				
+				location.href="AdmUsuarios.php?flag=mod&NomUs=" + ID;
 			}
 			<!-- ACTIVACION DEL FLAG DE USUARIOS REGISTRADOS EN UN PERIODO -->
 			function conUsuario(){
 				location.href="AdmUsuarios.php?flag=con";
 			}
-			<!-- MENSAJE DE RESPUESTA A CONSULTAS SOBRE USUARIOS -->
+			<!-- MENSAJE DE RESPUESTA A CONSULTAS SOBRE USUARIOS SATISFACTORIA -->
 			function MensajeResp(Msj){
+				location.href="AdmUsuarios.php?flag=lista&respmsg="+Msj;
+			}
+			<!-- MENSAJE DE RESPUESTA A CONSULTAS SOBRE USUARIOS ERROR -->
+			function Error(Msj, ID){
 				alert(Msj);
-				location.href="AdmUsuarios.php?flag=lista";
+				location.href="AdmUsuarios.php?flag=baja&ID="+ID;
 			}
 			<!-- MENSAJE DE ERROR -->	
 			function MensajeErr(Msj,ID ,Estad ,NomApe, NomUs, DNI, Tel, Dir, Mail ){
@@ -127,6 +144,70 @@
 					object.value = "";	
 				}
 			}
+			function validarbus (){
+				if (document.fbus.BusRap.value.length==0){
+				   alert("Tiene que completar el campo de busqueda")
+				   document.fbus.BusRap.focus()
+				   return 0;
+				}			
+				document.fbus.submit(); 		
+			}
+			function validarbusmod (){
+				if (document.fbusmod.NomUs.value.length==0){
+				   alert("Tiene que completar el campo de Nombre de Usuario ha modificar")
+				   document.fbusmod.NomUs.focus()
+				   return 0;
+				}			
+				document.fbusmod.submit(); 		
+			}					
+			function validarbusbaja (){
+				if (document.fbusbaja.NomUs.value.length==0){
+				   alert("Tiene que completar el campo de Nombre de Usuario ha borrar/activar")
+				   document.fbusbaja.NomUs.focus()
+				   return 0;
+				}			
+				document.fbusbaja.submit(); 		
+			}			
+			function validarperiodo(){
+				entro = false;
+				msg = "Tiene que completar el/los campo/s de: ";
+				if (document.fperiodo.Fini.value.length==0){
+					msg = msg + "Fecha Inicial; "
+					entro = true;
+				}
+				if (document.fperiodo.Ffin.value.length==0){
+					msg = msg + "Fecha Final; "
+					entro = true;
+				}
+				if(entro){
+				   alert(msg)
+				   document.fperiodo.NomUs.focus()
+				   return 0;
+				}			
+				document.fperiodo.submit(); 		
+			}	
+			function validarmod (){
+				entro = false;
+				msg = "Tiene que completar el/los campo/s de: ";
+				if (document.fmod.NomUs.value.length==0){
+				   	msg = msg + "Nombre de Usuario; "
+					entro = true;
+				}	
+				if (document.fmod.NomApe.value.length==0){
+				   	msg = msg + "Nombre y Apellido; "
+					entro = true;
+				}	
+				if (document.fmod.Mail.value.length==0){
+				   	msg = msg + "Mail; "
+					entro = true;
+				}					
+				if(entro){
+				   alert(msg)
+				   document.fmod.NomUs.focus()
+				   return 0;
+				}			
+				document.fmod.submit(); 		
+			}	
 			<!-- FIN VALIDACIONES DE CAMPOS -->
 		</script>
 	</head>
@@ -148,21 +229,41 @@
 				}
 				// ACCION = BORRAR, INDICA QUE SE DARA DE BAJA UN USUARIO
 				if (!empty($_GET['accion']) && $_GET['accion'] == 'borrar'){
-					BajaUsuario($_GET['ID'], $AltMsg);
+					$Comp = false;
+					BajaUsuario($_GET['ID'], $AltMsg, $Comp);
+					if ($Comp){
 	?>
-					<script languaje="javascript"> 	
-						MensajeResp("<?=$AltMsg?>");	
-					</script>
+						<script languaje="javascript"> 	
+							MensajeResp("<?=$AltMsg?>");	
+						</script>
 	<?php
+					}
+					else{
+	?>
+						<script languaje="javascript"> 	
+							Error("<?=$AltMsg?>", "<?=$_GET['ID']?>");	
+						</script>
+	<?php					
+					}
 				}
 				// ACCION = ACTIVAR, INDICA QUE SE DARA DE LA ACTIVACION DE UN USUARIO
 				if (!empty($_GET['accion']) && $_GET['accion'] == 'activar'){
-					ActivarUsuario($_GET['ID'], $AltMsg);
+					$Comp = false;
+					ActivarUsuario($_GET['ID'], $AltMsg, $Comp);
+					if ($Comp){
 	?>
-					<script languaje="javascript"> 	
-						MensajeResp("<?=$AltMsg?>");	
-					</script>
+						<script languaje="javascript"> 	
+							MensajeResp("<?=$AltMsg?>");	
+						</script>
 	<?php
+					}
+					else{
+	?>
+						<script languaje="javascript"> 	
+							Error("<?=$AltMsg?>", "<?=$_GET['ID']?>");	
+						</script>
+	<?php					
+					}
 				}
 				// ACCION = MODIFICAR, INDICA QUE SE DARA DE LA MODIFICACION DE UN USUARIO
 				if (!empty($_GET['accion']) && $_GET['accion'] == 'modificar'){
@@ -221,13 +322,18 @@
 				<div id='libros'>
 	<?php	
 					// OPCION LISTAR USUARIOS //
-					if (!empty($_GET['flag']) && $_GET['flag'] == 'lista'){	
-						echo '<div id="textoadmped"><samp>Listado de todos los usuarios:</samp></div>
-						<div id="barrabusquedaABM" action="Busqueda.php" method="GET">
-						<form>
+					if (!empty($_GET['flag']) && $_GET['flag'] == 'lista'){							
+						if(!empty($_GET['respmsg'])){
+							echo '<div id="textoadmped"><samp>>>>>>>' .$_GET['respmsg'] .'<<<<<<</samp></br><samp>Listado de todos los usuarios:</samp></div>';
+						}
+						else{
+							echo '<div id="textoadmped"><samp>Listado de todos los usuarios:</samp></div>';
+						}
+						echo '<div id="barrabusquedaABM" action="Busqueda.php" method="GET">
+						<form name="fbus">
 							<input size="40" type="text" name="BusRap" placeholder="Usuario, Nombre Apellido, DNI" required>
-							<input type="hidden" name="flag" value="lista" required readonly>
-							<input id="BusRapBotABM" type="submit" value="Buscar"/>
+							<input type="hidden" name="flag" value="lista" required readonly>							
+							<input id="BusRapBotABM" type="button" value="Buscar" onclick="validarbus()">
 						</form>
 						</div>';
 						echo '<div id="TablaUser">';
@@ -295,8 +401,7 @@
 		<?php
 											}
 											else{
-		?>					
-												<td><input class="botones" type='button' value='Modificar' onclick='modUsuario2("<?=$row['Usuario']?>")' disabled /></td>
+		?>																	
 												<td><input class="botones" type='button' value='ReActivar' onclick='activarUsuario2("<?=$row['ID']?>")' /></td>
 		<?php
 											}
@@ -325,11 +430,11 @@
 	?>
 						<div id='ABMDiv'>
 							<!-- FORMULARIO DE BUSQUEDA POR NOMUS -->
-							<form class='FAbm' action="" method="GET">
+							<form class='FAbm' name="fbusbaja" action="" method="GET">
 									<label for="ID">Nombre de Usuario a Borrar/Activar:</label>
 									<input type="text" name="NomUs" placeholder="Ej: Usuario" maxlength="10"  required>
-									<input type="hidden" name="flag" value="baja" required readonly>
-									<input class="botones" type="submit" value="Buscar">
+									<input type="hidden" name="flag" value="baja" required readonly>									
+									<input class="botones" type="button" value="Buscar" onclick="validarbusbaja()">	
 							</form>
 	<?php	
 							if (!empty($_GET['NomUs'])){
@@ -381,34 +486,34 @@
 	?>
 						<div id='ABMDiv'>
 							<!-- FORMULARIO DE BUSQUEDA POR NomUs -->
-							<form class='FAbm' action="" method="GET">
+							<form class='FAbm' name="fbusmod" action="" method="GET">
 									<label for="ID">Nombe de Usuario a modificar:</label>
 									<input type="text" name="NomUs" placeholder="Ej: Usuario" maxlength="10" required>
 									<input type="hidden" name="flag" value="mod" required readonly>
-									<input class="botones" type="submit" value="Buscar">
+									<input class="botones" type="button" value="Buscar" onclick="validarbusmod()">	
 							</form>
 	<?php	
 						if (!empty($_GET['tip']) && $_GET['tip'] == 'err'){
 							if($_GET['Estad'] == 'Activo'){
-								echo '<form class="FAbm" action="" method="GET">
+								echo '<form class="FAbm" name="fmod" action="" method="GET">
 									<label class="Reginput" for="Visble">Estado:</label>
 									<input class="Reginput" type="hidden" name="ID" value="', $_GET['ID'], '" required readonly>	
 									<input class="Reginput" type="text" name="Estad" value="', $_GET['Estad'], '" required readonly><br>
 									<label class="Reginput" for="NombreUsuario">Nombre Usuario:</label>
 									<input class="Reginput" type="text" name="NomUs" value="', $_GET['NomUs'], '" placeholder="Usuario" maxlength="10" required><br>
 									<label class="Reginput" for="NombreApellido">Nombre y Apellido:</label>
-									<input class="Reginput" type="text" name="NomApe"  value="', $_GET['NomApe'], '" placeholder="Nombre Apellido" maxlength="45" onkeypress="return LetrasEspacio(event)"  required><br>
+									<input class="Reginput" type="text" name="NomApe"  value="', $_GET['NomApe'], '" placeholder="Nombre Apellido" maxlength="30" onkeypress="return LetrasEspacio(event)"  required><br>
 									<label class="Reginput" for="DNI">DNI:</label>
-									<input class="Reginput" type="text" name="DNI" value="', $_GET['DNI'], '" placeholder="Ej: 37148135" maxlength="10" onkeypress="return Numeros(event);"  required readonly><br>
+									<input class="Reginput" type="text" name="DNI" value="', $_GET['DNI'], '" placeholder="Ej: 37148135" maxlength="8" onkeypress="return Numeros(event);"  required readonly><br>
 									<label class="Reginput" for="Telefono">Telefono:</label>
-									<input class="Reginput" type="text" name="Tel" value="', $_GET['Tel'], '" placeholder="Ej: 011-4189054" maxlength="10" onkeypress="return NumerosGuion(event);" required><br>
+									<input class="Reginput" type="text" name="Tel" value="', $_GET['Tel'], '" placeholder="Ej: 0114189054" maxlength="8" onkeypress="return NumerosGuion(event);" required><br>
 									<label class="Reginput" for="Direccion">Direccion:</label>
-									<input class="Reginput" type="text" name="Dir" value="', $_GET['Dir'], '" placeholder="Ej: Calle #Numero" maxlength="45" required><br>
+									<input class="Reginput" type="text" name="Dir" value="', $_GET['Dir'], '" placeholder="Ej: Calle #Numero" maxlength="30" required><br>
 									<label class="Reginput" for="Mail">Mail:</label>
-									<input class="Reginput" id="id_mail4" type="text" name="Mail" value="', $_GET['Mail'], '" placeholder="Ej: nombre@correo.com" maxlength="45" onblur="validarEmail()" required><br>';									
+									<input class="Reginput" id="id_mail4" type="text" name="Mail" value="', $_GET['Mail'], '" placeholder="Ej: nombre@correo.com" maxlength="30" onblur="validarEmail()" required><br>';									
 									if ($_GET['Estad'] == 'Activo' ){ 
 										echo '<input class="Reginput" type="hidden" name="accion" value="modificar" required readonly>	
-										<input class="botones" type="submit" value="Modificar">';
+										<input id="BusRapBotABM" type="button" value="Modificar" onclick="validarmod()">';
 									}
 									else{ 
 										echo '<input class="botones" type="submit" value="Modificar" disabled>';
@@ -430,25 +535,25 @@
 									while($row = mysql_fetch_assoc($res)){
 										if ($row['Estado'] == 1){
 											// FORMULARIO DE MODIFICACION //
-											echo '<form class="FAbm" action="" method="GET">
+											echo '<form class="FAbm" name="fmod" action="" method="GET">
 												<label class="Reginput" for="Visble">Estado:</label>
 												<input class="Reginput" type="hidden" name="ID" value="', $row['ID'], '" required readonly>	
 												<input class="Reginput" type="text" name="Estad" value="'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '" required readonly><br>
 												<label class="Reginput" for="NombreUsuario">Nombre Usuario:</label>
 												<input class="Reginput" type="text" name="NomUs" value="', $row['Nombre'], '" placeholder="Usuario" maxlength="10" required><br>
 												<label class="Reginput" for="NombreApellido">Nombre y Apellido:</label>
-												<input class="Reginput" type="text" name="NomApe"  value="', $row['NombreApellido'], '" placeholder="Nombre Apellido" maxlength="45" onkeypress="return LetrasEspacio(event)"  required><br>
+												<input class="Reginput" type="text" name="NomApe"  value="', $row['NombreApellido'], '" placeholder="Nombre Apellido" maxlength="30" onkeypress="return LetrasEspacio(event)"  required><br>
 												<label class="Reginput" for="DNI">DNI:</label>
-												<input class="Reginput" type="text" name="DNI" value="', $row['DNI'], '" placeholder="Ej: 37148135" maxlength="10" onkeypress="return Numeros(event);"  required readonly><br>
+												<input class="Reginput" type="text" name="DNI" value="', $row['DNI'], '" placeholder="Ej: 37148135" maxlength="8" onkeypress="return Numeros(event);"  required readonly><br>
 												<label class="Reginput" for="Telefono">Telefono:</label>
-												<input class="Reginput" type="text" name="Tel" value="', $row['Telefono'], '" placeholder="Ej: 011-4189054" maxlength="10" onkeypress="return NumerosGuion(event);" required><br>
+												<input class="Reginput" type="text" name="Tel" value="', $row['Telefono'], '" placeholder="Ej: 0114189054" maxlength="8" onkeypress="return NumerosGuion(event);"><br>
 												<label class="Reginput" for="Direccion">Direccion:</label>
-												<input class="Reginput" type="text" name="Dir" value="', $row['Direccion'], '" placeholder="Ej: Calle #Numero" maxlength="45" required><br>
+												<input class="Reginput" type="text" name="Dir" value="', $row['Direccion'], '" placeholder="Ej: Calle #Numero" maxlength="30"><br>
 												<label class="Reginput" for="Mail">Mail:</label>
-												<input class="Reginput" id="id_mail4" type="text" name="Mail" value="', $row['Contacto'], '" placeholder="Ej: nombre@correo.com" maxlength="45" onblur="validarEmail()" required><br>';									
+												<input class="Reginput" id="id_mail4" type="text" name="Mail" value="', $row['Contacto'], '" placeholder="Ej: nombre@correo.com" maxlength="30" onblur="validarEmail()" required><br>';									
 												if ($row['Estado'] == 1){ 
 													echo '<input class="Reginput" type="hidden" name="accion" value="modificar" required readonly>	
-													<input class="botones" type="submit" value="Modificar">';
+													<input id="BusRapBotABM" type="button" value="Modificar" onclick="validarmod()">';
 												}
 												else{ 
 													echo '<input class="botones" type="submit" value="Modificar" disabled>';
@@ -471,14 +576,14 @@
 	?>
 						<div id='ABMDiv'>
 							<!-- FORMULARIO DE INGRESO PERIODO -->
-							<form class='FAbm' action="" method="GET">
+							<form class='FAbm' name="fperiodo" action="" method="GET">
 									<label for="periodo">Ingrese periodo de tiempo:</label></br>
 									&nbsp;&nbsp;&nbsp;&nbsp;<label class="AVinput" for="periodo">Fecha Inicial:</label>
-									<input type="date" name="Fini" required></br>
+									<input type="date" name="Fini" id="datepickerLimInf" required></br>
 									&nbsp;&nbsp;&nbsp;&nbsp;<label class="AVinput" for="periodo">Fecha Final:</label>
-									<input type="date" name="Ffin" required></br>
-									<input type="hidden" name="flag" value="con" required readonly>
-									<input class="botones" type="submit" value="Buscar">
+									<input type="date" name="Ffin" id="datepickerLimSup" required></br>
+									<input type="hidden" name="flag" value="con" required readonly>									
+									<input class="botones" type="button" value="Buscar" onclick="validarperiodo()">	
 							</form>
 	<?php	
 							if (!empty($_GET['Fini']) && !empty($_GET['Ffin'])){

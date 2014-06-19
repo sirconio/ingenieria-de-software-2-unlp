@@ -37,23 +37,30 @@
 				if (confirm("Desea cambiar el estado del pedido a entregado?")){
 					location.href="PerfilPedidos.php?pedido=true&Is=" + ISBN + "&Dn=" + DNI;
 				}
-				else{
-					alert("La operacion no se realizo");
-				}
 			}
-			<!-- MENSAJE DE RESPUESTA A MODIFICACION DE PEDIDOS -->
-			function MensajeMod(Msj){
+			<!-- MENSAJE DE RESPUESTA A MODIFICACION DE PEDIDOS SATISFACTORIA -->
+			function MensajeMod(Msj){				
+				location.href="PerfilPedidos.php?flag=lista&respmsg="+Msj;
+			}
+			<!-- MENSAJE DE RESPUESTA A MODIFICACION DE PEDIDOS ERRONEA -->
+			function Error(Msj){
 				alert(Msj);
-				location.href="PerfilPedidos.php";
+				location.href="PerfilPedidos.php?flag=env";
 			}
 			<!-- ACTIVACION DEL FLAG DE ELIMNAR CUENTA -->
 			function Eliminar(){
 				if (confirm("Desea elimnar su cuenta?")){
 					location.href="PerfilCuenta.php?borrar=true";
 				}
-				else{
-					alert("La operacion no se realizo");
-				}
+			}
+			<!--VALIDACIONES DE CAMPOS -->
+			function validarbusrap (){
+				if (document.fbusrap.BusRap.value.length==0){
+				   alert("Tiene que completar el campo de busqueda")
+				   document.fbusrap.BusRap.focus()
+				   return 0;
+				}			
+				document.fbusrap.submit(); 		
 			}
 		</script>	
 	</head>
@@ -74,9 +81,9 @@
 			<div id='imglogo'><a href="index.php"><img src="Logo1.gif" width="85%" height="475%"></a></div> 
 			<!-- BARRA DE BUSQUEDA RAPIDA -->
 			<div id='barrabusqueda' action="Busqueda.php" method="GET">
-				<form>
+				<form name="fbusrap">
 					<input size="40" type="text" name="BusRap" placeholder="Autor, Titulo, ISBN" required>
-					<input id="BusRapBot"  type='submit' value='Busqueda Rapida'/>
+					<input id="BusRapBot" type="button" value="Busqueda Rapida" onclick="validarbusrap()">
 				</form>
 			</div>
 			<!-- CONTROL DE SESIONES -->
@@ -88,12 +95,22 @@
 				ConexionBaseDatos ($bd);
 				// CAMBIAR PEDIDO A RECIBIDO, SI PEDIDO = TRUE //
 				if (!empty($_GET['pedido']) && $_GET['pedido'] == 'true'){
-					PedidoEntregado($_GET['Is'], $_GET['Dn'], $AltMsg);
+					$Comp = false;
+					PedidoEntregado($_GET['Is'], $_GET['Dn'], $AltMsg, $Comp);
+					if ($Comp){
 	?>
 					<script languaje="javascript"> 	
 						MensajeMod("<?=$AltMsg?>");	
 					</script>
 	<?php
+					}
+					else{
+	?>
+						<script languaje="javascript"> 	
+							Error("<?=$AltMsg?>");	
+						</script>
+	<?php						
+					}
 				}
 				// FLAG = TRUE, INDICA QUE SE PRESIONO SOBRE EL BOTON CERRAR SESION
 				if (!empty($_GET['flag']) && $_GET['flag'] == 'true'){
@@ -160,9 +177,14 @@
 	<?php		
 				if (!empty($_GET['flag']) && $_GET['flag'] == 'lista'){
 	?>
-					<!-- TEXTO -->
-					<div id='textoperfil'><samp>Lista de todos los pedidos:</samp></div>
-		<?php
+					<!-- TEXTO -->			
+	<?php
+					if(!empty($_GET['respmsg'])){
+						echo '<div id="textoperfil"><samp>>>>>>>' .$_GET['respmsg'] .'<<<<<<</samp></br><samp>Lista de todos los pedidos:</samp></div>';
+					}
+					else{
+						echo '<div id="textoperfil"><samp>Lista de todos los pedidos:</samp></div>';
+					}
 					echo '<div id="PedidosUsuario">';
 					ConsultaPedidos ($res, $_SESSION["ID"]);
 					if(!$res) {
@@ -212,11 +234,6 @@
 			?>																	
 											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
 			<?php		
-										}
-										else{
-			?>		
-											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
-			<?php
 										}
 									echo "</tr>";
 									$ant = $row['ISBN'];
@@ -289,11 +306,6 @@
 			?>																	
 											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
 			<?php		
-										}
-										else{
-			?>		
-											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
-			<?php
 										}	
 									echo "</tr>";
 									$ant = $row['ISBN'];
@@ -367,11 +379,6 @@
 											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
 			<?php		
 										}
-										else{
-			?>		
-											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
-			<?php
-										}
 									echo "</tr>";
 									$ant = $row['ISBN'];
 								}
@@ -443,11 +450,6 @@
 			?>																	
 											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
 			<?php		
-										}
-										else{
-			?>		
-											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' disabled /></td>
-			<?php
 										}
 									echo "</tr>";
 									$ant = $row['ISBN'];

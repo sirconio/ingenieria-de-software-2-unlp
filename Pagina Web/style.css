@@ -232,7 +232,7 @@
 				}
 					#textoreg{
 						position:absolute;
-						top:5%;
+						top:0%;
 						right:3%;
 						left:17%;
 						font-weight:bold;
@@ -614,7 +614,7 @@
 						Top: 10%;
 						left:10%;
 						width: 35%;
-						height: 35%;
+						height: 37%;
 						padding:1%;
 						border: 3px double #FFFFFF;
 						background-image:url('Fondo9.jpg');
@@ -626,7 +626,7 @@
 						Top: 55%;
 						left:10%;
 						width: 35%;
-						height: 35%;
+						height: 37%;
 						padding:1%;
 						border: 3px double #FFFFFF;
 						background-image:url('Fondo9.jpg');
@@ -637,8 +637,8 @@
 						overflow:auto;
 						Top: 30%;
 						left:50%;
-						width: 35%;
-						height: 35%;
+						width: 37%;
+						height: 37%;
 						padding:1%;
 						border: 3px double #FFFFFF;
 						background-image:url('Fondo9.jpg');
@@ -739,7 +739,7 @@
 					/* ADMINISTRAR PEDIDOS */
 					#textoadmped{
 						position:absolute;
-						top:4%;
+						top:0%;
 						right:3%;
 						left:8%;
 						font-weight:bold;
@@ -807,7 +807,7 @@
 				}
 					#textoperfil{
 						position:absolute;
-						top:5%;
+						top:0%;
 						right:3%;
 						left:12%;
 						font-weight:bold;
@@ -870,7 +870,7 @@
 				}		
 					#textocarrito{
 						position:absolute;
-						top:5%;
+						top:0%;
 						right:3%;
 						left:12%;
 						font-weight:bold;
