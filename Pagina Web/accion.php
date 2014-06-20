@@ -1339,34 +1339,104 @@
 				AND libro.ISBN = ' .$ISBN;		
 		$res = mysql_query($cons);
 	}
+	// BUSQUEDA PARA USURIO NO REGISTRADO PAGINADO //
+	function ConsultaBusquedaPag (&$res, $NroPag, &$Aut, &$Tit, &$IS){
+		$pag = (10*$NroPag);
+		if	(!empty($Aut)){$Autor = '"'.$Aut.'"';}else{$Autor = 'autor.NombreApellido';}
+		if	(!empty($Tit)){$Titulo = '"'.$Tit.'"';}else{$Titulo = 'libro.Titulo';}
+		if	(!empty($IS)){$ISBN = '"'.$IS.'"';}else{$ISBN = 'libro.ISBN';}
+		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+				FROM libro, autor, idioma, disponibilidad
+				WHERE autor.Id_Autor = libro.Id_Autor
+				AND idioma.Id_Idioma = libro.Id_Idioma
+				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
+				AND autor.NombreApellido = ' .$Autor .'
+				AND libro.Titulo = ' .$Titulo .'
+				AND libro.ISBN = ' .$ISBN . '
+				LIMIT ' .$pag .',10';		
+		$res = mysql_query($cons);
+	}
 	// BUSQUEDA PARA USUARIO REGISTRADO //
 	function ConsultaBusqueda2 (&$res, &$Aut, &$Tit, &$IS, &$Et){
 		if	(!empty($Aut)){$Autor = '"'.$Aut.'"';}else{$Autor = 'autor.NombreApellido';}
 		if	(!empty($Tit)){$Titulo = '"'.$Tit.'"';}else{$Titulo = 'libro.Titulo';}
 		if	(!empty($IS)){$ISBN = '"'.$IS.'"';}else{$ISBN = 'libro.ISBN';}
 		if (!empty($Et)){
-			$eti = ' AND etiqueta.Descripcion IN (';
+			$eti = 'AND libro.ISBN = etiqueta_libro.ISBN 
+					AND etiqueta.Descripcion IN (';
 			$temp = '';
 			foreach ($Et as &$valor){
-					$temp = $temp .'"' .$valor .'",';
+					$temp = $temp .'"' .$valor .'", ';
 			}
-			$eti = $eti . $temp . '"")';
+			$eti = $eti . $temp . '" ")';
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, 
+			disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			FROM libro, autor, idioma, disponibilidad, etiqueta, etiqueta_libro
+			WHERE autor.Id_Autor = libro.Id_Autor
+			AND idioma.Id_Idioma = libro.Id_Idioma
+			AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad				
+			AND etiqueta.Id_Etiqueta = etiqueta_libro.Id_Etiqueta
+			AND autor.NombreApellido = ' .$Autor .'
+			AND libro.Titulo = ' .$Titulo .'
+			AND libro.ISBN = ' .$ISBN .' '
+			.$eti;		
 		}
 		else{
 			$eti = '';
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, 
+				disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+				FROM libro, autor, idioma, disponibilidad
+				WHERE autor.Id_Autor = libro.Id_Autor
+				AND idioma.Id_Idioma = libro.Id_Idioma
+				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad						
+				AND autor.NombreApellido = ' .$Autor .'
+				AND libro.Titulo = ' .$Titulo .'
+				AND libro.ISBN = ' .$ISBN .' '
+				.$eti;		
 		}
-		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, 
+		$res = mysql_query($cons);
+	}
+	// BUSQUEDA PARA USUARIO REGISTRADO PAGINADO //
+	function ConsultaBusqueda2Pag (&$res, $NroPag, &$Aut, &$Tit, &$IS, &$Et){
+		$pag = (10*$NroPag);
+		if	(!empty($Aut)){$Autor = '"'.$Aut.'"';}else{$Autor = 'autor.NombreApellido';}
+		if	(!empty($Tit)){$Titulo = '"'.$Tit.'"';}else{$Titulo = 'libro.Titulo';}
+		if	(!empty($IS)){$ISBN = '"'.$IS.'"';}else{$ISBN = 'libro.ISBN';}
+		if (!empty($Et)){
+			$eti = 'AND libro.ISBN = etiqueta_libro.ISBN
+					AND etiqueta.Descripcion IN (';
+			$temp = '';
+			foreach ($Et as &$valor){
+					$temp = $temp .'"' .$valor .'", ';
+			}
+			$eti = $eti . $temp . '" ")';
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, 
 				disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
 				FROM libro, autor, idioma, disponibilidad, etiqueta, etiqueta_libro
 				WHERE autor.Id_Autor = libro.Id_Autor
 				AND idioma.Id_Idioma = libro.Id_Idioma
-				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
-				AND libro.ISBN = etiqueta_libro.ISBN
+				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad				
 				AND etiqueta.Id_Etiqueta = etiqueta_libro.Id_Etiqueta
 				AND autor.NombreApellido = ' .$Autor .'
 				AND libro.Titulo = ' .$Titulo .'
-				AND libro.ISBN = ' .$ISBN .''
-				.$eti;		
+				AND libro.ISBN = ' .$ISBN .' '
+				.$eti . '
+				LIMIT ' .$pag .',10';	
+		}
+		else{
+			$eti = '';
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, 
+					disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+					FROM libro, autor, idioma, disponibilidad
+					WHERE autor.Id_Autor = libro.Id_Autor
+					AND idioma.Id_Idioma = libro.Id_Idioma
+					AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad									
+					AND autor.NombreApellido = ' .$Autor .'
+					AND libro.Titulo = ' .$Titulo .'
+					AND libro.ISBN = ' .$ISBN .' '
+					.$eti . '
+					LIMIT ' .$pag .',10';	
+		}			
 		$res = mysql_query($cons);
 	}
 	// FILTRADO CON UNA TABLA USUARIO NO REGISTRADO //
@@ -1392,16 +1462,49 @@
 				AND idioma.Descripcion = ' .$Idioma .$IS;
 		$res = mysql_query($cons);
 	}
+	// FILTRADO CON UNA TABLA USUARIO NO REGISTRADO PAGINADO //
+	function ConsultaFiltrosPag (&$res, $NroPag, &$Pinf, &$Psup, &$Idio, &$Tab){
+		$pag = (10*$NroPag);
+		if	(!empty($Pinf)){$PrecInf = '"'.$Pinf.'"';}else{$PrecInf = 'libro.Precio';}
+		if	(!empty($Psup)){$PrecSup = '"'.$Psup.'"';}else{$PrecSup = 'libro.Precio';}
+		if	(!empty($Idio)){$Idioma = '"'.$Idio.'"';}else{$Idioma = 'idioma.Descripcion';}
+		if  (!empty($Tab)){
+			$IS = ' AND libro.ISBN IN ( ';
+			$temp = '';
+			foreach ($Tab as &$valor){
+				$temp = $temp .$valor .', ';
+			}
+			$IS = $IS . $temp . '"")';
+		}
+		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+				FROM libro, autor, idioma, disponibilidad
+				WHERE autor.Id_Autor = libro.Id_Autor
+				AND idioma.Id_Idioma = libro.Id_Idioma
+				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
+				AND libro.Precio >= ' .$PrecInf .'
+				AND libro.Precio <= ' .$PrecSup .'
+				AND idioma.Descripcion = ' .$Idioma .$IS .'
+				LIMIT ' .$pag .',10';
+		$res = mysql_query($cons);
+	}
 	// FILTRADO CON UNA TABLA USUARIO REGISTRADO //
-	function ConsultaFiltros2 (&$res, &$Preinf, &$Presup, &$Idio, &$Disp, &$Paginf, &$Pagsup, &$Finf, &$Fsup){
+	function ConsultaFiltros2 (&$res, &$Preinf, &$Presup, &$Idio, &$Disp, &$Paginf, &$Pagsup, &$Finf, &$Fsup, &$Tab){
 		if	(!empty($Preinf)){$PrecInf = '"'.$Preinf.'"';}else{$PrecInf = 'libro.Precio';}
 		if	(!empty($Presup)){$PrecSup = '"'.$Presup.'"';}else{$PrecSup = 'libro.Precio';}
 		if	(!empty($Idio)){$Idioma = '"'.$Idio.'"';}else{$Idioma = 'idioma.Descripcion';}
 		if	(!empty($Disp)){$Dispo = '"'.$Disp.'"';}else{$Dispo = 'disponibilidad.Descripcion';}
 		if	(!empty($Paginf)){$PagiInf = '"'.$Paginf.'"';}else{$PagiInf = 'libro.CantidadPaginas';}
 		if	(!empty($Pagsup)){$PagiSup = '"'.$Pagsup.'"';}else{$PagiSup = 'libro.CantidadPaginas';}
-		if	(!empty($Finf)){$FecInf = $Finf;}else{$FecInf = 'libro.Fecha';}
-		if	(!empty($Fsup)){$FecSup = $Fsup;}else{$FecSup = 'libro.Fecha';}
+		if	(!empty($Finf)){$dinf = date('Y-m-d', strtotime($Finf));$dateinf = '"'.$dinf .'"';}else{$dateinf = 'libro.Fecha';}
+		if	(!empty($Fsup)){$dsup = date('Y-m-d', strtotime($Fsup));$datesup = '"'.$dsup .'"';}else{$datesup = 'libro.Fecha';}
+		if  (!empty($Tab)){
+			$IS = ' AND libro.ISBN IN ( ';
+			$temp = '';
+			foreach ($Tab as &$valor){
+				$temp = $temp .$valor .', ';
+			}
+			$IS = $IS . $temp . '"")';
+		}
 		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
 				FROM libro, autor, idioma, disponibilidad
 				WHERE autor.Id_Autor = libro.Id_Autor
@@ -1413,8 +1516,43 @@
 				AND disponibilidad.Descripcion = ' .$Dispo .'
 				AND libro.CantidadPaginas >= ' .$PagiInf .'
 				AND libro.CantidadPaginas <= ' .$PagiSup .'
-				AND libro.Fecha >= ' .$FecInf .'
-				AND libro.Fecha <= ' .$FecSup;		
+				AND libro.Fecha >= ' .$dateinf .'
+				AND libro.Fecha <= ' .$datesup .$IS;		
+		$res = mysql_query($cons);
+	}
+	// FILTRADO CON UNA TABLA USUARIO REGISTRADO PAGINADO //
+	function ConsultaFiltros2Pag (&$res, $NroPag, &$Preinf, &$Presup, &$Idio, &$Disp, &$Paginf, &$Pagsup, &$Finf, &$Fsup, &$Tab){
+		$pag = (10*$NroPag);
+		if	(!empty($Preinf)){$PrecInf = '"'.$Preinf.'"';}else{$PrecInf = 'libro.Precio';}
+		if	(!empty($Presup)){$PrecSup = '"'.$Presup.'"';}else{$PrecSup = 'libro.Precio';}
+		if	(!empty($Idio)){$Idioma = '"'.$Idio.'"';}else{$Idioma = 'idioma.Descripcion';}
+		if	(!empty($Disp)){$Dispo = '"'.$Disp.'"';}else{$Dispo = 'disponibilidad.Descripcion';}
+		if	(!empty($Paginf)){$PagiInf = '"'.$Paginf.'"';}else{$PagiInf = 'libro.CantidadPaginas';}
+		if	(!empty($Pagsup)){$PagiSup = '"'.$Pagsup.'"';}else{$PagiSup = 'libro.CantidadPaginas';}
+		if	(!empty($Finf)){$dinf = date('Y-m-d', strtotime($Finf));$dateinf = '"'.$dinf .'"';}else{$dateinf = 'libro.Fecha';}
+		if	(!empty($Fsup)){$dsup = date('Y-m-d', strtotime($Fsup));$datesup = '"'.$dsup .'"';}else{$datesup = 'libro.Fecha';}
+		if  (!empty($Tab)){
+			$IS = ' AND libro.ISBN IN ( ';
+			$temp = '';
+			foreach ($Tab as &$valor){
+				$temp = $temp .$valor .', ';
+			}
+			$IS = $IS . $temp . '"")';
+		}
+		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+				FROM libro, autor, idioma, disponibilidad
+				WHERE autor.Id_Autor = libro.Id_Autor
+				AND idioma.Id_Idioma = libro.Id_Idioma
+				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
+				AND libro.Precio >= ' .$PrecInf .'
+				AND libro.Precio <= ' .$PrecSup .'	
+				AND idioma.Descripcion = ' .$Idioma .'
+				AND disponibilidad.Descripcion = ' .$Dispo .'
+				AND libro.CantidadPaginas >= ' .$PagiInf .'
+				AND libro.CantidadPaginas <= ' .$PagiSup .'
+				AND libro.Fecha >= ' .$dateinf .'
+				AND libro.Fecha <= ' .$datesup  .$IS .'
+				LIMIT ' .$pag .',10';		
 		$res = mysql_query($cons);
 	}
 	// BUSQUEDA RAPIDA //
@@ -1427,6 +1565,20 @@
 				AND ( libro.Titulo LIKE "%' .$BusRap .'%" 
 				OR    autor.NombreApellido LIKE "%' .$BusRap .'%" 
 				OR	  libro.ISBN LIKE "%'.$BusRap .'%")';			
+		$res = mysql_query($cons);
+	}
+	// BUSQUEDA RAPIDA PAGINADO //
+	function ConsultaBusquedaRapidaPag (&$res, $NroPag, &$BusRap){
+		$pag = (10*$NroPag);
+		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+				FROM libro, autor, idioma, disponibilidad
+				WHERE autor.Id_Autor = libro.Id_Autor
+				AND idioma.Id_Idioma = libro.Id_Idioma
+				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
+				AND ( libro.Titulo LIKE "%' .$BusRap .'%" 
+				OR    autor.NombreApellido LIKE "%' .$BusRap .'%" 
+				OR	  libro.ISBN LIKE "%'.$BusRap .'%")
+				LIMIT ' .$pag .',10';			
 		$res = mysql_query($cons);
 	}
 	// GENERADOR DE SELECT //
@@ -1592,6 +1744,158 @@
 								AND idioma.Id_Idioma = libro.Id_Idioma
 								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
 								ORDER BY idioma.Descripcion DESC';
+			$res = mysql_query($cons);	
+		}			
+	}
+	// GENERADOR DE ORDENACION PAGINADO //
+	function ConsultaOrdenamientoPag (&$res, $NroPag, &$orden, &$Tab){
+		$pag = (10*$NroPag);
+		if  (!empty($Tab)){
+			$IS = ' AND libro.ISBN IN ( ';
+			$temp = '';
+			foreach ($Tab as &$valor){
+				$temp = $temp .$valor .', ';
+			}
+			$IS = $IS . $temp . '"")';
+		}
+		if ($orden == 'PrecAsc') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.Precio ASC
+								LIMIT ' .$pag .',10';
+			$res = mysql_query($cons);					
+		}
+		elseif ($orden == 'PrecDes') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.Precio DESC
+								LIMIT ' .$pag .',10';
+			$res = mysql_query($cons);						
+		}
+		elseif  ($orden == 'TitAsc') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.Titulo ASC
+								LIMIT ' .$pag .',10';
+			$res = mysql_query($cons);	
+		}						
+		elseif  ($orden == 'TitDes') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.Titulo DESC
+								LIMIT ' .$pag .',10';
+			$res = mysql_query($cons);	
+		}
+		elseif  ($orden == 'AutAsc') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible, libro.Hojear AS Indice
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY autor.NombreApellido ASC
+								LIMIT ' .$pag .',10';
+			$res = mysql_query($cons);	
+		}						
+		elseif  ($orden == 'AutDes') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY autor.NombreApellido DESC
+								LIMIT ' .$pag .',10';
+			$res = mysql_query($cons);	
+		}			
+		elseif  ($orden == 'ISBNAsc') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.ISBN ASC
+								LIMIT ' .$pag .',10';
+			$res = mysql_query($cons);	
+		}						
+		elseif  ($orden == 'ISBNDes') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.ISBN DESC
+								LIMIT ' .$pag .',10';
+			$res = mysql_query($cons);	
+		}
+		elseif  ($orden == 'CPAsc') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.CantidadPaginas ASC
+								LIMIT ' .$pag .',10';
+			$res = mysql_query($cons);	
+		}						
+		elseif  ($orden == 'CPDes') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.CantidadPaginas DESC
+								LIMIT ' .$pag .',10';
+			$res = mysql_query($cons);	
+		}	
+		elseif  ($orden == 'FecAsc') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.Fecha ASC
+								LIMIT ' .$pag .',10';
+			$res = mysql_query($cons);	
+		}						
+		elseif  ($orden == 'FecDes') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY libro.Fecha DESC
+								LIMIT ' .$pag .',10';
+			$res = mysql_query($cons);	
+		}
+		elseif  ($orden == 'IdioAsc') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible, libro.Hojear AS Indice
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY idioma.Descripcion ASC
+								LIMIT ' .$pag .',10';
+			$res = mysql_query($cons);	
+		}						
+		elseif  ($orden == 'IdioDes') {
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible, libro.Hojear AS Indice
+								FROM libro, autor, idioma, disponibilidad
+								WHERE autor.Id_Autor = libro.Id_Autor
+								AND idioma.Id_Idioma = libro.Id_Idioma
+								AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad' .$IS .'
+								ORDER BY idioma.Descripcion DESC
+								LIMIT ' .$pag .',10';
 			$res = mysql_query($cons);	
 		}			
 	}

@@ -252,7 +252,7 @@
 								<label class="Reginput" for="DNI">*DNI:</label>
 								<input class="Reginput" id="id_Dni"type="text" name="DNI" value="', $_GET['DNI'], '" placeholder="Ej: 37148135" maxlength="8" onkeypress="return Numeros(event);" required><br>	
 								<label class="Reginput" for="Telefono">Telefono:</label>
-								<input class="Reginput" type="tel" id="idtel" name="Tel" value="', $_GET['Tel'], '" placeholder="Ej: 0114189054" maxlength="8" onkeypress="return NumerosGuion(event);" onblur="validarTelefono()" ><br>
+								<input class="Reginput" type="tel" id="idtel" name="Tel" value="', $_GET['Tel'], '" placeholder="Ej: 0114189054" maxlength="8" onkeypress="return Numeros(event);" onblur="validarTelefono()" ><br>
 								<label class="Reginput" for="Direccion">Direccion:</label>
 								<input class="Reginput" type="text" size="30" name="Dir" value="', $_GET['Dir'], '" placeholder="Ej: Calle #Numero" maxlength="30" ><br>
 								<label class="Reginput" for="Mail">*Mail:</label>
@@ -275,7 +275,7 @@
 								<label class="Reginput" for="DNI">*DNI:</label>
 								<input class="Reginput" id="id_Dni"type="text" name="DNI" placeholder="Ej: 37148135" maxlength="8" onkeypress="return Numeros(event);" required><br>	
 								<label class="Reginput" for="Telefono">Telefono:</label>
-								<input class="Reginput" type="tel" id="idtel" name="Tel" placeholder="Ej: 0114189054" maxlength="8" onkeypress="return NumerosGuion(event);" onblur="validarTelefono()" ><br>
+								<input class="Reginput" type="tel" id="idtel" name="Tel" placeholder="Ej: 0114189054" maxlength="8" onkeypress="return Numeros(event);" onblur="validarTelefono()" ><br>
 								<label class="Reginput" for="Direccion">Direccion:</label>
 								<input class="Reginput" type="text" size="30" name="Dir" placeholder="Ej: Calle #Numero" maxlength="30" ><br>
 								<label class="Reginput" for="Mail">*Mail:</label>

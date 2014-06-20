@@ -3,14 +3,9 @@
       header( "Cache-Control: no-cache, must-revalidate" );
       header( "Pragma: no-cache" );
 	  session_start();
-	  if(empty($_SESSION['estado'])){
+	  if(!empty($_SESSION['categoria']) && $_SESSION['categoria'] != 'Administrador'){
 		header ("Location: index.php");
-		}
-		else{
-			if ($_SESSION['categoria'] != 'Normal'){
-				header ("Location: index.php");
-			}
-		}
+	  }
 ?>
 <html>
 	<head>
@@ -37,10 +32,20 @@
 			function busqueda (bus){
 				location.href="Busqueda.php?BusRap=" + bus;
 			}
+			function respuesta(Nom){				
+				location.href="Contacto.php?respnom="+Nom;
+			}	
 			<!-- VALIDACIONES DE CAMPOS -->
 			function NumerosGuion(e){
 				var keynum = window.event ? window.event.keyCode : e.which;
 				if ((keynum == 8) || (keynum == 45))
+				return true;
+				 
+				return /\d/.test(String.fromCharCode(keynum));
+			}
+			function Numeros(e){
+				var keynum = window.event ? window.event.keyCode : e.which;
+				if ((keynum == 8))
 				return true;
 				 
 				return /\d/.test(String.fromCharCode(keynum));
@@ -62,6 +67,32 @@
 				}			
 				document.fbusrap.submit(); 		
 			}
+			function validarenvio (){
+				entro = false;
+				msg = "Tiene que completar el/los campo/s de: ";
+				if (document.fenvio.Nombre.value.length==0){
+				   	msg = msg + "Nombre; "
+					entro = true;
+				}	
+				if (document.fenvio.mail.value.length==0){
+				   	msg = msg + "Mail; "
+					entro = true;
+				}	
+				if (document.fenvio.telefono.value.length==0){
+				   	msg = msg + "Telefono/Celular; "
+					entro = true;
+				}	
+				if (document.fenvio.consulta.value.length==0){
+				   	msg = msg + "Consulta; "
+					entro = true;
+				}					
+				if(entro){
+				   alert(msg)
+				   document.fenvio.NomUs.focus()
+				   return 0;
+				}			
+				document.fenvio.submit(); 		
+			}	
 			<!-- FIN VALIDACIONES DE CAMPOS -->
 		</script>	
 	</head>
@@ -140,7 +171,7 @@
 					<li><a href="Busqueda.php">Catalogo</a></li>
 					<li><a href="QuienesSomos.php">Quienes Somos?</a></li>
 	<?php
-					if ($_SESSION['categoria'] == 'Normal'){
+					if ($_SESSION['categoria'] != 'Administrador'){
 	?>
 					<li><a href="Contacto.php">Contacto</a></li>
 	<?php	
@@ -150,7 +181,12 @@
 						<li><a href="Administrador.php">Modo Administrador</a></li>
 	<?php	
 					}
+					if (empty($_SESSION['estado'])){
 	?>
+						<li><a href="Registrarme.php">Registrate</a></li>
+	<?php
+					}
+	?>				
 				</ul>
 			</div>
 			<!-- CONTENIDO CONTACTO -->
@@ -163,24 +199,28 @@
 						respuesta("<?=$_GET['Nombre']?>");
 					</script> 
 	<?php
+				}					
+				if(!empty($_GET['respnom'])){
+					echo '<div id="textoreg"><samp>>>>>>>' .$_GET['respnom'] .' : Su mensaje fue enviado con exito!<<<<<<</samp></div>';
 				}
 	?>
 				<!-- RECTANGULO DE CONTACTO -->	
 				<div id='textcontacto'> 
-					Dejenos su consulta: </br></br></br>
+					Dejenos su consulta: </br></br>
 					<!-- FORMULARIO CONTACTO -->
-					<form action="Contacto.php" method="GET">
-						<label class='contacto' for="lNombre">Nombre:</label>
+					<form name="fenvio" action="Contacto.php" method="GET">
+						<label class='contacto' for="lNombre">*Nombre:</label>
 						<input class='contacto' type="text" name="Nombre" placeholder="Usuario" maxlength="10" required>
-						<label class='contacto' for="lMail">E-mail:</label>
-						<input class='contacto' id="id_mail2" type="text" size="20" name="e-mail" placeholder="Ej: nombr@corr.com" maxlength="45" onblur="validarEmail()" required>
-						<label class='contacto' for="lTelefono">Telefono/Celular:</label>
-						<input class='contacto' type="text" name="telefono" placeholder="Ej: 011-4189054" maxlength="10" onkeypress="return NumerosGuion(event);" required></br>
+						<label class='contacto' for="lMail">*E-mail:</label>
+						<input class='contacto' id="id_mail2" type="text" size="20" name="mail" placeholder="Ej: nombr@corr.com" maxlength="30" onblur="validarEmail()" required>
+						<label class='contacto' for="lTelefono">*Telefono/Celular:</label>
+						<input class='contacto' type="text" name="telefono" placeholder="Ej: 0114189054" maxlength="8" onkeypress="return Numeros(event);" required></br>
 						<label class='contacto' for="lAusnto">Asunto:</label>
 						<input class='contacto' type="text" name="asunto" placeholder="Asunto" maxlength="10"></br>
-						<label class='contacto' for="lConsulta">Consulta:</label></br>
-						<textarea class='contacto' name="consulta" rows="10" cols="50" maxlength="255" placeholder="Escriba su consulta aqui..." required></textarea> 
-						<input class='contacto' type='submit' value='Enviar'/>
+						<label class='contacto' for="lConsulta">*Consulta:</label></br>
+						<textarea class='contacto' name="consulta" rows="10" cols="50" maxlength="255" placeholder="Escriba su consulta aqui..." required></textarea> 						
+						<input class='contacto' type="button" value="Enviar" onclick="validarenvio()"></br>
+						<label for="obligatorios">Los * son campos obligatorios</label>
 					</form>
 				</div>
 			</div>

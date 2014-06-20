@@ -272,14 +272,14 @@
 						position: absolute;
 						width: 70%;
 						top:12%;
-						left:15%;
+						left:10%;
 						right:20%;
 						border: 3px double #FFFFFF;
 						background-image:url('Fondo9.jpg');
 						background-size:contain;
 					}
 					.contacto{
-						margin:1.2%;
+						margin:0.5%;
 					}					
 				/* SECCION CATALOGO */
 					#imgbusqueda{
@@ -315,9 +315,9 @@
 					min-height: 300px;
 					min-width: 75%;
 					float: right;
-					top:8%;
+					top:0%;
 					right:0%;
-					height:75%;
+					height:90%;
 					width:75%;
 					text-align:justify;
 					font-weight:bold;
@@ -325,12 +325,44 @@
 					font-family:Georgia,"Times New Roman",Serif;
 					color: white;
 				}
+					#PaginasPedbusNO{
+						position:absolute;
+						top:90%;
+						left:2%;
+						height:5%;
+						width:62%;		
+						border: 3px groove #FFFFFF;
+						background-image:url('Fondo9.jpg');
+						overflow: auto;
+					}
+					#PaginasPedbusNO li {
+						display:inline;
+						padding-right: 1%;
+					}
+					#PaginasPedbusNO a:link,a:visited{
+						height:30%;
+						width:100%;
+						color:#FFFFFF;
+						text-decoration:none;
+					}
+					#PaginasPedbusNO a:hover,a:active{
+						cursor:pointer;
+						text-transform:uppercase;
+						color: #FFFFFF;
+					}	
+					#busquedarapNO{
+						position: absolute;
+						top:0%;
+						left:2%;	
+						width:50%;
+						z-index:4;
+					}
 					#TabCatNoReg{
 						position:absolute;
-						top:60%;
-						left:2.5%;
-						height:39%;
-						width:90%;
+						top:8%;
+						left:3%;
+						height:92%;
+						width:60%;
 						overflow: auto;
 					}
 					#TabCatNoReg table{
@@ -348,10 +380,11 @@
 					}	
 					#BusISCatNoReg{
 						position: absolute;
+						overflow:auto;
 						top:5%;
-						left:9%;
-						right:55%;
-						height:39%;
+						left:70%;
+						width:25%;
+						height:35%;
 						border: 3px groove #FFFFFF;
 						background-image:url('Fondo9.jpg');
 						background-size:contain;
@@ -370,10 +403,11 @@
 					}
 					#BusCatNoReg{
 						position: absolute;
+						overflow:auto;
 						top:13%;
-						left:9%;
-						right:55%;
-						height:31%;
+						left:70%;
+						width:25%;
+						height:28%;
 						border: 3px groove #FFFFFF;
 						background-image:url('Fondo9.jpg');
 						background-size:contain;
@@ -396,8 +430,8 @@
 					}
 					#OrdCatNoReg{
 						position: absolute;
-						top:50%;
-						left:3%;
+						top:0%;
+						left:43%;
 						width:40%;
 						z-index:4;
 					}
@@ -409,13 +443,13 @@
 					}
 					#FilCatNoReg{
 						position: absolute;
+						overflow:auto;
 						min-height:0%;
 						min-width:0%;
-						top:5%;
-						left:46%;
-						right:1%;
-						height:39%;
-						width:35%;
+						top:55%;
+						left:70%;						
+						height:35%;
+						width:25%;
 						text-align:left;
 						border: 3px groove #FFFFFF;
 						background-image:url('Fondo9.jpg');
@@ -443,20 +477,45 @@
 					overflow:auto;
 					min-height: 300px;
 					float: right;
-					height:93%;
+					height:98%;
 					width:79%;
 					text-align:justify;
 					font-weight:bold;
 					font-size:normal;
 					font-family:Georgia,"Times New Roman",Serif;
 					color: white;
-				}		
+				}							
+					#PaginasPedbus{
+						position:absolute;
+						top:92%;
+						left:7%;
+						height:5%;
+						width:62%;		
+						border: 3px groove #FFFFFF;
+						background-image:url('Fondo9.jpg');
+						overflow: auto;
+					}
+					#PaginasPedbus li {
+						display:inline;
+						padding-right: 1%;
+					}
+					#PaginasPedbus a:link,a:visited{
+						height:30%;
+						width:100%;
+						color:#FFFFFF;
+						text-decoration:none;
+					}
+					#PaginasPedbus a:hover,a:active{
+						cursor:pointer;
+						text-transform:uppercase;
+						color: #FFFFFF;
+					}	
 					#TabCatReg{
 						position:absolute;
-						top:60%;
+						top:7%;
 						left:8%;
 						height:85%;
-						width:90%;					
+						width:60%;					
 						overflow: auto;
 					}	
 					#TabCatReg table{
@@ -474,21 +533,40 @@
 					}	
 					#OrdCatReg{
 						position: absolute;
-						top:50%;
-						left:8%;	
+						top:0%;
+						left:44%;	
 						width:50%;
 						z-index:4;
 					}
+					#busquedarap{
+						position: absolute;
+						top:0%;
+						left:5%;	
+						width:50%;
+						z-index:4;
+					}
+					#FilLab samp{
+						position: absolute;					
+						top:50%;
+						left:70%;
+						font-weight:bold;
+						font-size:normal;
+						font-family:Georgia,"Times New Roman",Serif;
+						color: white;
+					}
 					#FilCatReg{
 						position: absolute;
-						top:1%;
-						left:52%;
-						width:43%;
+						top:54%;
+						left:70%;
+						width:28%;
 						height:45%;
 						overflow:auto;
 						border: 3px groove #FFFFFF;
 						background-image:url('Fondo9.jpg');
-						background-size:contain;
+						background-size:contain;						
+						font-size:85%;
+						font-family:Georgia,"Times New Roman",Serif;
+						color: white;
 					}	
 					#FilCatReg label{
 						margin:0.5%;
@@ -496,18 +574,27 @@
 						font-weight:bold;
 					}
 					#FilCatRegBot{
-						position:relative;	
-						bottom:0%;	
+						position:relative;							
 						left:20%;
 						width:45%;
 					}
+					#BusLab samp{
+						position: absolute;					
+						top:0%;
+						left:70%;
+						font-weight:bold;
+						font-size:normal;
+						font-family:Georgia,"Times New Roman",Serif;
+						color: white;
+					}
 					#BusISCatReg{
 						position: absolute;
-						top:1%;
-						left:8%;
+						overflow:auto;
+						top:4%;
+						left:70%;
 						right:55%;
 						height:45%;
-						width:42%;
+						width:28%;
 						border: 3px groove #FFFFFF;
 						background-image:url('Fondo9.jpg');
 						background-size:contain;
@@ -516,13 +603,17 @@
 					#BusISCatReg label{
 						margin:0.5%;
 						color: white;
-						font-weight:bold;
+						background-size:contain;						
+						font-size:85%;
+						font-family:Georgia,"Times New Roman",Serif;
+						color: white;
 					}
 					#BusCatReg{
 						position: absolute;
-						top:8%;
-						left:8%;
-						width:42%;
+						overflow:auto;
+						top:11%;
+						left:70%;
+						width:28%;
 						height:38%;
 						border: 3px groove #FFFFFF;
 						background-image:url('Fondo9.jpg');
@@ -532,7 +623,10 @@
 					#BusCatReg label{
 						margin:0.5%;
 						color: white;
-						font-weight:bold;
+						background-size:contain;						
+						font-size:85%;
+						font-family:Georgia,"Times New Roman",Serif;
+						color: white;
 					}
 					#BusCatRegBot{
 						position:absolute;
@@ -548,6 +642,10 @@
 						width:70%;
 						overflow: auto;
 						border: 1px dashed #FFFFFF;
+						background-size:contain;						
+						font-size:85%;
+						font-family:Georgia,"Times New Roman",Serif;
+						color: white;
 					}
 					#Caracteristicas input{
 						margin:1%;

@@ -115,7 +115,7 @@
 					<li><a href="Busqueda.php">Catalogo</a></li>
 					<li><a href="QuienesSomos.php">Quienes Somos?</a></li>
 	<?php
-					if ($_SESSION['categoria'] == 'Normal'){
+					if ($_SESSION['categoria'] != 'Administrador'){
 	?>
 						<li><a href="Contacto.php">Contacto</a></li>
 	<?php	

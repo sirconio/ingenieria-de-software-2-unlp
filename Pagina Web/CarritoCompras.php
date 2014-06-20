@@ -11,7 +11,22 @@
 	<head>
 		<title>CookBook</title>
 		<link type="text/css" rel="stylesheet" href="style.css">
+		
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+		<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+		<link rel="stylesheet" href="/resources/demos/style.css">
+		
 		<script>
+			<!-- DATAPICKER FECHA VENCIMIENTO -->
+			$(function() {	
+				$("#datepicker").datepicker({
+					changeMonth: true,
+					changeYear: true,
+					showOtherMonths: true,
+					selectOtherMonths: true
+				});
+			});
 			<!-- VENTANA EMERGENTE DE INICIO DE SESION -->
 			function acceso(){
 				window.open("InicioSesion.php","myWindow","status = 1, height = 150, width = 350, resizable = no" )	
@@ -84,6 +99,10 @@
 				   	msg = msg + "Numero de Tarjeta; "
 					entro = true;
 				}	
+				if (document.fpass.FechaVenc.value.length==0){
+				   	msg = msg + "Fecha de Vencimiento; "
+					entro = true;
+				}	
 				if (document.fpass.Pass.value.length==0){
 				   	msg = msg + "Clave; "
 					entro = true;
@@ -94,7 +113,27 @@
 				   return 0;
 				}
 				else{
-					location.href="CarritoCompras.php?comprar=true";
+					var today = new Date();
+					var dd = today.getDate();
+					var mm = today.getMonth()+1;
+					var yyyy = today.getFullYear();
+
+					if(dd<10) {
+						dd='0'+dd
+					} 
+
+					if(mm<10) {
+						mm='0'+mm
+					} 
+					var Fecha = new Date();					
+					Fecha = document.fpass.FechaVenc.value;	
+					today = mm+'/'+dd+'/'+yyyy;					
+					if (Fecha > today){
+						location.href="CarritoCompras.php?comprar=true";
+					}
+					else{
+						alert("Tarjeta Vencida");
+					}
 				}				
 			}
 		</script>	
@@ -244,9 +283,11 @@
 						echo '<div id="textocarrito"><samp>Verificando su tarjeta:</samp></div>
 						<form id="FRegPerfilClave" name="fpass" action="" method="POST">						
 							<label class="Reginput" for="NroTarjeta">Numero de Tarjeta</label>
-							<input class="Reginput" type="text" name="NumTarj" placeholder="Ej: 1234567890" maxlength="8"  onkeypress="return Numeros(event);" required><br>
+							<input class="Reginput" type="text" name="NumTarj" placeholder="Ej: 1234567890" maxlength="16"  onkeypress="return Numeros(event);" required><br>
+							<label class="Reginput" for="NroTarjeta">Fecha de Vencimiento</label>
+							<input class="Reginput" type="text" name="FechaVenc" id="datepicker" required><br>
 							<label class="Reginput" for="PassTarjeta">Clave:</label>
-							<input class="Reginput" type="password" name="Pass" placeholder="Ej: Clave" maxlength="30" required><br>
+							<input class="Reginput" type="password" name="Pass" placeholder="Ej: Clave" maxlength="4" required><br>
 							<input class="botones" type="button" value="Enviar" onclick="validarpass()">
 							<input class="botones" type="button" value="Atras" onclick="Atras()">
 						</form>';	

@@ -8,9 +8,31 @@
 	<head>
 		<title>CookBook</title>
 		<link type="text/css" rel="stylesheet" href="style.css">
-		<link rel="stylesheet" media="screen" type="text/css" href="css/datepicker.css" />
-		<script type="text/javascript" src="js/datepicker.js"></script>
+	
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+		<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+		<link rel="stylesheet" href="/resources/demos/style.css">
+		
 		<script>
+			<!-- DATAPICKER LIMITE INF -->
+			$(function() {	
+				$("#datepickerLimInf").datepicker({
+					changeMonth: true,
+					changeYear: true,
+					showOtherMonths: true,
+					selectOtherMonths: true
+				});
+			});
+			<!-- DATAPICKER LIMITE SUP -->
+			$(function() {	
+				$("#datepickerLimSup").datepicker({
+					changeMonth: true,
+					changeYear: true,
+					showOtherMonths: true,
+					selectOtherMonths: true
+				});
+			});
 			<!-- VENTANA EMERGENTE DE INICIO DE SESION -->
 			function acceso(){
 				window.open("InicioSesion.php","myWindow","status = 1, height = 150, width = 350, resizable = no" )	
@@ -27,9 +49,6 @@
 			function irperfil(){
 				location.href="VerPerfil.php";
 			}
-			$(function() {	
-				$('#datepicker').DatePicker();
-			});
 			<!-- ACTIVACION DEL FLAG DE AGREAGAR AL CARRITO -->
 			function AgregarCarrito(ISBN, ID){
 				location.href="Busqueda.php?carrito=true&Is=" + ISBN + "&Dn=" + ID;
@@ -100,14 +119,7 @@
 	<!-- CABECERA -->
 		<div id='cabecera'>
 			<!-- LOGO COOKBOOK -->
-			<div id='imglogo'><a href="index.php"><img src="Logo1.gif" width="85%" height="475%"></a></div>  
-			<!-- BARRA DE BUSQUEDA RAPIDA -->
-			<div id='barrabusqueda' action="Busqueda.php" method="GET">
-				<form name="fbusrap">
-					<input size="40" type="text" name="BusRap" placeholder="Autor, Titulo, ISBN" required>
-					<input id="BusRapBot" type="button" value="Busqueda Rapida" onclick="validarbusrap()">
-				</form>
-			</div>
+			<div id='imglogo'><a href="index.php"><img src="Logo1.gif" width="85%" height="475%"></a></div>  			
 			<!-- CONTROL DE SESIONES -->
 			<div id='sesiones'>	
 	<?php
@@ -164,7 +176,7 @@
 					<li><a href="Busqueda.php">Catalogo</a></li>
 					<li><a href="QuienesSomos.php">Quienes Somos?</a></li>
 	<?php
-					if ($_SESSION['categoria'] == 'Normal'){
+					if ($_SESSION['categoria'] != 'Administrador'){
 	?>
 						<li><a href="Contacto.php">Contacto</a></li>
 	<?php	
@@ -207,61 +219,148 @@
 				<div id='TabCatReg'>
 	<?php	
 					// CATALOGO COMPLETO //
-					ConsultaPorDefecto ($res);
+					ConsultaPorDefecto ($restam);
 					// CATALOGO BUSQUEDA RAPIDA //
 					if	(!empty($_GET['BusRap'])){	
-						ConsultaBusquedaRapida ($res, $_GET['BusRap']);	
+						ConsultaBusquedaRapida ($restam, $_GET['BusRap']);	
 					}
 					// CATALOGO BUSQUEDA AVANZADA //
-					if	(!empty($_GET['Autor']) || !empty($_GET['Titulo']) || !empty($_GET['ISBN']) || !empty($_GET['Etiquetas[]'])){	
-						ConsultaBusqueda2 ($res, $_GET['Autor'], $_GET['Titulo'], $_GET['ISBN'], $_GET['Etiquetas[]']);
+					if	(!empty($_GET['Autor']) || !empty($_GET['Titulo']) || !empty($_GET['ISBN']) || !empty($_GET['Etiquetas'])){	
+						ConsultaBusqueda2 ($restam, $_GET['Autor'], $_GET['Titulo'], $_GET['ISBN'], $_GET['Etiquetas']);
 					}
 					// CATALOGO ORDENADO //	
 					if	(!empty($_GET['Orden'])){	
-						ConsultaOrdenamiento ($res, $_GET['Orden']);	
+						ConsultaOrdenamiento ($restam, $_GET['Orden'], $_GET['Tabla']);	
 					}
 					// CATALOGO FILTRADO //
 					if	(!empty($_GET['PreInf']) || !empty($_GET['PreSup']) || !empty($_GET['Idiomas']) || !empty($_GET['Disponibilidades']) || !empty($_GET['PagInf']) || 
 					!empty($_GET['PagSup']) || !empty($_GET['FecInf']) || !empty($_GET['FecSup'])){	
-						ConsultaFiltros2 ($res, $_GET['PreInf'], $_GET['PreSup'], $_GET['Idiomas'], $_GET['Disponibilidades'], $_GET['PagInf'], $_GET['PagSup'], $_GET['FecInf'], 
-						$_GET['FecSup']);
+						ConsultaFiltros2 ($restam, $_GET['PreInf'], $_GET['PreSup'], $_GET['Idiomas'], $_GET['Disponibilidades'], $_GET['PagInf'], $_GET['PagSup'], $_GET['FecInf'], 
+						$_GET['FecSup'], $_GET['Tabla']);
 					}
 					// CONTROL DE CONSULTA //		
-					if(!$res) {
+					if(!$restam) {
 						$message= 'Consulta invalida: ' .mysql_error() ."\n";
 						die($message);
-					}	
-					// GENERANDO TABLA //	
-					echo "<table border='1'>
-							<tr>
-								<th>ISBN</th>
-								<th>Titulo</th>
-								<th>Autor</th>								
-								<th>Precio</th>
-							</tr>";
-					$ant = ' ';
-					while($row = mysql_fetch_assoc($res)) {
-						if ($row['ISBN'] != $ant){
-							echo "<tr>";
-								echo "<td>", $row['ISBN'], "</td>";
-								echo "<td>", $row['Titulo'], "</td>";
-								echo "<td>", $row['NombreApellido'], "</td>";							
-								echo "<td>", $row['Precio'], "</td>";								
-								BuscarEtiquetas($row['ISBN'], $Etiq);
-		?>																	
-								<td><input class="botones" type='button' value='Detalle' onclick='Hojear("<?=$row['ISBN']?>", "<?=$row['Titulo']?>", "<?=$row['NombreApellido']?>", "<?=$row['Precio']?>", "<?=$row['CantidadPaginas']?>", "<?=$row['Idioma']?>", "<?=$row['Fecha']?>", "<?=$row['Disponibilidad']?>", "<?=$Etiq?>", "<?=$row['Indice']?>")' /></td>
-		<?php
-								if ($_SESSION['categoria'] != 'Administrador'){
-	?>
-									<td><input class="botones" type='button' value='Agregar a Carrito' onclick='AgregarCarrito("<?=$row['ISBN']?>","<?=$_SESSION["ID"]?>")'  /></td>
-	<?php
-								}							
-							echo "</tr>";
-							$ant = $row['ISBN'];
-						}
+					}		
+					$num1 = mysql_num_rows($restam);
+					if($num1 == 0){
+						echo 'No se encontro ningun libro con dichas caracteristicas';
+						$Tab = array();
 					}
-					echo "</table>
-				</div>";
+					else{	
+						$Tab = array();
+						$ant = ' ';
+						while($row = mysql_fetch_assoc($restam)) {
+							if ($row['ISBN'] != $ant){								
+								$ant = $row['ISBN'];
+								array_push($Tab, $row['ISBN']);
+							}
+						}
+						if (empty($_GET['numpag'])){
+							$NroPag = 1;
+						}
+						else{
+							$NroPag = $_GET['numpag'];
+						}
+						// CATALOGO COMPLETO //	
+						ConsultaPorDefectoPag ($res,($NroPag-1));
+						// CATALOGO BUSQUEDA RAPIDA //
+						if	(!empty($_GET['BusRap'])){	
+							ConsultaBusquedaRapidaPag ($res,($NroPag-1),  $_GET['BusRap']);	
+						}
+						// CATALOGO BUSQUEDA AVANZADA //
+						if	(!empty($_GET['Autor']) || !empty($_GET['Titulo']) || !empty($_GET['ISBN']) || !empty($_GET['Etiquetas'])){	
+							ConsultaBusqueda2Pag ($res,($NroPag-1), $_GET['Autor'], $_GET['Titulo'], $_GET['ISBN'], $_GET['Etiquetas']);
+						}
+						// CATALOGO ORDENADO //	
+						if	(!empty($_GET['Orden'])){	
+							ConsultaOrdenamientoPag ($res,($NroPag-1), $_GET['Orden'], $_GET['Tabla']);	
+						}
+						// CATALOGO FILTRADO //
+						if	(!empty($_GET['PreInf']) || !empty($_GET['PreSup']) || !empty($_GET['Idiomas']) || !empty($_GET['Disponibilidades']) || !empty($_GET['PagInf']) || 
+						!empty($_GET['PagSup']) || !empty($_GET['FecInf']) || !empty($_GET['FecSup'])){	
+							ConsultaFiltros2Pag ($res,($NroPag-1), $_GET['PreInf'], $_GET['PreSup'], $_GET['Idiomas'], $_GET['Disponibilidades'], $_GET['PagInf'], $_GET['PagSup'], $_GET['FecInf'], 
+							$_GET['FecSup'], $_GET['Tabla']);
+						}
+						$num2 = mysql_num_rows($res);
+							if($num2 == 0){
+								echo 'No se encontro ningun libro con dichas caracteristicas';
+							}
+							else{
+								// GENERAR TABLA //
+								echo 'Pagina Numero: ' .$NroPag;	
+								echo "<table border='1'>
+										<tr>								
+											<th>Titulo</th>
+											<th>Autor</th>								
+											<th>Precio</th>
+										</tr>";
+								$ant = ' ';
+								while($row = mysql_fetch_assoc($res)) {
+									if ($row['ISBN'] != $ant){
+										echo "<tr>";							
+											echo "<td>", $row['Titulo'], "</td>";
+											echo "<td>", $row['NombreApellido'], "</td>";							
+											echo "<td>", "$" ,$row['Precio'], "</td>";								
+											BuscarEtiquetas($row['ISBN'], $Etiq);
+?>																	
+											<td><input class="botones" type='button' value='Detalle' onclick='Hojear("<?=$row['ISBN']?>", "<?=$row['Titulo']?>", "<?=$row['NombreApellido']?>", "<?=$row['Precio']?>", "<?=$row['CantidadPaginas']?>", "<?=$row['Idioma']?>", "<?=$row['Fecha']?>", "<?=$row['Disponibilidad']?>", "<?=$Etiq?>", "<?=$row['Indice']?>")' /></td>
+<?php
+											if ($_SESSION['categoria'] != 'Administrador'){
+?>
+												<td><input class="botones" type='button' value='Al a Carrito' onclick='AgregarCarrito("<?=$row['ISBN']?>","<?=$_SESSION["ID"]?>")'  /></td>
+<?php
+											}							
+										echo "</tr>";
+										$ant = $row['ISBN'];
+									}
+								}
+								echo "</table>";
+							}	
+					}		
+				echo "</div>";
+				echo '<div id="PaginasPedbus">';
+					$pag = 1;
+					echo 'Paginas: ';
+					while ( $num1 > 0 ) {						
+						// CATALOGO BUSQUEDA RAPIDA //
+						if	(!empty($_GET['BusRap'])){								
+							echo '<li><a href="Busqueda.php?numpag=' .$pag .'&BusRap=' .$_GET['BusRap'] .'">' .$pag .'</a></li>';
+						}
+						// CATALOGO BUSQUEDA AVANZADA //
+						elseif	(!empty($_GET['Autor']) || !empty($_GET['Titulo']) || !empty($_GET['ISBN']) || !empty($_GET['Etiquetas'])){								
+							if (!empty($_GET['Etiquetas'])){								
+								$met = '&Etiquetas[]=';	
+								$temp = '';
+								foreach ($_GET['Etiquetas'] as &$valor){
+									$temp = $temp .$valor .'&Etiquetas[]=';
+								}								
+								$met = $met .$temp .'none';
+								echo '<li><a href="Busqueda.php?numpag=' .$pag .'&Autor=' .$_GET['Autor'] .'&Titulo=' .$_GET['Titulo'] .'&ISBN=' .$_GET['ISBN'] .$met .'">' .$pag .'</a></li>';
+							}
+							else{
+								echo '<li><a href="Busqueda.php?numpag=' .$pag .'&Autor=' .$_GET['Autor'] .'&Titulo=' .$_GET['Titulo'] .'&ISBN=' .$_GET['ISBN'] .'">' .$pag .'</a></li>';
+							}
+						}
+						// CATALOGO ORDENADO //
+						elseif	(!empty($_GET['Orden'])){	
+							echo '<li><a href="Busqueda.php?numpag=' .$pag .'&Orden=' .$_GET['Orden'] .'">' .$pag .'</a></li>';
+						}
+						// CATALOGO FILTRADO //
+						elseif (!empty($_GET['PreInf']) || !empty($_GET['PreSup']) || !empty($_GET['Idiomas']) || !empty($_GET['Disponibilidades']) || !empty($_GET['PagInf']) || 
+						!empty($_GET['PagSup']) || !empty($_GET['FecInf']) || !empty($_GET['FecSup'])){
+							echo '<li><a href="Busqueda.php?numpag=' .$pag .'&PreInf=' .$_GET['PreInf'] .'&PreSup=' .$_GET['PreSup'] .'&Idiomas=' .$_GET['Idiomas'] .'&Disponibilidades=' .$_GET['Disponibilidades'] .'&PagInf=' .$_GET['PagInf'] .'&PagSup=' .$_GET['PagSup'] .'&FecInf=' .$_GET['FecInf'] .'&FecSup=' .$_GET['FecSup'] .'">' .$pag .'</a></li>';
+						}
+						// CATALOGO COMPLETO //
+						else{
+							echo '<li><a href="Busqueda.php?numpag=' .$pag .'">' .$pag .'</a></li>';
+						}
+						echo '<li> - </li>';
+						$pag ++;
+						$num1 = $num1-10;
+					}
+				echo '</div>';	
 	?>	
 				<!-- FORMULARIO DE ORDENAMIENTO -->	
 				<form id='OrdCatReg' action="Busqueda.php" method="GET">
@@ -273,19 +372,25 @@
 						<option value="TitAsc">Titulo Ascendente</option>
 						<option value="TitDes">Titulo Descendiente</option>
 						<option value="AutAsc">Autor Ascendente</option>
-						<option value="AutDes">Autor Descendiente</option>
-						<option value="CPAsc">Cantidad Paginas Ascendente</option>
-						<option value="CPDes">Cantidad Paginas Descendiente</option>
-						<option value="ISBNAsc">ISBN Ascendente</option>
-						<option value="ISBNDes">ISBN Descendiente</option>
-						<option value="FecAsc">Fecha Publicacion Ascendente</option>
-						<option value="FecDes">Fecha Publicacion Descendiente</option>
-						<option value="IdioAsc">Idioma Ascendente</option>
-						<option value="IdioDes">Idioma Descendiente</option>
+						<option value="AutDes">Autor Descendiente</option>					
 					</select>
+	<?php				
+					foreach ($Tab as &$valor){	
+							echo '<input hidden type="checkbox" name="Tabla[]" value="', $valor, '" checked="checked" required readonly >';
+					}							
+	?>
 					<input class="botones "type="submit" value="Recargar">
 				</form>
-				<!-- FORMULARIO DE FILTRADO -->	
+				<!-- FORMULARIO DE BUSQUEDA RAPIDA -->	
+				<div id='busquedarap' >
+					<form name="fbusrap"action="Busqueda.php" method="GET">
+						<label for="Ordenar">Buqueda Rapida:</label>
+						<input size="40" type="text" name="BusRap" placeholder="Autor, Titulo, ISBN" required>
+						<input id="BusRapBot" type="button" value="Buscar" onclick="validarbusrap()">
+					</form>
+				</div>
+				<!-- FORMULARIO DE FILTRADO -->		
+				<div id="FilLab"><samp>Filtrado: </samp></div>
 				<form id='FilCatReg' action="Busqueda.php" method="GET">
 					<label for="Tipo">Idiomas:</label>
 	<?php
@@ -294,7 +399,7 @@
 						while($row = mysql_fetch_assoc($residiomas)){	
 							echo '<option value="', $row['Idioma'], '">', $row['Idioma'], '</option>';
 						}
-					echo '</select>	
+					echo '</select></br>	
 					<label class="botones" for="Marca">Disponibilidad:</label>
 					<select class="botones" name="Disponibilidades">
 						<option value="">Todos....</option>';
@@ -309,11 +414,15 @@
 					&nbsp;&nbsp;&nbsp;&nbsp;<label for="PreInf">Mayor que:</label><input type="text" name="PreInf" placeholder="Ej: 37.14" maxlength="10" onkeypress="return NumerosPunto(event);" onblur="validarPrecioMayor()" ></br>
 					&nbsp;&nbsp;&nbsp;&nbsp;<label for="PreSup">Menor que:</label><input type="text" name="PreSup" placeholder="Ej: 97.85" maxlength="10" onkeypress="return NumerosPunto(event);" onblur="validarPrecioMenor()" ></br>
 					<label for="CantFec">Fecha de Publicacion:</label></br>
-					&nbsp;&nbsp;&nbsp;&nbsp;<label for="FechInf">Mayor que:</label><input type="text" name="FecInf" id="datepicker" ></br>
-					&nbsp;&nbsp;&nbsp;&nbsp;<label for="FechSup">Menor que:</label><input type="text" name="FecSup" id="datepicker2" ></br>
-					<input class="botones" id="FilCatRegBot" type="submit" value="Filtrar"></br></br>
+					&nbsp;&nbsp;&nbsp;&nbsp;<label for="FechInf">Mayor que:</label><input type="text" name="FecInf" id="datepickerLimInf" ></br>
+					&nbsp;&nbsp;&nbsp;&nbsp;<label for="FechSup">Menor que:</label><input type="text" name="FecSup" id="datepickerLimSup" ></br>';				
+					foreach ($Tab as &$valor){	
+							echo '<input hidden type="checkbox" name="Tabla[]" value="', $valor, '" checked="checked" required readonly >';
+						}
+					echo '<input class="botones" id="FilCatRegBot" type="submit" value="Filtrar"></br></br>
 				</form>';
 				// FORMULARIOS DE BUSQUEDA //	
+				echo '<div id="BusLab"><samp>Busqueda Avanzada: </samp></div>';
 				// BUSQUEDA POR ISBN //
 				echo '<form id="BusISCatReg" action="Busqueda.php" method="GET">
 					<label for="ISBN">ISBN:</label>
@@ -392,59 +501,123 @@
 				<div id='TabCatNoReg'>
 	<?php			
 					// CATALOGO COMPLETO //
-					ConsultaPorDefecto ($res);
+					ConsultaPorDefecto ($restam);
 					// CATALOGO BUSQUEDA RAPIDA //
 					if	(!empty($_GET['BusRap'])){	
-						ConsultaBusquedaRapida ($res, $_GET['BusRap']);	
+						ConsultaBusquedaRapida ($restam, $_GET['BusRap']);	
 					}
 					// CATALOGO BUSQUEDA AVANZADA //
 					if	(!empty($_GET['Autor']) || !empty($_GET['Titulo']) || !empty($_GET['ISBN'])){	
-						ConsultaBusqueda ($res, $_GET['Autor'], $_GET['Titulo'], $_GET['ISBN']);
+						ConsultaBusqueda ($restam, $_GET['Autor'], $_GET['Titulo'], $_GET['ISBN']);
 					}
 					// CATALOGO ORDENADO //
 					if	(!empty($_GET['Orden'])){	
-						ConsultaOrdenamiento ($res, $_GET['Orden'], $_GET['Tabla']);	
+						ConsultaOrdenamiento ($restam, $_GET['Orden'], $_GET['Tabla']);	
 					}
 					// CATALOGO FILTRADO //
 					if	(!empty($_GET['PreInf']) || !empty($_GET['PreSup']) || !empty($_GET['Idiomas'])){
-						ConsultaFiltros ($res, $_GET['PreInf'], $_GET['PreSup'], $_GET['Idiomas'], $_GET['Tabla']);
+						ConsultaFiltros ($restam, $_GET['PreInf'], $_GET['PreSup'], $_GET['Idiomas'], $_GET['Tabla']);
 					}
 					// CONTROL DE CONSULTA //	
-					if(!$res) {
+					if(!$restam) {
 						$message= 'Consulta invalida: ' .mysql_error() ."\n";
 						die($message);
 					}		
 					// GENERANDO TABLA //
-					$num1 = mysql_num_rows($res);
+					$num1 = mysql_num_rows($restam);
 					if($num1 == 0){
 						echo 'No se encontro ningun libro con dichas caracteristicas';
 						$Tab = array();
 					}
 					else{	
-						echo "<table>
-								<tr>
-									<th>ISBN</th>
-									<th>Titulo</th>
-									<th>Autor</th>
-									<th>Precio</th>
-								</tr>";
-						$ant = ' ';
 						$Tab = array();
-						while($row = mysql_fetch_assoc($res)) {
-							if ($row['ISBN'] != $ant){
-								echo "<tr>";
-									echo "<td>", $row['ISBN'], "</td>";
-									echo "<td>", $row['Titulo'], "</td>";
-									echo "<td>", $row['NombreApellido'], "</td>";
-									echo "<td>", $row['Precio'], "</td>";										
-								echo "</tr>";
+						$ant = ' ';
+						while($row = mysql_fetch_assoc($restam)) {
+							if ($row['ISBN'] != $ant){								
 								$ant = $row['ISBN'];
 								array_push($Tab, $row['ISBN']);
 							}
 						}
-						echo "</table>";		
+						if (empty($_GET['numpag'])){
+							$NroPag = 1;
+						}
+						else{
+							$NroPag = $_GET['numpag'];
+						}	
+						// CATALOGO COMPLETO //
+						ConsultaPorDefectoPag ($res, ($NroPag-1));
+						// CATALOGO BUSQUEDA RAPIDA //
+						if	(!empty($_GET['BusRap'])){	
+							ConsultaBusquedaRapidaPag ($res, ($NroPag-1), $_GET['BusRap']);	
+						}
+						// CATALOGO BUSQUEDA AVANZADA //
+						if	(!empty($_GET['Autor']) || !empty($_GET['Titulo']) || !empty($_GET['ISBN'])){	
+							ConsultaBusquedaPag ($res, ($NroPag-1), $_GET['Autor'], $_GET['Titulo'], $_GET['ISBN']);
+						}
+						// CATALOGO ORDENADO //
+						if	(!empty($_GET['Orden'])){	
+							ConsultaOrdenamientoPag ($res, ($NroPag-1), $_GET['Orden'], $_GET['Tabla']);	
+						}
+						// CATALOGO FILTRADO //
+						if	(!empty($_GET['PreInf']) || !empty($_GET['PreSup']) || !empty($_GET['Idiomas'])){
+							ConsultaFiltrosPag ($res, ($NroPag-1), $_GET['PreInf'], $_GET['PreSup'], $_GET['Idiomas'], $_GET['Tabla']);
+						}
+						$num2 = mysql_num_rows($res);
+						if($num2 == 0){
+							echo 'No se encontro ningun libro con dichas caracteristicas';
+						}
+						else{
+							echo 'Pagina Numero: ' .$NroPag;
+							echo "<table>
+									<tr>									
+										<th>Titulo</th>
+										<th>Autor</th>
+										<th>Precio</th>
+									</tr>";
+							$ant = ' ';						
+							while($row = mysql_fetch_assoc($res)) {
+								if ($row['ISBN'] != $ant){
+									echo "<tr>";									
+										echo "<td>", $row['Titulo'], "</td>";
+										echo "<td>", $row['NombreApellido'], "</td>";
+										echo "<td>", $row['Precio'], "</td>";										
+									echo "</tr>";
+									$ant = $row['ISBN'];									
+								}
+							}
+							echo "</table>";		
+						}
 					}	
 				echo "</div>";
+				echo '<div id="PaginasPedbusNO">';
+					$pag = 1;
+					echo 'Paginas: ';
+					while ( $num1 > 0 ) {						
+						// CATALOGO BUSQUEDA RAPIDA //
+						if	(!empty($_GET['BusRap'])){								
+							echo '<li><a href="Busqueda.php?numpag=' .$pag .'&BusRap=' .$_GET['BusRap'] .'">' .$pag .'</a></li>';
+						}
+						// CATALOGO BUSQUEDA AVANZADA //
+						elseif	(!empty($_GET['Autor']) || !empty($_GET['Titulo']) || !empty($_GET['ISBN'])){	
+							echo '<li><a href="Busqueda.php?numpag=' .$pag .'&Autor=' .$_GET['Autor'] .'&Titulo=' .$_GET['Titulo'] .'&ISBN=' .$_GET['ISBN'] .'">' .$pag .'</a></li>';
+						}
+						// CATALOGO ORDENADO //
+						elseif	(!empty($_GET['Orden'])){	
+							echo '<li><a href="Busqueda.php?numpag=' .$pag .'&Orden=' .$_GET['Orden'] .'">' .$pag .'</a></li>';
+						}
+						// CATALOGO FILTRADO //
+						elseif	(!empty($_GET['PreInf']) || !empty($_GET['PreSup']) || !empty($_GET['Idiomas'])){
+							echo '<li><a href="Busqueda.php?numpag=' .$pag .'&PreInf=' .$_GET['PreInf'] .'&PreSup=' .$_GET['PreSup'] .'&Idiomas=' .$_GET['Idiomas'] .'">' .$pag .'</a></li>';
+						}
+						// CATALOGO COMPLETO //
+						else{
+							echo '<li><a href="Busqueda.php?numpag=' .$pag .'">' .$pag .'</a></li>';
+						}
+						echo '<li> - </li>';
+						$pag ++;
+						$num1 = $num1-10;
+					}
+				echo '</div>';	
 	?>				
 				<!-- FORMULARIO DE ORDENAMIENTO -->	
 				<form id='OrdCatNoReg' action="Busqueda.php" method="GET">
@@ -457,8 +630,6 @@
 						<option value="TitDes">Titulo Descendiente</option>
 						<option value="AutAsc">Autor Ascendente</option>
 						<option value="AutDes">Autor Descendiente</option>
-						<option value="ISBNAsc">ISBN Ascendente</option>
-						<option value="ISBNDes">ISBN Descendiente</option>
 					</select>
 	<?php				
 					foreach ($Tab as &$valor){	
@@ -467,7 +638,16 @@
 	?>
 					<input id="OrdCatNoRegBot" type="submit" value="Recargar">
 				</form>
+				<!-- FORMULARIO DE BUSQUEDA RAPIDA -->	
+				<div id='busquedarapNo' >
+					<form name="fbusrap"action="Busqueda.php" method="GET">
+						<label for="Ordenar">Buqueda Rapida:</label>
+						<input size="40" type="text" name="BusRap" placeholder="Autor, Titulo, ISBN" required>
+						<input id="BusRapBot" type="button" value="Buscar" onclick="validarbusrap()">
+					</form>
+				</div>
 				<!-- FORMULARIO DE FILTRADO -->				
+				<div id="FilLab"><samp>Filtrado: </samp></div>
 				<form id='FilCatNoReg' action="Busqueda.php" method="GET">
 					<label for="Tipo">Idiomas:</label>
 	<?php		
@@ -486,6 +666,7 @@
 						echo '<input id="FilCatNoRegBot" type="submit" value="Filtrar"></br></br>
 				</form>';
 				// FORMULARIOS DE BUSQUEDA //	
+				echo '<div id="BusLab"><samp>Busqueda Avanzada: </samp></div>';
 				// BUSQUEDA POR ISBN //
 				echo '<form id="BusISCatNoReg" action="Busqueda.php" method="GET">
 					<label for="ISBN">ISBN:</label>
