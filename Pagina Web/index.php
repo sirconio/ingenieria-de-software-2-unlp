@@ -11,7 +11,7 @@
 		<script>
 			<!-- VENTANA EMERGENTE DE INICIO DE SESION -->
 			function acceso(){
-				window.open("InicioSesion.php","myWindow","status = 1, height = 150, width = 350, resizable = no" )	
+				window.open("InicioSesion.php","myWindow","status = 1, height = 200, width = 400, resizable = no" )	
 			}
 			<!-- RECARGA LA PAGINA CON EL FLAG EN TRUE -->
 			function salir(){

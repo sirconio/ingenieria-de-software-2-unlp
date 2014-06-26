@@ -219,10 +219,8 @@
 									<th>FechaPedido</th>
 									<th>Estado</th>
 									
-								</tr>";
-							$ant = ' ';
-							while($row = mysql_fetch_assoc($res)) {
-								if ($row['ISBN'] != $ant){
+								</tr>";							
+							while($row = mysql_fetch_assoc($res)) {								
 									echo "<tr>";
 										echo "<td>", $row['ISBN'], "</td>";
 										echo "<td>", $row['Titulo'], "</td>";
@@ -235,9 +233,7 @@
 											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
 			<?php		
 										}
-									echo "</tr>";
-									$ant = $row['ISBN'];
-								}
+									echo "</tr>";									
 							}
 							echo "</table>";
 						}	
@@ -291,10 +287,8 @@
 									<th>FechaPedido</th>
 									<th>Estado</th>
 									
-								</tr>";
-							$ant = ' ';
-							while($row = mysql_fetch_assoc($res)) {
-								if ($row['ISBN'] != $ant){
+								</tr>";							
+							while($row = mysql_fetch_assoc($res)) {								
 									echo "<tr>";
 										echo "<td>", $row['ISBN'], "</td>";
 										echo "<td>", $row['Titulo'], "</td>";
@@ -307,10 +301,7 @@
 											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
 			<?php		
 										}	
-									echo "</tr>";
-									$ant = $row['ISBN'];
-							
-								}
+									echo "</tr>";				
 							}
 							echo "</table>";
 						}	
@@ -363,10 +354,8 @@
 									<th>NombreApellido</th>
 									<th>FechaPedido</th>
 									<th>Estado</th>									
-								</tr>";
-							$ant = ' ';
-							while($row = mysql_fetch_assoc($res)) {
-								if ($row['ISBN'] != $ant){
+								</tr>";							
+							while($row = mysql_fetch_assoc($res)) {								
 									echo "<tr>";
 										echo "<td>", $row['ISBN'], "</td>";
 										echo "<td>", $row['Titulo'], "</td>";
@@ -379,9 +368,7 @@
 											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
 			<?php		
 										}
-									echo "</tr>";
-									$ant = $row['ISBN'];
-								}
+									echo "</tr>";							
 							}
 							echo "</table>";
 						}	
@@ -435,10 +422,8 @@
 									<th>FechaPedido</th>
 									<th>Estado</th>
 									
-								</tr>";
-							$ant = ' ';
-							while($row = mysql_fetch_assoc($res)) {
-								if ($row['ISBN'] != $ant){
+								</tr>";							
+							while($row = mysql_fetch_assoc($res)) {								
 									echo "<tr>";
 										echo "<td>", $row['ISBN'], "</td>";
 										echo "<td>", $row['Titulo'], "</td>";
@@ -451,9 +436,7 @@
 											<td><input class="botones" type='button' value='Recibido' onclick='Recibido("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
 			<?php		
 										}
-									echo "</tr>";
-									$ant = $row['ISBN'];
-								}
+									echo "</tr>";							
 							}
 							echo "</table>";
 						}	

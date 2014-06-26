@@ -298,22 +298,24 @@
 										</tr>";
 								$ant = ' ';
 								while($row = mysql_fetch_assoc($res)) {
-									if ($row['ISBN'] != $ant){
-										echo "<tr>";							
-											echo "<td>", $row['Titulo'], "</td>";
-											echo "<td>", $row['NombreApellido'], "</td>";							
-											echo "<td>", "$" ,$row['Precio'], "</td>";								
-											BuscarEtiquetas($row['ISBN'], $Etiq);
-?>																	
-											<td><input class="botones" type='button' value='Detalle' onclick='Hojear("<?=$row['ISBN']?>", "<?=$row['Titulo']?>", "<?=$row['NombreApellido']?>", "<?=$row['Precio']?>", "<?=$row['CantidadPaginas']?>", "<?=$row['Idioma']?>", "<?=$row['Fecha']?>", "<?=$row['Disponibilidad']?>", "<?=$Etiq?>", "<?=$row['Indice']?>")' /></td>
-<?php
-											if ($_SESSION['categoria'] != 'Administrador'){
-?>
-												<td><input class="botones" type='button' value='Al a Carrito' onclick='AgregarCarrito("<?=$row['ISBN']?>","<?=$_SESSION["ID"]?>")'  /></td>
-<?php
-											}							
-										echo "</tr>";
-										$ant = $row['ISBN'];
+									if ($row['Estado'] == 1){
+										if ($row['ISBN'] != $ant){
+											echo "<tr>";							
+												echo "<td>", $row['Titulo'], "</td>";
+												echo "<td>", $row['NombreApellido'], "</td>";							
+												echo "<td>", "$" ,$row['Precio'], "</td>";								
+												BuscarEtiquetas($row['ISBN'], $Etiq);
+	?>																	
+												<td><input class="botones" type='button' value='Detalle' onclick='Hojear("<?=$row['ISBN']?>", "<?=$row['Titulo']?>", "<?=$row['NombreApellido']?>", "<?=$row['Precio']?>", "<?=$row['CantidadPaginas']?>", "<?=$row['Idioma']?>", "<?=$row['Fecha']?>", "<?=$row['Disponibilidad']?>", "<?=$Etiq?>", "<?=$row['Indice']?>")' /></td>
+	<?php
+												if ($_SESSION['categoria'] != 'Administrador'){
+	?>
+													<td><input class="botones" type='button' value='Al a Carrito' onclick='AgregarCarrito("<?=$row['ISBN']?>","<?=$_SESSION["ID"]?>")'  /></td>
+	<?php
+												}							
+											echo "</tr>";
+											$ant = $row['ISBN'];
+										}
 									}
 								}
 								echo "</table>";
@@ -574,15 +576,17 @@
 										<th>Autor</th>
 										<th>Precio</th>
 									</tr>";
-							$ant = ' ';						
+							$ant = ' ';
 							while($row = mysql_fetch_assoc($res)) {
-								if ($row['ISBN'] != $ant){
-									echo "<tr>";									
-										echo "<td>", $row['Titulo'], "</td>";
-										echo "<td>", $row['NombreApellido'], "</td>";
-										echo "<td>", $row['Precio'], "</td>";										
-									echo "</tr>";
-									$ant = $row['ISBN'];									
+								if ($row['Estado'] == 1){
+									if ($row['ISBN'] != $ant){
+										echo "<tr>";									
+											echo "<td>", $row['Titulo'], "</td>";
+											echo "<td>", $row['NombreApellido'], "</td>";
+											echo "<td>", "$" ,$row['Precio'], "</td>";										
+										echo "</tr>";
+										$ant = $row['ISBN'];									
+									}
 								}
 							}
 							echo "</table>";		

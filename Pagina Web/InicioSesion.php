@@ -52,9 +52,10 @@
 			}
 			if ($msg == ' '){
 		?>
+			</br></br>
 			<form method="post" name="fvalidar" action="">
 				<samp>Por favor, ingrese:<samp/></br></br>
-				<label for="Usuario">Usuario:</label><input type="text" name="usuario" placeholder="Usuario" maxlength="10" required /></br></br>
+				<label for="Usuario">Usuario:</label><input type="text" name="usuario" placeholder="Usuario" maxlength="10" autofocus required /></br></br>
 				<label for="Clave">Clave:</label><input type="password" name="clave" placeholder="Contraseña" maxlength="30" required /></br></br>				
 				<input class="botones" type="button" value="Enviar" onclick="validar()">
 			</form>
@@ -70,7 +71,17 @@
 		<?php
 				}
 				else{
+					echo '</br>';
 					echo $msg;
+					?>
+						</br></br>
+						<form method="post" name="fvalidar" action="">
+							<samp>Por favor, ingrese:<samp/></br></br>
+							<label for="Usuario">Usuario:</label><input type="text" name="usuario" placeholder="Usuario" maxlength="10" autofocus required /></br></br>
+							<label for="Clave">Clave:</label><input type="password" name="clave" placeholder="Contraseña" maxlength="30" required /></br></br>				
+							<input class="botones" type="button" value="Enviar" onclick="validar()">
+						</form>
+					<?php
 				}	
 			}
 			///CIERRE///

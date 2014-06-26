@@ -41,7 +41,7 @@
 				}
 			}
 			if (!$entro){
-				$msg = "<a href='InicioSesion.php'> Acceso Denegado, Haga Click Aqui Para Intentar Nuevamente</a>";
+				$msg = "<samp>>>>>>>Acceso Denegado, intentar Nuevamente<<<<<<</samp>";
 			}
 		}
 	}
@@ -865,12 +865,15 @@
 	function LibroPeriodo (&$res, $Fini, $Ffin){
 		$dateini = date('Y-m-d', strtotime($Fini));
 		$datefin = date('Y-m-d', strtotime($Ffin));
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, autor.NombreApellido AS Autor, pedidos.DNI, cliente.NombreApellido AS Cliente, pedidos.FechaPedido
+		$cons = 'SELECT  COUNT(pedidos.ISBN) As Ventas, pedidos.ISBN, libro.Titulo, autor.NombreApellido AS Autor
 				FROM cliente, pedidos, libro, autor
 				WHERE cliente.DNI = pedidos.DNI
 				AND libro.Id_Autor = autor.Id_Autor
 				AND pedidos.ISBN = libro.ISBN
-				AND	pedidos.FechaPedido BETWEEN "' .$dateini. '" AND "' .$datefin. '"';
+				AND	pedidos.FechaPedido BETWEEN "' .$dateini. '" AND "' .$datefin. '"
+				GROUP BY pedidos.ISBN, libro.Titulo, autor.NombreApellido
+				ORDER BY Ventas DESC
+				LIMIT 0,10';
 		$res = mysql_query( $cons);
 	}
 // GESTION DE AUTOR //	
@@ -1280,12 +1283,57 @@
 		}
 	}
 // GESTION DEL CATALOGO //
+	// CONSULTA POR DEFECTO ADMI//
+	function ConsultaPorDefectoAdm (&$res){
+		$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado, libro.Hojear AS Indice
+						FROM libro, autor, idioma, disponibilidad
+						WHERE autor.Id_Autor = libro.Id_Autor
+						AND idioma.Id_Idioma = libro.Id_Idioma
+						AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad');
+	}
+	// CONSULTA POR DEFECTO BUSQUEDA ADMI//
+	function ConsultaPorDefectoBusAdm (&$res, $bus){
+		$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado,  libro.Hojear AS Indice
+						FROM libro, autor, idioma, disponibilidad
+						WHERE autor.Id_Autor = libro.Id_Autor
+						AND idioma.Id_Idioma = libro.Id_Idioma
+						AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
+						AND ( libro.Titulo LIKE "%' .$bus .'%" 
+						OR    autor.NombreApellido LIKE "%' .$bus .'%" 
+						OR	  libro.ISBN LIKE "%'.$bus .'%")');
+	}
+	// CONSULTA POR DEFECTO PAGINADA ADMI //
+	function ConsultaPorDefectoPagAdm (&$res, $NroPag){
+		$pag = (10*$NroPag);
+		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado, libro.Hojear AS Indice
+				FROM libro, autor, idioma, disponibilidad
+				WHERE autor.Id_Autor = libro.Id_Autor
+				AND idioma.Id_Idioma = libro.Id_Idioma
+				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
+				LIMIT ' .$pag .',10';
+		$res = mysql_query($cons);
+	}
+	// CONSULTA POR DEFECTO PAGINADA BUSQUEDA ADMI //
+	function ConsultaPorDefectoPagBusAdm (&$res, $NroPag, $bus){
+		$pag = (10*$NroPag);
+		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado, libro.Hojear AS Indice
+				FROM libro, autor, idioma, disponibilidad
+				WHERE autor.Id_Autor = libro.Id_Autor
+				AND idioma.Id_Idioma = libro.Id_Idioma
+				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
+				AND ( libro.Titulo LIKE "%' .$bus .'%" 
+				OR    autor.NombreApellido LIKE "%' .$bus .'%" 
+				OR	  libro.ISBN LIKE "%'.$bus .'%")
+				LIMIT ' .$pag .',10';
+		$res = mysql_query($cons);
+	}
 	// CONSULTA POR DEFECTO //
 	function ConsultaPorDefecto (&$res){
 		$res = mysql_query('SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado, libro.Hojear AS Indice
 						FROM libro, autor, idioma, disponibilidad
 						WHERE autor.Id_Autor = libro.Id_Autor
 						AND idioma.Id_Idioma = libro.Id_Idioma
+						AND libro.Visible = 1
 						AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad');
 	}
 	// CONSULTA POR DEFECTO BUSQUEDA//
@@ -1294,6 +1342,7 @@
 						FROM libro, autor, idioma, disponibilidad
 						WHERE autor.Id_Autor = libro.Id_Autor
 						AND idioma.Id_Idioma = libro.Id_Idioma
+						AND libro.Visible = 1
 						AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
 						AND ( libro.Titulo LIKE "%' .$bus .'%" 
 						OR    autor.NombreApellido LIKE "%' .$bus .'%" 
@@ -1306,6 +1355,7 @@
 				FROM libro, autor, idioma, disponibilidad
 				WHERE autor.Id_Autor = libro.Id_Autor
 				AND idioma.Id_Idioma = libro.Id_Idioma
+				AND libro.Visible = 1
 				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
 				LIMIT ' .$pag .',10';
 		$res = mysql_query($cons);
@@ -1316,6 +1366,7 @@
 		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado, libro.Hojear AS Indice
 				FROM libro, autor, idioma, disponibilidad
 				WHERE autor.Id_Autor = libro.Id_Autor
+				AND libro.Visible = 1
 				AND idioma.Id_Idioma = libro.Id_Idioma
 				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
 				AND ( libro.Titulo LIKE "%' .$bus .'%" 
@@ -1329,10 +1380,11 @@
 		if	(!empty($Aut)){$Autor = '"'.$Aut.'"';}else{$Autor = 'autor.NombreApellido';}
 		if	(!empty($Tit)){$Titulo = '"'.$Tit.'"';}else{$Titulo = 'libro.Titulo';}
 		if	(!empty($IS)){$ISBN = '"'.$IS.'"';}else{$ISBN = 'libro.ISBN';}
-		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado,  libro.Hojear AS Indice
 				FROM libro, autor, idioma, disponibilidad
 				WHERE autor.Id_Autor = libro.Id_Autor
 				AND idioma.Id_Idioma = libro.Id_Idioma
+				AND libro.Visible = 1
 				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
 				AND autor.NombreApellido = ' .$Autor .'
 				AND libro.Titulo = ' .$Titulo .'
@@ -1345,10 +1397,11 @@
 		if	(!empty($Aut)){$Autor = '"'.$Aut.'"';}else{$Autor = 'autor.NombreApellido';}
 		if	(!empty($Tit)){$Titulo = '"'.$Tit.'"';}else{$Titulo = 'libro.Titulo';}
 		if	(!empty($IS)){$ISBN = '"'.$IS.'"';}else{$ISBN = 'libro.ISBN';}
-		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado,  libro.Hojear AS Indice
 				FROM libro, autor, idioma, disponibilidad
 				WHERE autor.Id_Autor = libro.Id_Autor
 				AND idioma.Id_Idioma = libro.Id_Idioma
+				AND libro.Visible = 1
 				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
 				AND autor.NombreApellido = ' .$Autor .'
 				AND libro.Titulo = ' .$Titulo .'
@@ -1370,10 +1423,11 @@
 			}
 			$eti = $eti . $temp . '" ")';
 			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, 
-			disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado,  libro.Hojear AS Indice
 			FROM libro, autor, idioma, disponibilidad, etiqueta, etiqueta_libro
 			WHERE autor.Id_Autor = libro.Id_Autor
 			AND idioma.Id_Idioma = libro.Id_Idioma
+			AND libro.Visible = 1
 			AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad				
 			AND etiqueta.Id_Etiqueta = etiqueta_libro.Id_Etiqueta
 			AND autor.NombreApellido = ' .$Autor .'
@@ -1384,10 +1438,11 @@
 		else{
 			$eti = '';
 			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, 
-				disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+				disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado,  libro.Hojear AS Indice
 				FROM libro, autor, idioma, disponibilidad
 				WHERE autor.Id_Autor = libro.Id_Autor
 				AND idioma.Id_Idioma = libro.Id_Idioma
+				AND libro.Visible = 1
 				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad						
 				AND autor.NombreApellido = ' .$Autor .'
 				AND libro.Titulo = ' .$Titulo .'
@@ -1411,10 +1466,11 @@
 			}
 			$eti = $eti . $temp . '" ")';
 			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, 
-				disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+				disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado,  libro.Hojear AS Indice
 				FROM libro, autor, idioma, disponibilidad, etiqueta, etiqueta_libro
 				WHERE autor.Id_Autor = libro.Id_Autor
 				AND idioma.Id_Idioma = libro.Id_Idioma
+				AND libro.Visible = 1
 				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad				
 				AND etiqueta.Id_Etiqueta = etiqueta_libro.Id_Etiqueta
 				AND autor.NombreApellido = ' .$Autor .'
@@ -1426,10 +1482,11 @@
 		else{
 			$eti = '';
 			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, 
-					disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+					disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado,  libro.Hojear AS Indice
 					FROM libro, autor, idioma, disponibilidad
 					WHERE autor.Id_Autor = libro.Id_Autor
 					AND idioma.Id_Idioma = libro.Id_Idioma
+					AND libro.Visible = 1
 					AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad									
 					AND autor.NombreApellido = ' .$Autor .'
 					AND libro.Titulo = ' .$Titulo .'
@@ -1452,10 +1509,11 @@
 			}
 			$IS = $IS . $temp . '"")';
 		}
-		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado,  libro.Hojear AS Indice
 				FROM libro, autor, idioma, disponibilidad
 				WHERE autor.Id_Autor = libro.Id_Autor
 				AND idioma.Id_Idioma = libro.Id_Idioma
+				AND libro.Visible = 1
 				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
 				AND libro.Precio >= ' .$PrecInf .'
 				AND libro.Precio <= ' .$PrecSup .'
@@ -1476,10 +1534,11 @@
 			}
 			$IS = $IS . $temp . '"")';
 		}
-		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado,  libro.Hojear AS Indice
 				FROM libro, autor, idioma, disponibilidad
 				WHERE autor.Id_Autor = libro.Id_Autor
 				AND idioma.Id_Idioma = libro.Id_Idioma
+				AND libro.Visible = 1
 				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
 				AND libro.Precio >= ' .$PrecInf .'
 				AND libro.Precio <= ' .$PrecSup .'
@@ -1505,9 +1564,10 @@
 			}
 			$IS = $IS . $temp . '"")';
 		}
-		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado,  libro.Hojear AS Indice
 				FROM libro, autor, idioma, disponibilidad
 				WHERE autor.Id_Autor = libro.Id_Autor
+				AND libro.Visible = 1
 				AND idioma.Id_Idioma = libro.Id_Idioma
 				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
 				AND libro.Precio >= ' .$PrecInf .'
@@ -1539,10 +1599,11 @@
 			}
 			$IS = $IS . $temp . '"")';
 		}
-		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado,  libro.Hojear AS Indice
 				FROM libro, autor, idioma, disponibilidad
 				WHERE autor.Id_Autor = libro.Id_Autor
 				AND idioma.Id_Idioma = libro.Id_Idioma
+				AND libro.Visible = 1
 				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
 				AND libro.Precio >= ' .$PrecInf .'
 				AND libro.Precio <= ' .$PrecSup .'	
@@ -1557,10 +1618,11 @@
 	}
 	// BUSQUEDA RAPIDA //
 	function ConsultaBusquedaRapida (&$res, &$BusRap){
-		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado,  libro.Hojear AS Indice
 				FROM libro, autor, idioma, disponibilidad
 				WHERE autor.Id_Autor = libro.Id_Autor
 				AND idioma.Id_Idioma = libro.Id_Idioma
+				AND libro.Visible = 1
 				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
 				AND ( libro.Titulo LIKE "%' .$BusRap .'%" 
 				OR    autor.NombreApellido LIKE "%' .$BusRap .'%" 
@@ -1570,10 +1632,11 @@
 	// BUSQUEDA RAPIDA PAGINADO //
 	function ConsultaBusquedaRapidaPag (&$res, $NroPag, &$BusRap){
 		$pag = (10*$NroPag);
-		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+		$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible As Estado,  libro.Hojear AS Indice
 				FROM libro, autor, idioma, disponibilidad
 				WHERE autor.Id_Autor = libro.Id_Autor
 				AND idioma.Id_Idioma = libro.Id_Idioma
+				AND libro.Visible = 1
 				AND disponibilidad.Id_Disponibilidad = libro.Id_Disponibilidad
 				AND ( libro.Titulo LIKE "%' .$BusRap .'%" 
 				OR    autor.NombreApellido LIKE "%' .$BusRap .'%" 

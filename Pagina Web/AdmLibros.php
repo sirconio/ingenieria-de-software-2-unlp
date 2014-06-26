@@ -873,10 +873,10 @@
 						</div>';
 						echo '<div id="TablaLibros">';
 						if (!empty($_GET['BusRap'])){
-							ConsultaPorDefectoBus ($restam, $_GET['BusRap']);
+							ConsultaPorDefectoBusAdm ($restam, $_GET['BusRap']);
 						}
 						else{
-							ConsultaPorDefecto ($restam);
+							ConsultaPorDefectoAdm ($restam);
 						}	
 						if(!$restam) {
 							$message= 'Consulta invalida: ' .mysql_error() ."\n";
@@ -894,10 +894,10 @@
 								$NroPag = $_GET['numpag'];
 							}
 							if (!empty($_GET['BusRap'])){
-								ConsultaPorDefectoPagBus ($res, ($NroPag-1), $_GET['BusRap']);
+								ConsultaPorDefectoPagBusAdm ($res, ($NroPag-1), $_GET['BusRap']);
 							}
 							else{
-								ConsultaPorDefectoPag ($res, ($NroPag-1));
+								ConsultaPorDefectoPagAdm ($res, ($NroPag-1));
 							}	
 							$num2 = mysql_num_rows($res);
 							if($num2 == 0){
@@ -923,7 +923,7 @@
 											echo "<td>", $row['ISBN'], "</td>";
 											echo "<td>", $row['Titulo'], "</td>";
 											echo "<td>", $row['NombreApellido'], "</td>";									
-											echo "<td>", $row['Precio'], "</td>";											
+											echo "<td>", "$" ,$row['Precio'], "</td>";											
 											BuscarEtiquetas($row['ISBN'], $Etiq);
 											echo '<textarea hidden name="Ind' .$Nro .'" rows="10" cols="10">' .$row['Indice'] .'</textarea>';											
 		?>																	
@@ -1418,23 +1418,19 @@
 									echo '<div id="TablaTopLibros">';
 									echo "<table border='1'>
 										<tr>
+											<th>Nro Ventas</th>
 											<th>ISBN</th>
 											<th>T&iacutetulo</th>
-											<th>Autor</th>
-											<th>DNI</th>
-											<th>Cliente</th>
-											<th>FechaPedido</th>
+											<th>Autor</th>																					
 										</tr>";
 									$ant = ' ';
 									while($row = mysql_fetch_assoc($res)) {
 										if ($row['ISBN'] != $ant){
 											echo "<tr>";
+												echo "<td>", $row['Ventas'], "</td>";
 												echo "<td>", $row['ISBN'], "</td>";
 												echo "<td>", $row['Titulo'], "</td>";
-												echo "<td>", $row['Autor'], "</td>";
-												echo "<td>", $row['DNI'], "</td>";
-												echo "<td>", $row['Cliente'], "</td>";
-												echo "<td>", $row['FechaPedido'], "</td>";		
+												echo "<td>", $row['Autor'], "</td>";																							
 											echo "</tr>";
 											$ant = $row['ISNB'];
 										}

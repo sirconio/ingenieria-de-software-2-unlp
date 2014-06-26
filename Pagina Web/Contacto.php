@@ -3,7 +3,7 @@
       header( "Cache-Control: no-cache, must-revalidate" );
       header( "Pragma: no-cache" );
 	  session_start();
-	  if(!empty($_SESSION['categoria']) && $_SESSION['categoria'] != 'Administrador'){
+	  if(!empty($_SESSION['categoria']) && $_SESSION['categoria'] == 'Administrador'){
 		header ("Location: index.php");
 	  }
 ?>

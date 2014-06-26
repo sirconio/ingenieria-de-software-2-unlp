@@ -349,7 +349,7 @@
 										echo "<td>", $row['ISBN'], "</td>";
 										echo "<td>", $row['Titulo'], "</td>";
 										echo "<td>", $row['NombreApellido'], "</td>";
-										echo "<td>", $row['Precio'], "</td>";
+										echo "<td>", "$" ,$row['Precio'], "</td>";
 				?>																	
 										<td><input class="botones" type='button' value='Retirar' onclick='Retirar("<?=$row['ID']?>")' /></td>
 				<?php													
