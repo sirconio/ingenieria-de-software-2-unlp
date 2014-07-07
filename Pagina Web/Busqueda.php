@@ -58,7 +58,7 @@
 				Ventana = window.open('','Detalles','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=600,height=400');
 				Ventana.moveTo(100,100);
 				Ventana.document.innerHTML = "";
-				Ventana.document.write("<html><head></head><body background='Fondo8.jpg' background-size='cover' style='color:white' onblur='self.close()' ><p>ISBN: " + ISBN + " - Autor: " + NombreApellido + " - Titulo: " + Titulo + "</p><p>Idioma: " + Idioma + " - Cantidad de Paginas: " + CantPag + " - Fecha Publicacion: " + Fecha + "</p><p>Precio: $" + Precio + "</p><p>Etiquetas: " + Etiq + "</p><p>Indice: <p>&nbsp;&nbsp;&nbsp;&nbsp;" + Ind + "</p></p><p>------------------------------</p></body></html>");
+				Ventana.document.write("<html><head></head><body background='Fondo8.jpg' background-size='cover' style='color:white' onblur='self.close()' ><p>ISBN: " + ISBN + " - Autor: " + NombreApellido + " - Titulo: " + Titulo + "</p><p>Idioma: " + Idioma + " - Cantidad de Paginas: " + CantPag + " - Fecha Publicacion: " + Fecha + "</p><p>Precio: $" + Precio + "</p><p>Etiquetas: " + Etiq + "</p><p>Primeras Paginas: <p>&nbsp;&nbsp;&nbsp;&nbsp;" + Ind + "</p></p><p>------------------------------</p></body></html>");
 				myWindow.focus();
 			}
 			<!-- MENSAJE DE ALTA AL CARRITO -->

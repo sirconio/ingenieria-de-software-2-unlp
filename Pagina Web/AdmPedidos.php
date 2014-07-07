@@ -30,9 +30,9 @@
 				location.href="VerPerfil.php";
 			}	
 			<!-- ACTIVACION DEL FLAG DE CAMBIAR ESTADO A ENVIADO -->
-			function Enviado (ISBN, DNI){
+			function Enviado (Fec, DNI, Est){
 				if (confirm("Desea cambiar el estado del pedido a enviado?")){
-					location.href="AdmPedidos.php?flag=lista&pedido=true&Is=" + ISBN + "&Dn=" + DNI;
+					location.href="AdmPedidos.php?flag=lista&pedido=true&Fec=" + Fec + "&Dn=" + DNI + "&Es=" + Est;
 				}
 			}	
 			<!-- MENSAJE DE RESPUESTA A MODIFICACION DE PEDIDOS SATISFACTORIO -->
@@ -60,6 +60,14 @@
 			function pedidosEntregados(){
 				location.href="AdmPedidos.php?flag=ent";
 			}		
+			<!-- VENTANA DE DETALLES -->
+			function Verdetalle(Libros){
+				Ventana = window.open('','Detalles','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=600,height=400');
+				Ventana.moveTo(100,100);
+				Ventana.document.innerHTML = "";
+				Ventana.document.write("<html><head></head><body background='Fondo8.jpg' background-size='cover' style='color:white' onblur='self.close()' ><p>Libros dentro del pedido:</p><p>"+Libros+"</p><p>------------------------------</p></body></html>");
+				myWindow.focus();
+			}
 			<!-- VALIDACIONES DE CAMPOS -->
 			function validarbus (){
 				if (document.fbus.BusRap.value.length==0){
@@ -86,7 +94,7 @@
 				// CAMBIAR PEDIDO A ENVIADO, SI PEDIDO = TRUE //
 				if (!empty($_GET['pedido']) && $_GET['pedido'] == 'true'){
 					$Comp = false;
-					PedidoEnviado($_GET['Is'], $_GET['Dn'], $AltMsg, $Comp);
+					PedidoEnviado($_GET['Fec'], $_GET['Es'], $_GET['Dn'], $AltMsg, $Comp);
 					if ($Comp){
 	?>
 						<script languaje="javascript"> 	
@@ -194,29 +202,45 @@
 								// GENERAR TABLA //							
 								echo "<table border='1'>
 									<tr>
-										<th>ISBN</th>
-										<th>Titulo</th>
+										<th>Cliente</th>
 										<th>DNI</th>
-										<th>NombreApellido</th>
-										<th>FechaPedido</th>
+										<th>Fecha Pedido</th>
 										<th>Estado</th>
-										
-									</tr>";								
-								while($row = mysql_fetch_assoc($res)) {									
-										echo "<tr>";
-											echo "<td>", $row['ISBN'], "</td>";
-											echo "<td>", $row['Titulo'], "</td>";
-											echo "<td>", $row['DNI'], "</td>";
-											echo "<td>", $row['NombreApellido'], "</td>";
-											echo "<td>", $row['FechaPedido'], "</td>";
-											echo "<td>", $row['Estado'], "</td>";						
-											if ($row['Estado'] == "Pendiente"){	
-		?>													
-												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
-		<?php		
+										<th>Cantidad Libros</th>
+										<th>Detalle</th>
+									</tr>";									
+							$row = mysql_fetch_assoc($res);								
+							while($row) {										
+									echo "<tr>";									
+									$FecAnt = $row['FechaPedido'];	
+									$Est = $row['Estado'];
+									$ent = false;
+									$libros = '';
+									$Cant = 0;
+									$Dni = $row['DNI'];
+										While ($row && $FecAnt == $row['FechaPedido'] && $Est == $row['Estado'] && $Dni == $row['DNI']) {	
+											if (!$ent){	
+												echo "<td>", $row['NombreApellido'], "</td>";
+												echo "<td>", $row['DNI'], "</td>";
+												echo "<td>", $row['FechaPedido'], "</td>";
+												echo "<td>", $row['Estado'], "</td>";
+												$ent = true;	
 											}
-										echo "</tr>";																								
-								}
+											$Cant = $Cant + 1;	
+											$libros = $libros .' ISBN: ' .$row['ISBN']. ' - Titulo: ' .$row['Titulo'] .';</br>';
+											$row = mysql_fetch_assoc($res);
+										}	
+											echo "<td>", $Cant, "</td>";
+			?>																	
+											<td><input class="botones" type='button' value='Detalle' onclick='Verdetalle("<?=$libros?>")' /></td>
+			<?php		
+											if ($Est == "Pendiente"){							
+			?>																	
+												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$FecAnt?>","<?=$Dni?>","<?=$Est?>")' /></td>
+			<?php								
+											}
+									echo "</tr>";									
+							}								
 								echo "</table>";
 							}	
 						}	
@@ -262,29 +286,45 @@
 								// GENERAR TABLA //							
 								echo"<table border='1'>
 									<tr>
-										<th>ISBN</th>
-										<th>Titulo</th>
+										<th>Cliente</th>
 										<th>DNI</th>
-										<th>NombreApellido</th>
-										<th>FechaPedido</th>
+										<th>Fecha Pedido</th>
 										<th>Estado</th>
-										
+										<th>Cantidad Libros</th>
+										<th>Detalle</th>
 									</tr>";								
-								while($row = mysql_fetch_assoc($res)) {									
-										echo "<tr>";
-											echo "<td>", $row['ISBN'], "</td>";
-											echo "<td>", $row['Titulo'], "</td>";
-											echo "<td>", $row['DNI'], "</td>";
-											echo "<td>", $row['NombreApellido'], "</td>";
-											echo "<td>", $row['FechaPedido'], "</td>";
-											echo "<td>", $row['Estado'], "</td>";										
-											if ($row['Estado'] == "Pendiente"){	
-		?>													
-												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
-		<?php		
+							$row = mysql_fetch_assoc($res);								
+							while($row) {										
+									echo "<tr>";									
+									$FecAnt = $row['FechaPedido'];	
+									$Est = $row['Estado'];
+									$ent = false;
+									$libros = '';
+									$Cant = 0;
+									$Dni = $row['DNI'];
+										While ($row && $FecAnt == $row['FechaPedido'] && $Est == $row['Estado'] && $Dni == $row['DNI']) {	
+											if (!$ent){	
+												echo "<td>", $row['NombreApellido'], "</td>";
+												echo "<td>", $row['DNI'], "</td>";
+												echo "<td>", $row['FechaPedido'], "</td>";
+												echo "<td>", $row['Estado'], "</td>";
+												$ent = true;	
 											}
-										echo "</tr>";																		
-								}
+											$Cant = $Cant + 1;	
+											$libros = $libros .' ISBN: ' .$row['ISBN']. ' - Titulo: ' .$row['Titulo'] .';</br>';
+											$row = mysql_fetch_assoc($res);
+										}	
+											echo "<td>", $Cant, "</td>";
+			?>																	
+											<td><input class="botones" type='button' value='Detalle' onclick='Verdetalle("<?=$libros?>")' /></td>
+			<?php		
+											if ($Est == "Pendiente"){							
+			?>																	
+												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$FecAnt?>","<?=$Dni?>","<?=$Est?>")' /></td>
+			<?php								
+											}
+									echo "</tr>";									
+							}						
 								echo "</table>";
 							}	
 						}	
@@ -330,28 +370,45 @@
 								// GENERAR TABLA //
 								echo "<table border='1'>
 									<tr>
-										<th>ISBN</th>
-										<th>Titulo</th>
+										<th>Cliente</th>
 										<th>DNI</th>
-										<th>NombreApellido</th>
-										<th>FechaPedido</th>
-										<th>Estado</th>									
+										<th>Fecha Pedido</th>
+										<th>Estado</th>
+										<th>Cantidad Libros</th>
+										<th>Detalle</th>								
 									</tr>";								
-								while($row = mysql_fetch_assoc($res)) {									
-										echo "<tr>";
-											echo "<td>", $row['ISBN'], "</td>";
-											echo "<td>", $row['Titulo'], "</td>";
-											echo "<td>", $row['DNI'], "</td>";
-											echo "<td>", $row['NombreApellido'], "</td>";
-											echo "<td>", $row['FechaPedido'], "</td>";
-											echo "<td>", $row['Estado'], "</td>";										
-											if ($row['Estado'] == "Pendiente"){	
-		?>													
-												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
-		<?php		
+							$row = mysql_fetch_assoc($res);								
+							while($row) {										
+									echo "<tr>";									
+									$FecAnt = $row['FechaPedido'];	
+									$Est = $row['Estado'];
+									$ent = false;
+									$libros = '';
+									$Cant = 0;
+									$Dni = $row['DNI'];
+										While ($row && $FecAnt == $row['FechaPedido'] && $Est == $row['Estado'] && $Dni == $row['DNI']) {	
+											if (!$ent){	
+												echo "<td>", $row['NombreApellido'], "</td>";
+												echo "<td>", $row['DNI'], "</td>";
+												echo "<td>", $row['FechaPedido'], "</td>";
+												echo "<td>", $row['Estado'], "</td>";
+												$ent = true;	
 											}
-										echo "</tr>";																			
-								}
+											$Cant = $Cant + 1;	
+											$libros = $libros .' ISBN: ' .$row['ISBN']. ' - Titulo: ' .$row['Titulo'] .';</br>';
+											$row = mysql_fetch_assoc($res);
+										}	
+											echo "<td>", $Cant, "</td>";
+			?>																	
+											<td><input class="botones" type='button' value='Detalle' onclick='Verdetalle("<?=$libros?>")' /></td>
+			<?php		
+											if ($Est == "Pendiente"){							
+			?>																	
+												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$FecAnt?>","<?=$Dni?>","<?=$Est?>")' /></td>
+			<?php								
+											}
+									echo "</tr>";									
+							}						
 								echo "</table>";
 							}	
 						}	
@@ -397,29 +454,45 @@
 								// GENERAR TABLA //
 								echo "<table border='1'>
 									<tr>
-										<th>ISBN</th>
-										<th>Titulo</th>
+										<th>Cliente</th>
 										<th>DNI</th>
-										<th>NombreApellido</th>
-										<th>FechaPedido</th>
+										<th>Fecha Pedido</th>
 										<th>Estado</th>
-										
+										<th>Cantidad Libros</th>
+										<th>Detalle</th>
 									</tr>";								
-								while($row = mysql_fetch_assoc($res)) {									
-										echo "<tr>";
-											echo "<td>", $row['ISBN'], "</td>";
-											echo "<td>", $row['Titulo'], "</td>";
-											echo "<td>", $row['DNI'], "</td>";
-											echo "<td>", $row['NombreApellido'], "</td>";
-											echo "<td>", $row['FechaPedido'], "</td>";
-											echo "<td>", $row['Estado'], "</td>";
-											if ($row['Estado'] == "Pendiente"){	
-		?>													
-												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$row['ISBN']?>","<?=$row['DNI']?>")' /></td>
-		<?php		
+							$row = mysql_fetch_assoc($res);								
+							while($row) {										
+									echo "<tr>";									
+									$FecAnt = $row['FechaPedido'];	
+									$Est = $row['Estado'];
+									$ent = false;
+									$libros = '';
+									$Cant = 0;
+									$Dni = $row['DNI'];
+										While ($row && $FecAnt == $row['FechaPedido'] && $Est == $row['Estado'] && $Dni == $row['DNI']) {	
+											if (!$ent){	
+												echo "<td>", $row['NombreApellido'], "</td>";
+												echo "<td>", $row['DNI'], "</td>";
+												echo "<td>", $row['FechaPedido'], "</td>";
+												echo "<td>", $row['Estado'], "</td>";
+												$ent = true;	
 											}
-										echo "</tr>";																			
-								}
+											$Cant = $Cant + 1;	
+											$libros = $libros .' ISBN: ' .$row['ISBN']. ' - Titulo: ' .$row['Titulo'] .';</br>';
+											$row = mysql_fetch_assoc($res);
+										}	
+											echo "<td>", $Cant, "</td>";
+			?>																	
+											<td><input class="botones" type='button' value='Detalle' onclick='Verdetalle("<?=$libros?>")' /></td>
+			<?php		
+											if ($Est == "Pendiente"){							
+			?>																	
+												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$FecAnt?>","<?=$Dni?>","<?=$Est?>")' /></td>
+			<?php								
+											}
+									echo "</tr>";									
+							}						
 								echo "</table>";
 							}	
 						}	

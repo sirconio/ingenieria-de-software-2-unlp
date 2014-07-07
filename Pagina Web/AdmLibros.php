@@ -376,7 +376,7 @@
 				Ventana.document.innerHTML = "";
 				var Indice = "Ind"+Nro;
 				Ind = document.getElementsByName(Indice)[0].value;			
-				Ventana.document.write("<html><head></head><body background='Fondo8.jpg' background-size='cover' style='color:white' onblur='self.close()' ><p>ISBN: " + ISBN + " - Autor: " + NombreApellido + " - Titulo: " + Titulo + "</p><p>Idioma: " + Idioma + " - Cantidad de Paginas: " + CantPag + " - Fecha Publicacion: " + Fecha + "</p><p>Precio: $" + Precio + "</p><p>Etiquetas: " + Etiq + "</p><p>Indice: <p>&nbsp;&nbsp;&nbsp;&nbsp;</p>" + Ind + "</p><p>------------------------------</p></body></html>");
+				Ventana.document.write("<html><head></head><body background='Fondo8.jpg' background-size='cover' style='color:white' onblur='self.close()' ><p>ISBN: " + ISBN + " - Autor: " + NombreApellido + " - Titulo: " + Titulo + "</p><p>Idioma: " + Idioma + " - Cantidad de Paginas: " + CantPag + " - Fecha Publicacion: " + Fecha + "</p><p>Precio: $" + Precio + "</p><p>Etiquetas: " + Etiq + "</p><p>Primeras Paginas: <p>&nbsp;&nbsp;&nbsp;&nbsp;" + Ind + "</p><p>------------------------------</p></body></html>");
 				myWindow.focus();
 			}
 			<!-- VALIDACIONES DE CAMPOS -->
@@ -1049,7 +1049,7 @@
 									<input class="botones" type="button" value="Agregar Etiqueta" onclick="agregarEtiqueta('alta','0')"></br>
 	<?php
 									echo '<div id="AdminIndice">
-										<label for="Fecha">Indice:</label></br>
+										<label for="Fecha">Primeras Paginas:</label></br>
 										<textarea name="Ind" rows="10" cols="37" maxlength="255" placeholder="Indice del libro..."  required>' .$_GET['Indice']. '</textarea> 
 									</div>';
 									echo '<input type="hidden" name="accion" value="agregar" required readonly>									
@@ -1110,7 +1110,7 @@
 									<input class="botones" type="button" value="Agregar Etiqueta" onclick="agregarEtiqueta('alta', '0')"></br>
 	<?php
 									echo '<div id="AdminIndice">
-										<label for="Fecha">Indice:</label></br>
+										<label for="Fecha">Primeras Paginas:</label></br>
 										<textarea name="Ind" rows="10" cols="37" maxlength="255" placeholder="Indice del libro..."  required></textarea> 
 									</div>';
 									echo '<input type="hidden" name="accion" value="agregar" required readonly>
@@ -1281,7 +1281,7 @@
 													<input class="botones" type="button" value="Agregar Etiqueta" onclick="agregarEtiqueta('mod', '<?=$_GET['ISBN']?>')"></br>
 		<?php
 													echo '<div id="AdminIndice">
-														<label for="Fecha">Indice:</label></br>
+														<label for="Fecha">Primeras Paginas:</label></br>
 														<textarea name="Ind" rows="10" cols="37" maxlength="255" placeholder="Indice del libro..."  required>' .$_GET['Indice'].'</textarea> 
 													</div>';
 													if ($row['Estado'] == 1){ 
@@ -1365,7 +1365,7 @@
 													<input class="botones" type="button" value="Agregar Etiqueta" onclick="agregarEtiqueta('mod', '<?=$_GET['ISBN']?>')"></br>
 		<?php
 													echo '<div id="AdminIndice">
-														<label for="Fecha">Indice:</label></br>
+														<label for="Fecha">Primeras Paginas:</label></br>
 														<textarea name="Ind" rows="10" cols="37" maxlength="255" placeholder="Indice del libro..."  required> ' .$row['Indice'] .'</textarea> 
 													</div>';
 													if ($row['Estado'] == 1){ 

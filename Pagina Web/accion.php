@@ -533,11 +533,18 @@
 		$res = mysql_query( $cons);
 	}
 	// CAMBIAR PEDIDO A ENTREGADO //
- 	function PedidoEntregado ($ISBN, $DNI, &$Msj, &$Comp){
-		$cons = 'UPDATE pedidos 
+ 	function PedidoEntregado ($Fec, $Est, $DNI, &$Msj, &$Comp){
+		$Estado = 'SELECT Id_Estado
+					FROM estado
+					WHERE Descripcion = "' .$Est .'"';
+		$Eres =  mysql_query( $Estado);	
+		while($row = mysql_fetch_assoc($Eres)){
+			$cons = 'UPDATE pedidos 
 					SET Id_Estado = 3 
-					WHERE ISBN = ' .$ISBN. '
+					WHERE FechaPedido = "' .$Fec. '"
+					AND Id_Estado = ' .$row['Id_Estado'] .'
 					AND DNI = ' .$DNI;
+		}			
 		$res = mysql_query( $cons);		
 		if (!$res){
 			$Msj = "Estado no modificado";
@@ -548,11 +555,18 @@
 		}
 	}
 	// CAMBIAR PEDIDO A ENVIADO //
-	function PedidoEnviado($ISBN, $DNI, &$Msj, &$Comp){
-		$cons = 'UPDATE pedidos 
+	function PedidoEnviado($Fec, $Est, $DNI, &$Msj, &$Comp){
+		$Estado = 'SELECT Id_Estado
+					FROM estado
+					WHERE Descripcion = "' .$Est .'"';
+		$Eres =  mysql_query( $Estado);	
+		while($row = mysql_fetch_assoc($Eres)){
+			$cons = 'UPDATE pedidos 
 					SET Id_Estado = 2 
-					WHERE ISBN = ' .$ISBN. '
+					WHERE FechaPedido = "' .$Fec. '"
+					AND Id_Estado = ' .$row['Id_Estado'] .'
 					AND DNI = ' .$DNI;
+		}			
 		$res = mysql_query( $cons);		
 		if (!$res){
 			$Msj = "Estado no modificado";
