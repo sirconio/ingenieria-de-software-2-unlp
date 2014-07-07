@@ -496,15 +496,15 @@
 						if (!empty($_GET['tip']) && $_GET['tip'] == 'err'){
 							if($_GET['Estad'] == 'Activo'){
 								echo '<form class="FAbm" name="fmod" action="" method="GET">
-									<label class="Reginput" for="Visble">Estado:</label>
+									<label class="Reginput" for="Visble">Estado: ', $_GET['Estad'], '</label>
 									<input class="Reginput" type="hidden" name="ID" value="', $_GET['ID'], '" required readonly>	
-									<input class="Reginput" type="text" name="Estad" value="', $_GET['Estad'], '" required readonly><br>
+									<input class="Reginput" type="hidden" name="Estad" value="', $_GET['Estad'], '" required readonly><br>
 									<label class="Reginput" for="NombreUsuario">Nombre Usuario:</label>
 									<input class="Reginput" type="text" name="NomUs" value="', $_GET['NomUs'], '" placeholder="Usuario" maxlength="10" required><br>
 									<label class="Reginput" for="NombreApellido">Nombre y Apellido:</label>
 									<input class="Reginput" type="text" name="NomApe"  value="', $_GET['NomApe'], '" placeholder="Nombre Apellido" maxlength="30" onkeypress="return LetrasEspacio(event)"  required><br>
-									<label class="Reginput" for="DNI">DNI:</label>
-									<input class="Reginput" type="text" name="DNI" value="', $_GET['DNI'], '" placeholder="Ej: 37148135" maxlength="8" onkeypress="return Numeros(event);"  required readonly><br>
+									<label class="Reginput" for="DNI">DNI: ', $_GET['DNI'], '</label>
+									<input class="Reginput" type="hidden" name="DNI" value="', $_GET['DNI'], '" placeholder="Ej: 37148135" maxlength="8" onkeypress="return Numeros(event);"  required readonly><br>
 									<label class="Reginput" for="Telefono">Telefono:</label>
 									<input class="Reginput" type="text" name="Tel" value="', $_GET['Tel'], '" placeholder="Ej: 0114189054" maxlength="8" onkeypress="return Numeros(event);" required><br>
 									<label class="Reginput" for="Direccion">Direccion:</label>
@@ -536,15 +536,15 @@
 										if ($row['Estado'] == 1){
 											// FORMULARIO DE MODIFICACION //
 											echo '<form class="FAbm" name="fmod" action="" method="GET">
-												<label class="Reginput" for="Visble">Estado:</label>
+												<label class="Reginput" for="Visble">Estado: '; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '</label>
 												<input class="Reginput" type="hidden" name="ID" value="', $row['ID'], '" required readonly>	
-												<input class="Reginput" type="text" name="Estad" value="'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '" required readonly><br>
+												<input class="Reginput" type="hidden" name="Estad" value="'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '" required readonly><br>
 												<label class="Reginput" for="NombreUsuario">Nombre Usuario:</label>
 												<input class="Reginput" type="text" name="NomUs" value="', $row['Nombre'], '" placeholder="Usuario" maxlength="10" required><br>
 												<label class="Reginput" for="NombreApellido">Nombre y Apellido:</label>
 												<input class="Reginput" type="text" name="NomApe"  value="', $row['NombreApellido'], '" placeholder="Nombre Apellido" maxlength="30" onkeypress="return LetrasEspacio(event)"  required><br>
-												<label class="Reginput" for="DNI">DNI:</label>
-												<input class="Reginput" type="text" name="DNI" value="', $row['DNI'], '" placeholder="Ej: 37148135" maxlength="8" onkeypress="return Numeros(event);"  required readonly><br>
+												<label class="Reginput" for="DNI">DNI: ', $row['DNI'], '</label>
+												<input class="Reginput" type="hidden" name="DNI" value="', $row['DNI'], '" placeholder="Ej: 37148135" maxlength="8" onkeypress="return Numeros(event);"  required readonly><br>
 												<label class="Reginput" for="Telefono">Telefono:</label>
 												<input class="Reginput" type="text" name="Tel" value="', $row['Telefono'], '" placeholder="Ej: 0114189054" maxlength="8" onkeypress="return Numeros(event);"><br>
 												<label class="Reginput" for="Direccion">Direccion:</label>

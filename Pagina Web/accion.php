@@ -1684,7 +1684,7 @@
 			$IS = $IS . $temp . '"")';
 		}
 		if ($orden == 'PrecAsc') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1693,7 +1693,7 @@
 			$res = mysql_query($cons);					
 		}
 		elseif ($orden == 'PrecDes') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1702,7 +1702,7 @@
 			$res = mysql_query($cons);						
 		}
 		elseif  ($orden == 'TitAsc') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1711,7 +1711,7 @@
 			$res = mysql_query($cons);	
 		}						
 		elseif  ($orden == 'TitDes') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1720,7 +1720,7 @@
 			$res = mysql_query($cons);	
 		}
 		elseif  ($orden == 'AutAsc') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible, libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado, libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1729,7 +1729,7 @@
 			$res = mysql_query($cons);	
 		}						
 		elseif  ($orden == 'AutDes') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1738,7 +1738,7 @@
 			$res = mysql_query($cons);	
 		}			
 		elseif  ($orden == 'ISBNAsc') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1747,7 +1747,7 @@
 			$res = mysql_query($cons);	
 		}						
 		elseif  ($orden == 'ISBNDes') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1756,7 +1756,7 @@
 			$res = mysql_query($cons);	
 		}
 		elseif  ($orden == 'CPAsc') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1765,7 +1765,7 @@
 			$res = mysql_query($cons);	
 		}						
 		elseif  ($orden == 'CPDes') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1774,7 +1774,7 @@
 			$res = mysql_query($cons);	
 		}	
 		elseif  ($orden == 'FecAsc') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1783,7 +1783,7 @@
 			$res = mysql_query($cons);	
 		}						
 		elseif  ($orden == 'FecDes') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1792,7 +1792,7 @@
 			$res = mysql_query($cons);	
 		}
 		elseif  ($orden == 'IdioAsc') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible, libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado, libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1801,7 +1801,7 @@
 			$res = mysql_query($cons);	
 		}						
 		elseif  ($orden == 'IdioDes') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible, libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado, libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1822,7 +1822,7 @@
 			$IS = $IS . $temp . '"")';
 		}
 		if ($orden == 'PrecAsc') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1832,7 +1832,7 @@
 			$res = mysql_query($cons);					
 		}
 		elseif ($orden == 'PrecDes') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1842,7 +1842,7 @@
 			$res = mysql_query($cons);						
 		}
 		elseif  ($orden == 'TitAsc') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1852,7 +1852,7 @@
 			$res = mysql_query($cons);	
 		}						
 		elseif  ($orden == 'TitDes') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1862,7 +1862,7 @@
 			$res = mysql_query($cons);	
 		}
 		elseif  ($orden == 'AutAsc') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible, libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado, libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1872,7 +1872,7 @@
 			$res = mysql_query($cons);	
 		}						
 		elseif  ($orden == 'AutDes') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1882,7 +1882,7 @@
 			$res = mysql_query($cons);	
 		}			
 		elseif  ($orden == 'ISBNAsc') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1892,7 +1892,7 @@
 			$res = mysql_query($cons);	
 		}						
 		elseif  ($orden == 'ISBNDes') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1902,7 +1902,7 @@
 			$res = mysql_query($cons);	
 		}
 		elseif  ($orden == 'CPAsc') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1912,7 +1912,7 @@
 			$res = mysql_query($cons);	
 		}						
 		elseif  ($orden == 'CPDes') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1922,7 +1922,7 @@
 			$res = mysql_query($cons);	
 		}	
 		elseif  ($orden == 'FecAsc') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1932,7 +1932,7 @@
 			$res = mysql_query($cons);	
 		}						
 		elseif  ($orden == 'FecDes') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible,  libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado,  libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1942,7 +1942,7 @@
 			$res = mysql_query($cons);	
 		}
 		elseif  ($orden == 'IdioAsc') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible, libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado, libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma
@@ -1952,7 +1952,7 @@
 			$res = mysql_query($cons);	
 		}						
 		elseif  ($orden == 'IdioDes') {
-			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible, libro.Hojear AS Indice
+			$cons = 'SELECT libro.ISBN, libro.Titulo, autor.NombreApellido, libro.CantidadPaginas, libro.Precio, idioma.Descripcion as Idioma, libro.Fecha, disponibilidad.Descripcion as Disponibilidad, libro.Visible AS Estado, libro.Hojear AS Indice
 								FROM libro, autor, idioma, disponibilidad
 								WHERE autor.Id_Autor = libro.Id_Autor
 								AND idioma.Id_Idioma = libro.Id_Idioma

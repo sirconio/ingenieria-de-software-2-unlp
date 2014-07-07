@@ -513,25 +513,25 @@
 						ConsultaBusqueda ($restam, $_GET['Autor'], $_GET['Titulo'], $_GET['ISBN']);
 					}
 					// CATALOGO ORDENADO //
-					if	(!empty($_GET['Orden'])){	
+					if	(!empty($_GET['Orden'])){							
 						ConsultaOrdenamiento ($restam, $_GET['Orden'], $_GET['Tabla']);	
 					}
 					// CATALOGO FILTRADO //
 					if	(!empty($_GET['PreInf']) || !empty($_GET['PreSup']) || !empty($_GET['Idiomas'])){
 						ConsultaFiltros ($restam, $_GET['PreInf'], $_GET['PreSup'], $_GET['Idiomas'], $_GET['Tabla']);
 					}
-					// CONTROL DE CONSULTA //	
-					if(!$restam) {
+					// CONTROL DE CONSULTA //						
+					if(!$restam) {				
 						$message= 'Consulta invalida: ' .mysql_error() ."\n";
 						die($message);
-					}		
+					}							
 					// GENERANDO TABLA //
 					$num1 = mysql_num_rows($restam);
 					if($num1 == 0){
 						echo 'No se encontro ningun libro con dichas caracteristicas';
 						$Tab = array();
 					}
-					else{	
+					else{								
 						$Tab = array();
 						$ant = ' ';
 						while($row = mysql_fetch_assoc($restam)) {
@@ -557,7 +557,7 @@
 							ConsultaBusquedaPag ($res, ($NroPag-1), $_GET['Autor'], $_GET['Titulo'], $_GET['ISBN']);
 						}
 						// CATALOGO ORDENADO //
-						if	(!empty($_GET['Orden'])){	
+						if	(!empty($_GET['Orden'])){							
 							ConsultaOrdenamientoPag ($res, ($NroPag-1), $_GET['Orden'], $_GET['Tabla']);	
 						}
 						// CATALOGO FILTRADO //

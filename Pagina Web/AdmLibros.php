@@ -1016,7 +1016,7 @@
 	?>											
 									<input class="botones" type="button" value="Agregar Idioma" onclick="agregarIdioma('alta', '0')"></br>
 	<?php
-									echo '<label for="Fecha">Fecha:</label>
+									echo '<label for="Fecha">Fecha de Edicion:</label>
 									<input type="text" name="Fecha" value="', $_GET['Fecha'], '" id="datepickerAltaLibro" required><br>
 									<select hidden class="botones" name="Disp" required>
 										<option  value="0"></option>';
@@ -1093,7 +1093,7 @@
 	?>									
 									<input class="botones" type="button" value="Agregar Idioma" onclick="agregarIdioma('alta', '0')"></br>
 	<?php
-									echo '<label for="Fecha">Fecha:</label>
+									echo '<label for="Fecha">Fecha de Edicion:</label>
 									<input type="text" name="Fecha" id="datepickerAltaLibro" required><br>
 									<select hidden class="botones" name="Disp" required>
 										<option  value="0"></option>';
@@ -1158,7 +1158,7 @@
 											<input type="text" name="Precio" value="', $row['Precio'], '" required readonly><br>
 											<label for="Idioma">Idioma:</label>
 											<input type="text" name="Idioma" value="', $row['Idioma'], '" required readonly><br>
-											<label for="Fecha">Fecha:</label>
+											<label for="Fecha">Fecha de Edicion:</label>
 											<input type="text" name="Fecha" value="', $row['Fecha'], '" required readonly><br>';							
 											if ($row['Estado'] == 1){ 
 												echo '<input type="hidden" name="accion" value="borrar" required readonly>';	
@@ -1241,7 +1241,7 @@
 		?>											
 													<input class="botones" type="button" value="Agregar Idioma" onclick="agregarIdioma('mod', '<?=$_GET['ISBN']?>')"></br>			
 		<?php
-													echo '<label for="Fecha">Fecha:</label>';
+													echo '<label for="Fecha">Fecha de Edicion:</label>';
 													$date = date('m-d-Y', strtotime($_GET['Fecha']));
 													$datefin = str_replace('-', '/', $date);
 													echo '<input type="text" name="Fecha" value="', $datefin, '" id="datepickerModLibro" required ><br>
@@ -1327,7 +1327,7 @@
 		?>											
 													<input class="botones" type="button" value="Agregar Idioma" onclick="agregarIdioma('mod', '<?=$_GET['ISBN']?>')"></br>			
 		<?php
-													echo '<label for="Fecha">Fecha:</label>';
+													echo '<label for="Fecha">Fecha de Edicion:</label>';
 													$date = date('m-d-Y', strtotime($row['Fecha']));
 													$datefin = str_replace('-', '/', $date);
 													echo '<input type="text" name="Fecha" value="', $datefin, '" id="datepickerModLibro" required ><br>
@@ -1388,21 +1388,18 @@
 					}
 					// OPCION TOP 10 LIBROS MAS VENDIDOS EN UN PERIODO //
 					elseif (!empty($_GET['flag']) && $_GET['flag'] == 'con'){
-						echo '<div id="textoadmped"><samp>Top 10 de libros m&aacutes vendidos en un per&iacuteodo:</samp></div>';
-	?>
-						<div id='ABMDiv'>
-							<!-- FORMULARIO DE INGRESO PERIODO -->
-							<form class='FAbm' name="fperiodo" action="" method="GET">
-								<label for="periodo">Ingrese per&iacuteodo de tiempo:</label></br>
-								&nbsp;&nbsp;&nbsp;&nbsp;<label class="AVinput" for="periodo">Fecha Inicial:</label>
-								<input type="date" name="Fini" id="datepickerLimInf" required></br>
-								&nbsp;&nbsp;&nbsp;&nbsp;<label class="AVinput" for="periodo">Fecha Final:</label>
-								<input type="date" name="Ffin" id="datepickerLimSup" required></br>
-								<input type="hidden" name="flag" value="con" required readonly>
-								<input class="botones" type="button" value="Buscar" onclick="validarperiodo()">	
-							</form>
-	<?php	
+						echo '<div id="textoadmped"><samp>Top 10 de libros m&aacutes vendidos en un per&iacuteodo:</samp></div>
+						<div id="ABMDiv">';
 							if (!empty($_GET['Fini']) && !empty($_GET['Ffin'])){
+								echo '<form class="FAbm" name="fperiodo" action="" method="GET">
+									<label for="periodo">Ingrese per&iacuteodo de tiempo:</label></br>
+									&nbsp;&nbsp;&nbsp;&nbsp;<label class="AVinput" for="periodo">Fecha Inicial:</label>
+									<input type="date" name="Fini" id="datepickerLimInf" value="' .$_GET['Fini'] .'"  required></br>
+									&nbsp;&nbsp;&nbsp;&nbsp;<label class="AVinput" for="periodo">Fecha Final:</label>
+									<input type="date" name="Ffin" id="datepickerLimSup" value="' .$_GET['Ffin'] .'" required></br>
+									<input type="hidden" name="flag" value="con" required readonly>
+									<input class="botones" type="button" value="Buscar" onclick="validarperiodo()">	
+								</form>';
 								// CONSULTA DE BUSQUEDA DEL TOP 10 //
 								LibroPeriodo ($res, $_GET['Fini'], $_GET['Ffin']);
 								if(!$res) {
@@ -1439,6 +1436,20 @@
 									</div>";
 								}
 							}		
+							else{
+	?>							
+								<!-- FORMULARIO DE INGRESO PERIODO -->
+								<form class='FAbm' name="fperiodo" action="" method="GET">
+									<label for="periodo">Ingrese per&iacuteodo de tiempo:</label></br>
+									&nbsp;&nbsp;&nbsp;&nbsp;<label class="AVinput" for="periodo">Fecha Inicial:</label>
+									<input type="date" name="Fini" id="datepickerLimInf" required></br>
+									&nbsp;&nbsp;&nbsp;&nbsp;<label class="AVinput" for="periodo">Fecha Final:</label>
+									<input type="date" name="Ffin" id="datepickerLimSup" required></br>
+									<input type="hidden" name="flag" value="con" required readonly>
+									<input class="botones" type="button" value="Buscar" onclick="validarperiodo()">	
+								</form>
+	<?php								
+							}
 						echo '</div>';
 					}
 					// OPCION ALTA AUTOR //

@@ -84,6 +84,13 @@
 				 
 				return /\d/.test(String.fromCharCode(keynum));
 			}
+			function LetrasEspacio(e) {
+				tecla = (document.all) ? e.keyCode : e.which;
+				if ((tecla==8) || (tecla == 32)) return true;
+				patron =/[A-Za-z]/;
+				te = String.fromCharCode(tecla);
+				return patron.test(te);
+			}
 			function validarbusrap (){
 				if (document.fbusrap.BusRap.value.length==0){
 				   alert("Tiene que completar el campo de busqueda")
@@ -95,6 +102,14 @@
 			function validarpass (){
 				entro = false;
 				msg = "Tiene que completar el/los campo/s de: ";
+				if (document.fpass.Titular.value.length==0){
+				   	msg = msg + "Titular; "
+					entro = true;
+				}	
+				if (document.fpass.TipTarj.value.length==0){
+				   	msg = msg + "Tipo de Tarjeta; "
+					entro = true;
+				}	
 				if (document.fpass.NumTarj.value.length==0){
 				   	msg = msg + "Numero de Tarjeta; "
 					entro = true;
@@ -269,6 +284,7 @@
 			<!-- BOTONES DE DESPLAZAMIENTO -->
 			<div id='encabezado'>
 				<ul id='botones'>
+					<li><a href="Busqueda.php">Volver al Catalogo</a></li>
 					<li><a href="index.php">Volver al Inicio</a></li>
 				</ul>
 			</div>
@@ -282,12 +298,16 @@
 					if ($Comp){
 						echo '<div id="textocarrito"><samp>Verificando su tarjeta:</samp></div>
 						<form id="FRegPerfilClave" name="fpass" action="" method="POST">						
+							<label class="Reginput" for="NroTarjeta">Titular:</label>
+							<input class="Reginput" type="text" name="Titular" placeholder="Ej: Apellido Nombre" onkeypress="return LetrasEspacio(event)" required><br>
+							<label class="Reginput" for="NroTarjeta">Tipo de Tarjeta:</label>
+							<input class="Reginput" type="text" name="TipTarj" placeholder="Ej: Tipo" onkeypress="return LetrasEspacio(event)" required><br>
 							<label class="Reginput" for="NroTarjeta">Numero de Tarjeta</label>
 							<input class="Reginput" type="text" name="NumTarj" placeholder="Ej: 1234567890" maxlength="16"  onkeypress="return Numeros(event);" required><br>
 							<label class="Reginput" for="NroTarjeta">Fecha de Vencimiento</label>
 							<input class="Reginput" type="text" name="FechaVenc" id="datepicker" required><br>
-							<label class="Reginput" for="PassTarjeta">Clave:</label>
-							<input class="Reginput" type="password" name="Pass" placeholder="Ej: Clave" maxlength="4" required><br>
+							<label class="Reginput" for="PassTarjeta">Codigo de seguridad:</label>
+							<input class="Reginput" type="password" name="Pass" placeholder="Ej:Codigo de seguridad" maxlength="4" required><br>
 							<input class="botones" type="button" value="Enviar" onclick="validarpass()">
 							<input class="botones" type="button" value="Atras" onclick="Atras()">
 						</form>';	
