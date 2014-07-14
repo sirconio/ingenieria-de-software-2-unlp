@@ -974,11 +974,11 @@
 									<!-- FROMULARIO DE ALTA -->
 	<?php										
 								echo '<form class="FAbm" name="falta" action="" method="GET">
-									<label for="ISNB">ISBN:</label>
+									<label for="ISNB">*ISBN:</label>
 									<input type="text" name="ISBN" value="', $_GET['ISBN'], '" placeholder="Ej: 1234567890" maxlength="9" onkeypress="return Numeros(event);" required><br>
-									<label for="Titulo">T&iacutetulo:</label>
+									<label for="Titulo">*T&iacutetulo:</label>
 									<input type="text" name="Titulo" value="', $_GET['Titulo'], '" size="40" placeholder="Ej: Titulo" maxlength="45" required><br>
-									<label for="Autor">Autor:</label>			
+									<label for="Autor">*Autor:</label>			
 									<select class="botones" name="Autor" required>';
 									if (!empty($_GET['Autor'])){
 										echo '<option value="', $_GET['Autor'], '">', $_GET['Autor'], '</option>';
@@ -995,11 +995,11 @@
 		?>			
 									<input class="botones" type="button" value="Agregar Autor" onclick="agregarAutor('alta', '0')"></br>
 		<?php		
-									echo '<label for="CantPag">Cantidad P&aacuteginas:</label>
+									echo '<label for="CantPag">*Cantidad P&aacuteginas:</label>
 									<input type="text" name="CantPag" value="', $_GET['CantPag'], '" placeholder="Ej: 1" maxlength="10" onkeypress="return Numeros(event);" required><br>
-									<label for="Precio">Precio:</label>
+									<label for="Precio">*Precio:</label>
 									<input type="text" name="Precio" value="', $_GET['Precio'], '" placeholder="Ej: 37.14" maxlength="10" onkeypress="return NumerosPunto(event);" required><br>
-									<label for="Idioma">Idioma:</label>
+									<label for="Idioma">*Idioma:</label>
 									<select class="botones" name="Idioma" required>';
 									if (!empty($_GET['Idioma'])){
 										echo '<option value="', $_GET['Idioma'], '">', $_GET['Idioma'], '</option>';
@@ -1016,7 +1016,7 @@
 	?>											
 									<input class="botones" type="button" value="Agregar Idioma" onclick="agregarIdioma('alta', '0')"></br>
 	<?php
-									echo '<label for="Fecha">Fecha de Edicion:</label>
+									echo '<label for="Fecha">*Fecha de Edicion:</label>
 									<input type="text" name="Fecha" value="', $_GET['Fecha'], '" id="datepickerAltaLibro" required><br>
 									<select hidden class="botones" name="Disp" required>
 										<option  value="0"></option>';
@@ -1044,12 +1044,13 @@
 											echo '<input class="botones" type="checkbox" name="Etiquetas[]" value="', $row['Etiqueta'], '">', $row['Etiqueta'];
 										}	
 									}
-									echo '</div>';
+									echo '<label for="obligatorios">Los * son campos obligatorios</label>
+									</div>';
 	?>								
 									<input class="botones" type="button" value="Agregar Etiqueta" onclick="agregarEtiqueta('alta','0')"></br>
 	<?php
 									echo '<div id="AdminIndice">
-										<label for="Fecha">Primeras Paginas:</label></br>
+										<label for="Fecha">*Primeras Paginas:</label></br>
 										<textarea name="Ind" rows="10" cols="37" maxlength="255" placeholder="Indice del libro..."  required>' .$_GET['Indice']. '</textarea> 
 									</div>';
 									echo '<input type="hidden" name="accion" value="agregar" required readonly>									
@@ -1060,11 +1061,11 @@
 	?>
 								<!-- FROMULARIO DE ALTA -->
 								<form class='FAbm' name="falta" action="" method="GET">
-									<label for="ISNB">ISBN:</label>
+									<label for="ISNB">*ISBN:</label>
 									<input type="text" name="ISBN" placeholder="Ej: 1234567890" maxlength="9" onkeypress="return Numeros(event);" required><br>
-									<label for="Titulo">T&iacutetulo:</label>
+									<label for="Titulo">*T&iacutetulo:</label>
 									<input type="text" name="Titulo" size="40" placeholder="Ej: Titulo" maxlength="45" required><br>
-									<label for="Autor">Autor:</label>
+									<label for="Autor">*Autor:</label>
 		<?php						
 									echo '<select class="botones" name="Autor" required>
 										<option value="">Seleccione un Autor...</option>';
@@ -1077,11 +1078,11 @@
 		?>			
 									<input class="botones" type="button" value="Agregar Autor" onclick="agregarAutor('alta', '0')"></br>
 		<?php		
-									echo '<label for="CantPag">Cantidad P&aacuteginas:</label>
+									echo '<label for="CantPag">*Cantidad P&aacuteginas:</label>
 									<input type="text" name="CantPag" placeholder="Ej: 1" maxlength="10" onkeypress="return Numeros(event);" required><br>
-									<label for="Precio">Precio:</label>
+									<label for="Precio">*Precio:</label>
 									<input type="text" name="Precio" placeholder="Ej: 37.14" maxlength="10" onkeypress="return NumerosPunto(event);" required><br>
-									<label for="Idioma">Idioma:</label>
+									<label for="Idioma">*Idioma:</label>
 									<select class="botones" name="Idioma" required>
 										<option value="">Seleccione un idioma...</option>';
 										while($row = mysql_fetch_assoc($residiomas)){	
@@ -1093,7 +1094,7 @@
 	?>									
 									<input class="botones" type="button" value="Agregar Idioma" onclick="agregarIdioma('alta', '0')"></br>
 	<?php
-									echo '<label for="Fecha">Fecha de Edicion:</label>
+									echo '<label for="Fecha">*Fecha de Edicion:</label>
 									<input type="text" name="Fecha" id="datepickerAltaLibro" required><br>
 									<select hidden class="botones" name="Disp" required>
 										<option  value="0"></option>';
@@ -1110,14 +1111,15 @@
 									<input class="botones" type="button" value="Agregar Etiqueta" onclick="agregarEtiqueta('alta', '0')"></br>
 	<?php
 									echo '<div id="AdminIndice">
-										<label for="Fecha">Primeras Paginas:</label></br>
+										<label for="Fecha">*Primeras Paginas:</label></br>
 										<textarea name="Ind" rows="10" cols="37" maxlength="255" placeholder="Indice del libro..."  required></textarea> 
 									</div>';
 									echo '<input type="hidden" name="accion" value="agregar" required readonly>
 									<input class="botones" type="button" value="Cargar" onclick="validaralta()">	
 								</form>';
 							}
-						echo '</div>';
+						echo '<label for="obligatorios">Los * son campos obligatorios</label>
+						</div>';
 					}
 					// OPCION BAJA LIBROS //
 					elseif (!empty($_GET['flag']) && $_GET['flag'] == 'baja'){
@@ -1146,20 +1148,20 @@
 									while($row = mysql_fetch_assoc($res)){
 										// FORMULARIO DE BAJA //
 										echo '<form class="FAbm" action="" method="GET">											
-											<label for="Visble">ISBN:</label><input type="text" name="ISBN" value="', $row['ISBN'], '" required readonly>	
-											<label for="Visble">Estado:</label><input type="text" name="Estad" value="'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '" required readonly><br>
-											<label for="Titulo">T&iacutetulo:</label>
-											<input type="text" name="Titulo" value="', $row['Titulo'], '" size="40"  required readonly><br>
-											<label for="Autor">Autor:</label>
-											<input type="text" name="Autor" value="', $row['NombreApellido'], '" required readonly><br>
-											<label for="CantPag">Cantidad Paginas:</label>
-											<input type="text" name="CantPag" value="', $row['CantidadPaginas'], '" required readonly><br>
-											<label for="Precio">Precio:</label>
-											<input type="text" name="Precio" value="', $row['Precio'], '" required readonly><br>
-											<label for="Idioma">Idioma:</label>
-											<input type="text" name="Idioma" value="', $row['Idioma'], '" required readonly><br>
-											<label for="Fecha">Fecha de Edicion:</label>
-											<input type="text" name="Fecha" value="', $row['Fecha'], '" required readonly><br>';							
+											<label for="Visble">ISBN:', $row['ISBN'], '</label><input type="hidden" name="ISBN" value="', $row['ISBN'], '" required readonly>	
+											<label for="Visble">Estado:'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '</label><input type="hidden" name="Estad" value="'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '" required readonly><br>
+											<label for="Titulo">T&iacutetulo:', $row['Titulo'], '</label>
+											<input type="hidden" name="Titulo" value="', $row['Titulo'], '" size="40"  required readonly><br>
+											<label for="Autor">Autor:', $row['NombreApellido'], '</label>
+											<input type="hidden" name="Autor" value="', $row['NombreApellido'], '" required readonly><br>
+											<label for="CantPag">Cantidad Paginas:', $row['CantidadPaginas'], '</label>
+											<input type="hidden" name="CantPag" value="', $row['CantidadPaginas'], '" required readonly><br>
+											<label for="Precio">Precio:', $row['Precio'], '</label>
+											<input type="hidden" name="Precio" value="', $row['Precio'], '" required readonly><br>
+											<label for="Idioma">Idioma:', $row['Idioma'], '</label>
+											<input type="hidden" name="Idioma" value="', $row['Idioma'], '" required readonly><br>
+											<label for="Fecha">Fecha de Edicion:', $row['Fecha'], '</label>
+											<input type="hidden" name="Fecha" value="', $row['Fecha'], '" required readonly><br>';							
 											if ($row['Estado'] == 1){ 
 												echo '<input type="hidden" name="accion" value="borrar" required readonly>';	
 	?>
@@ -1209,11 +1211,11 @@
 											// FORMULARIO DE MODIFICACION //
 											if (!empty($_GET['tip']) && $_GET['tip'] == 'err'){
 												echo '<form class="FAbm" name="fmod" action="" method="GET">			
-													<label for="Visble">ISBN:</label><input type="text" name="ISBN" value="', $_GET['ISBN'], '" required readonly>	
+													<label for="Visble">ISBN:', $_GET['ISBN'], '</label><input type="hidden" name="ISBN" value="', $_GET['ISBN'], '" required readonly>	
 													<input hidden type="text" name="Estad" value="', $_GET['Estad'], '" required readonly><br>';
-													echo'<label for="Titulo">Titulo:</label>
+													echo'<label for="Titulo">*Titulo:</label>
 													<input type="text" name="Titulo" value="', $_GET['Titulo'], '" size="40" placeholder="Ej: Titulo" maxlength="45" required ><br>
-													<label for="Autor">Autor:</label>
+													<label for="Autor">*Autor:</label>
 													<select class="botones" name="Autor" required>
 														<option value="' .$_GET['Autor']. '">' .$_GET['Autor']. '</option>';
 														while($row2 = mysql_fetch_assoc($resautor)){
@@ -1225,11 +1227,11 @@
 		?>													
 													<input class="botones" type="button" value="Agregar Autor" onclick="agregarAutor('mod', '<?=$_GET['ISBN']?>')"></br>
 		<?php	
-													echo '<label for="CantPag">Cantidad P&aacuteginas:</label>
+													echo '<label for="CantPag">*Cantidad P&aacuteginas:</label>
 													<input type="text" name="CantPag" value="', $_GET['CantPag'], '" placeholder="Ej: 1" maxlength="10" onkeypress="return Numeros(event);" required ><br>
-													<label for="Precio">Precio:</label>
+													<label for="Precio">*Precio:</label>
 													<input type="text" name="Precio" value="', $_GET['Precio'], '" placeholder="Ej: 37.14" maxlength="10" onkeypress="return NumerosPunto(event);" required ><br>
-													<label for="Idioma">Idioma:</label>
+													<label for="Idioma">*Idioma:</label>
 													<select class="botones" name="Idioma" required>
 														<option value="' .$_GET['Idioma']. '">' .$_GET['Idioma']. '</option>';
 														while($row3 = mysql_fetch_assoc($residiomas)){	
@@ -1241,11 +1243,11 @@
 		?>											
 													<input class="botones" type="button" value="Agregar Idioma" onclick="agregarIdioma('mod', '<?=$_GET['ISBN']?>')"></br>			
 		<?php
-													echo '<label for="Fecha">Fecha de Edicion:</label>';
+													echo '<label for="Fecha">*Fecha de Edicion:</label>';
 													$date = date('m-d-Y', strtotime($_GET['Fecha']));
 													$datefin = str_replace('-', '/', $date);
 													echo '<input type="text" name="Fecha" value="', $datefin, '" id="datepickerModLibro" required ><br>
-													<label for="Dis">Disponibilidad:</label>
+													<label for="Dis">*Disponibilidad:</label>
 													<select class="botones" name="Disp" required>
 														<option value="' .$_GET['Disp']. '">' .$_GET['Disp']. '</option>';
 														while($row6 = mysql_fetch_assoc($resdisp)){	
@@ -1281,7 +1283,7 @@
 													<input class="botones" type="button" value="Agregar Etiqueta" onclick="agregarEtiqueta('mod', '<?=$_GET['ISBN']?>')"></br>
 		<?php
 													echo '<div id="AdminIndice">
-														<label for="Fecha">Primeras Paginas:</label></br>
+														<label for="Fecha">*Primeras Paginas:</label></br>
 														<textarea name="Ind" rows="10" cols="37" maxlength="255" placeholder="Indice del libro..."  required>' .$_GET['Indice'].'</textarea> 
 													</div>';
 													if ($row['Estado'] == 1){ 
@@ -1295,11 +1297,11 @@
 											}
 											else{
 												echo '<form class="FAbm" name="fmod" action="" method="GET">			
-													<label for="Visble">ISBN:</label><input type="text" name="ISBN" value="', $row['ISBN'], '" required readonly>	
+													<label for="Visble">ISBN:', $row['ISBN'], '</label><input type="hidden" name="ISBN" value="', $row['ISBN'], '" required readonly>	
 													<input hidden type="text" name="Estad" value="'; if ($row['Estado'] == 1){ echo 'Activo';}else{ echo 'Borrado';} echo '" required readonly><br>';
-													echo'<label for="Titulo">Titulo:</label>
+													echo'<label for="Titulo">*Titulo:</label>
 													<input type="text" name="Titulo" value="', $row['Titulo'], '" size="40" placeholder="Ej: Titulo" maxlength="45" required ><br>
-													<label for="Autor">Autor:</label>
+													<label for="Autor">*Autor:</label>
 													<select class="botones" name="Autor" required>
 														<option value="' .$row['NombreApellido']. '">' .$row['NombreApellido']. '</option>';
 														while($row2 = mysql_fetch_assoc($resautor)){	
@@ -1311,11 +1313,11 @@
 		?>													
 													<input class="botones" type="button" value="Agregar Autor" onclick="agregarAutor('mod', '<?=$_GET['ISBN']?>')"></br>
 		<?php	
-													echo '<label for="CantPag">Cantidad P&aacuteginas:</label>
+													echo '<label for="CantPag">*Cantidad P&aacuteginas:</label>
 													<input type="text" name="CantPag" value="', $row['CantidadPaginas'], '" placeholder="Ej: 1" maxlength="10" onkeypress="return Numeros(event);" required ><br>
-													<label for="Precio">Precio:</label>
+													<label for="Precio">*Precio:</label>
 													<input type="text" name="Precio" value="', $row['Precio'], '" placeholder="Ej: 37.14" maxlength="10" onkeypress="return NumerosPunto(event);" required ><br>
-													<label for="Idioma">Idioma:</label>
+													<label for="Idioma">*Idioma:</label>
 													<select class="botones" name="Idioma" required>
 														<option value="' .$row['Idioma']. '">' .$row['Idioma']. '</option>';
 														while($row3 = mysql_fetch_assoc($residiomas)){	
@@ -1327,11 +1329,11 @@
 		?>											
 													<input class="botones" type="button" value="Agregar Idioma" onclick="agregarIdioma('mod', '<?=$_GET['ISBN']?>')"></br>			
 		<?php
-													echo '<label for="Fecha">Fecha de Edicion:</label>';
+													echo '<label for="Fecha">*Fecha de Edicion:</label>';
 													$date = date('m-d-Y', strtotime($row['Fecha']));
 													$datefin = str_replace('-', '/', $date);
 													echo '<input type="text" name="Fecha" value="', $datefin, '" id="datepickerModLibro" required ><br>
-													<label for="Dis">Disponibilidad:</label>
+													<label for="Dis">*Disponibilidad:</label>
 													<select class="botones" name="Disp" required>
 														<option value="' .$row['Disponibilidad']. '">' .$row['Disponibilidad']. '</option>';
 														while($row6 = mysql_fetch_assoc($resdisp)){	
@@ -1365,7 +1367,7 @@
 													<input class="botones" type="button" value="Agregar Etiqueta" onclick="agregarEtiqueta('mod', '<?=$_GET['ISBN']?>')"></br>
 		<?php
 													echo '<div id="AdminIndice">
-														<label for="Fecha">Primeras Paginas:</label></br>
+														<label for="Fecha">*Primeras Paginas:</label></br>
 														<textarea name="Ind" rows="10" cols="37" maxlength="255" placeholder="Indice del libro..."  required> ' .$row['Indice'] .'</textarea> 
 													</div>';
 													if ($row['Estado'] == 1){ 
@@ -1376,7 +1378,8 @@
 														echo '<input class="botones" type="submit" value="Modificar" disabled>';
 													}
 												echo '</form>';
-											}	
+											}
+											echo '<label for="obligatorios">Los * son campos obligatorios</label>';		
 										}
 										else{
 											echo 'El libro: ISBN = ' .$_GET['ISBN'] .', Titulo = ' . $row['Titulo'] .'; no es un libro activo y sus datos no son modificables';

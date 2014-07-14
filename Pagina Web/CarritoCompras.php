@@ -307,7 +307,7 @@
 							<label class="Reginput" for="NroTarjeta">Fecha de Vencimiento</label>
 							<input class="Reginput" type="text" name="FechaVenc" id="datepicker" required><br>
 							<label class="Reginput" for="PassTarjeta">Codigo de seguridad:</label>
-							<input class="Reginput" type="password" name="Pass" placeholder="Ej:Codigo de seguridad" maxlength="4" required><br>
+							<input class="Reginput" type="password" name="Pass" placeholder="Ej:Codigo de seguridad" maxlength="4" onkeypress="return Numeros(event);" required><br>
 							<input class="botones" type="button" value="Enviar" onclick="validarpass()">
 							<input class="botones" type="button" value="Atras" onclick="Atras()">
 						</form>';	

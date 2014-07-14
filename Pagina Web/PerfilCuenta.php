@@ -333,21 +333,21 @@
 					// FORMULARIO DATOS PERSONALES //
 						echo '<form id="FRegPerfilPersonal" name="fdatos" action="" method="POST">
 							<label class="Reginput" for="ModPers">Modificar Datos Personales:</label></br>
-							<label class="Reginput" for="NombreUsuario">Nombre Usuario:</label>
+							<label class="Reginput" for="NombreUsuario">*Nombre Usuario:</label>
 							<input class="Reginput" type="text" name="NomUs" value="', $_GET['NomUs'], '" placeholder="Usuario" maxlength="10" required><br>
-							<label class="Reginput" for="NombreApellido">Nombre y Apellido:</label>
+							<label class="Reginput" for="NombreApellido">*Nombre y Apellido:</label>
 							<input class="Reginput" type="text" name="NomApe"  value="', $_GET['NomApe'], '" placeholder="Nombre Apellido" maxlength="30" onkeypress="return LetrasEspacio(event)" required><br>
-							<label class="Reginput" for="DNI">DNI:</label>
-							<input class="Reginput" type="text" name="DNI" value="', $_GET['DNI'], '" name="DNI" placeholder="Ej: 37148135" maxlength="8" onkeypress="return Numeros(event);" required readonly><br>
+							<label class="Reginput" for="DNI">DNI:', $_GET['DNI'], '</label>
+							<input class="Reginput" type="hidden" name="DNI" value="', $_GET['DNI'], '" name="DNI" placeholder="Ej: 37148135" maxlength="8" onkeypress="return Numeros(event);" required readonly><br>
 							<label class="Reginput" for="Telefono">Telefono:</label>
 							<input class="Reginput" type="text" name="Tel" value="', $_GET['Tel'], '" placeholder="Ej: 0114189054" maxlength="8" onkeypress="return Numeros(event);"><br>
 							<label class="Reginput" for="Direccion">Direccion:</label>
 							<input class="Reginput" type="text" name="Dir" value="', $_GET['Dir'], '" placeholder="Ej: Calle #Numero" maxlength="30"><br>
-							<label class="Reginput" for="Mail">Mail:</label>
+							<label class="Reginput" for="Mail">*Mail:</label>
 							<input class="Reginput" id="id_mail3" type="text" name="Mail" value="', $_GET['Mail'], '" placeholder="Ej: nombre@correo.com" maxlength="30" onblur="validarEmail()" required><br>
 							<input class="botones" type="button" value="Modificar" onclick="validardatos()">
-						</form>';	
-				
+							<label for="obligatorios">Los * son campos obligatorios</label>
+						</form>';							
 				}
 				else{
 					DatosUsuarioID($res, $_SESSION["ID"]);     
@@ -355,32 +355,34 @@
 						// FORMULARIO DATOS PERSONALES //
 						echo '<form id="FRegPerfilPersonal" name="fdatos" action="" method="POST">
 							<label class="Reginput" for="ModPers">Modificar Datos Personales:</label></br>
-							<label class="Reginput" for="NombreUsuario">Nombre Usuario:</label>
+							<label class="Reginput" for="NombreUsuario">*Nombre Usuario:</label>
 							<input class="Reginput" type="text" name="NomUs" value="', $row['Nombre'], '" placeholder="Usuario" maxlength="10" required><br>
-							<label class="Reginput" for="NombreApellido">Nombre y Apellido:</label>
+							<label class="Reginput" for="NombreApellido">*Nombre y Apellido:</label>
 							<input class="Reginput" type="text" name="NomApe"  value="', $row['NombreApellido'], '" placeholder="Nombre Apellido" maxlength="30" onkeypress="return LetrasEspacio(event)" required><br>
-							<label class="Reginput" for="DNI">DNI:</label>
-							<input class="Reginput" type="text" name="DNI" value="', $row['DNI'], '" name="DNI" placeholder="Ej: 37148135" maxlength="8" onkeypress="return Numeros(event);" required readonly><br>
+							<label class="Reginput" for="DNI">DNI:', $row['DNI'], '</label>
+							<input class="Reginput" type="hidden" name="DNI" value="', $row['DNI'], '" name="DNI" placeholder="Ej: 37148135" maxlength="8" onkeypress="return Numeros(event);" required readonly><br>
 							<label class="Reginput" for="Telefono">Telefono:</label>
 							<input class="Reginput" type="text" name="Tel" value="', $row['Telefono'], '" placeholder="Ej: 0114189054" maxlength="8" onkeypress="return Numeros(event);"required><br>
 							<label class="Reginput" for="Direccion">Direccion:</label>
 							<input class="Reginput" type="text" name="Dir" value="', $row['Direccion'], '" placeholder="Ej: Calle #Numero" maxlength="30" required><br>
-							<label class="Reginput" for="Mail">Mail:</label>
+							<label class="Reginput" for="Mail">*Mail:</label>
 							<input class="Reginput" id="id_mail3" type="text" name="Mail" value="', $row['Contacto'], '" placeholder="Ej: nombre@correo.com" maxlength="30" onblur="validarEmail()" required><br>
 							<input class="botones" type="button" value="Modificar" onclick="validardatos()">
-						</form>';	
+							<label for="obligatorios">Los * son campos obligatorios</label>
+						</form>';					
 					}
 				}	
 				// FORMULARIO DE CLAVE //	
 				echo '<form id="FRegPerfilClave" name="fpass" action="" method="POST">
 					<label class="Reginput" for="Modcontra">Modificar Contraseña:</label></br>
-					<label class="Reginput" for="Contraseña1">Contraseña Actual:</label>
+					<label class="Reginput" for="Contraseña1">*Contraseña Actual:</label>
 					<input class="Reginput" type="password" name="PassActual" placeholder="Contraseña Actual" maxlength="30" required><br>
-					<label class="Reginput" for="Contraseña2">Nueva Contraseña:</label>
+					<label class="Reginput" for="Contraseña2">*Nueva Contraseña:</label>
 					<input class="Reginput" id="id_pass1"type="password" name="Pass1" placeholder="Nueva Contraseña" maxlength="30" required><br>
-					<label class="Reginput" for="Contraseña2">Comfirme Contraseña:</label>
+					<label class="Reginput" for="Contraseña2">*Comfirme Contraseña:</label>
 					<input class="Reginput" id="id_pass2" size= "20" type="password" name="Pass2" placeholder="Repita Nueva Contraseña" maxlength="30" onblur="validarPass()" required><br>				
 					<input class="botones" type="button" value="Modificar" onclick="validarpass()">
+					<label for="obligatorios">Los * son campos obligatorios</label>
 				</form>';	
 				// CIERRE  SERVIDOR//
 				CerrarServidor ($con);

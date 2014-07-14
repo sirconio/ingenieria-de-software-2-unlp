@@ -30,9 +30,9 @@
 				location.href="VerPerfil.php";
 			}	
 			<!-- ACTIVACION DEL FLAG DE CAMBIAR ESTADO A ENVIADO -->
-			function Enviado (Fec, DNI, Est){
+			function Enviado (Fec, DNI, Est, Num){
 				if (confirm("Desea cambiar el estado del pedido a enviado?")){
-					location.href="AdmPedidos.php?flag=lista&pedido=true&Fec=" + Fec + "&Dn=" + DNI + "&Es=" + Est;
+					location.href="AdmPedidos.php?flag=lista&pedido=true&Fec=" + Fec + "&Dn=" + DNI + "&Es=" + Est + "&Num=" + Num;
 				}
 			}	
 			<!-- MENSAJE DE RESPUESTA A MODIFICACION DE PEDIDOS SATISFACTORIO -->
@@ -94,7 +94,7 @@
 				// CAMBIAR PEDIDO A ENVIADO, SI PEDIDO = TRUE //
 				if (!empty($_GET['pedido']) && $_GET['pedido'] == 'true'){
 					$Comp = false;
-					PedidoEnviado($_GET['Fec'], $_GET['Es'], $_GET['Dn'], $AltMsg, $Comp);
+					PedidoEnviado($_GET['Fec'], $_GET['Es'], $_GET['Dn'], $_GET['Num'], $AltMsg, $Comp);
 					if ($Comp){
 	?>
 						<script languaje="javascript"> 	
@@ -211,14 +211,15 @@
 									</tr>";									
 							$row = mysql_fetch_assoc($res);								
 							while($row) {										
-									echo "<tr>";									
+									echo "<tr>";		
+									$Nro = $row['Nro_Pedido'];									
 									$FecAnt = $row['FechaPedido'];	
 									$Est = $row['Estado'];
 									$ent = false;
 									$libros = '';
 									$Cant = 0;
 									$Dni = $row['DNI'];
-										While ($row && $FecAnt == $row['FechaPedido'] && $Est == $row['Estado'] && $Dni == $row['DNI']) {	
+										While ($row && $FecAnt == $row['FechaPedido'] && $Est == $row['Estado'] && $Dni == $row['DNI'] && $Nro == $row['Nro_Pedido']) {	
 											if (!$ent){	
 												echo "<td>", $row['NombreApellido'], "</td>";
 												echo "<td>", $row['DNI'], "</td>";
@@ -236,7 +237,7 @@
 			<?php		
 											if ($Est == "Pendiente"){							
 			?>																	
-												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$FecAnt?>","<?=$Dni?>","<?=$Est?>")' /></td>
+												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$FecAnt?>","<?=$Dni?>","<?=$Est?>","<?=$Nro?>")' /></td>
 			<?php								
 											}
 									echo "</tr>";									
@@ -296,13 +297,14 @@
 							$row = mysql_fetch_assoc($res);								
 							while($row) {										
 									echo "<tr>";									
-									$FecAnt = $row['FechaPedido'];	
+									$FecAnt = $row['FechaPedido'];
+									$Nro = $row['Nro_Pedido'];										
 									$Est = $row['Estado'];
 									$ent = false;
 									$libros = '';
 									$Cant = 0;
 									$Dni = $row['DNI'];
-										While ($row && $FecAnt == $row['FechaPedido'] && $Est == $row['Estado'] && $Dni == $row['DNI']) {	
+										While ($row && $FecAnt == $row['FechaPedido'] && $Est == $row['Estado'] && $Dni == $row['DNI']  && $Nro == $row['Nro_Pedido']) {	
 											if (!$ent){	
 												echo "<td>", $row['NombreApellido'], "</td>";
 												echo "<td>", $row['DNI'], "</td>";
@@ -320,7 +322,7 @@
 			<?php		
 											if ($Est == "Pendiente"){							
 			?>																	
-												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$FecAnt?>","<?=$Dni?>","<?=$Est?>")' /></td>
+												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$FecAnt?>","<?=$Dni?>","<?=$Est?>","<?=$Nro?>")' /></td>
 			<?php								
 											}
 									echo "</tr>";									
@@ -381,12 +383,13 @@
 							while($row) {										
 									echo "<tr>";									
 									$FecAnt = $row['FechaPedido'];	
+									$Nro = $row['Nro_Pedido'];	
 									$Est = $row['Estado'];
 									$ent = false;
 									$libros = '';
 									$Cant = 0;
 									$Dni = $row['DNI'];
-										While ($row && $FecAnt == $row['FechaPedido'] && $Est == $row['Estado'] && $Dni == $row['DNI']) {	
+										While ($row && $FecAnt == $row['FechaPedido'] && $Est == $row['Estado'] && $Dni == $row['DNI'] && $Nro == $row['Nro_Pedido']) {	
 											if (!$ent){	
 												echo "<td>", $row['NombreApellido'], "</td>";
 												echo "<td>", $row['DNI'], "</td>";
@@ -404,7 +407,7 @@
 			<?php		
 											if ($Est == "Pendiente"){							
 			?>																	
-												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$FecAnt?>","<?=$Dni?>","<?=$Est?>")' /></td>
+												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$FecAnt?>","<?=$Dni?>","<?=$Est?>","<?=$Nro?>")' /></td>
 			<?php								
 											}
 									echo "</tr>";									
@@ -465,12 +468,13 @@
 							while($row) {										
 									echo "<tr>";									
 									$FecAnt = $row['FechaPedido'];	
+									$Nro = $row['Nro_Pedido'];	
 									$Est = $row['Estado'];
 									$ent = false;
 									$libros = '';
 									$Cant = 0;
 									$Dni = $row['DNI'];
-										While ($row && $FecAnt == $row['FechaPedido'] && $Est == $row['Estado'] && $Dni == $row['DNI']) {	
+										While ($row && $FecAnt == $row['FechaPedido'] && $Est == $row['Estado'] && $Dni == $row['DNI'] && $Nro == $row['Nro_Pedido']) {	
 											if (!$ent){	
 												echo "<td>", $row['NombreApellido'], "</td>";
 												echo "<td>", $row['DNI'], "</td>";
@@ -488,7 +492,7 @@
 			<?php		
 											if ($Est == "Pendiente"){							
 			?>																	
-												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$FecAnt?>","<?=$Dni?>","<?=$Est?>")' /></td>
+												<td><input class="botones" type='button' value='Enviado' onclick='Enviado("<?=$FecAnt?>","<?=$Dni?>","<?=$Est?>","<?=$Nro?>")' /></td>
 			<?php								
 											}
 									echo "</tr>";									

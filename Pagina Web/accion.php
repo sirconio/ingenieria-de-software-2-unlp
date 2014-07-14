@@ -292,18 +292,18 @@
 // GESTION DE PEDIDOS //
 	// CONSULTAR TODOS LOS PEDIDOS //
 	function ConsultarPedidos (&$res){
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado, pedidos.Nro_Pedido
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.DNI = cliente.DNI
 				AND cliente.DNI = pedidos.DNI
 				AND pedidos.Id_Estado = estado.Id_Estado
 				AND pedidos.ISBN = libro.ISBN
-				ORDER BY pedidos.FechaPedido DESC';
+				ORDER BY pedidos.FechaPedido DESC, pedidos.Id_Estado ASC';
 		$res = mysql_query( $cons);
 	}
 	// CONSULTAR TODOS LOS PEDIDOS BUSQUEDA //
 	function ConsultarPedidosBus (&$res, $bus){
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado, pedidos.Nro_Pedido
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.DNI = cliente.DNI
 				AND cliente.DNI = pedidos.DNI
@@ -312,26 +312,26 @@
 				AND ( pedidos.ISBN LIKE "%' .$bus .'%" 
 				OR    pedidos.DNI LIKE "%' .$bus .'%" 
 				OR	  estado.Descripcion LIKE "%'.$bus .'%")
-				ORDER BY pedidos.FechaPedido DESC';
+				ORDER BY pedidos.FechaPedido DESC, pedidos.Id_Estado ASC';
 		$res = mysql_query( $cons);
 	}
 	// CONSULTAR TODOS LOS PEDIDOS PAGINADOS //
 	function ConsultarPedidosPag (&$res, $NroPag){
 		$pag = (10*$NroPag);
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado, pedidos.Nro_Pedido
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.DNI = cliente.DNI
 				AND cliente.DNI = pedidos.DNI
 				AND pedidos.Id_Estado = estado.Id_Estado
 				AND pedidos.ISBN = libro.ISBN
-				ORDER BY pedidos.FechaPedido DESC
+				ORDER BY pedidos.FechaPedido DESC, pedidos.Id_Estado ASC
 				LIMIT ' .$pag .',10';
 		$res = mysql_query( $cons);
 	}
 	// CONSULTAR TODOS LOS PEDIDOS PAGINADOS BUSQUEDA //
 	function ConsultarPedidosPagBus (&$res, $NroPag, $bus){
 		$pag = (10*$NroPag);
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado, pedidos.Nro_Pedido
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.DNI = cliente.DNI
 				AND cliente.DNI = pedidos.DNI
@@ -340,39 +340,39 @@
 				AND ( pedidos.ISBN LIKE "%' .$bus .'%" 
 				OR    pedidos.DNI LIKE "%' .$bus .'%" 
 				OR	  estado.Descripcion LIKE "%'.$bus .'%")
-				ORDER BY pedidos.FechaPedido DESC
+				ORDER BY pedidos.FechaPedido DESC, pedidos.Id_Estado ASC
 				LIMIT ' .$pag .',10';
 		$res = mysql_query( $cons);
 	}
 	// CONSULTAR PEDIDO CON ID //
 	function ConsultaPedidos (&$res, $ID){
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado, pedidos.Nro_Pedido
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.Id_Usuario =' .$ID .'
 				AND usuario.DNI = cliente.DNI
 				AND cliente.DNI = pedidos.DNI
 				AND pedidos.Id_Estado = estado.Id_Estado
 				AND pedidos.ISBN = libro.ISBN
-				ORDER BY pedidos.FechaPedido DESC';
+				ORDER BY pedidos.FechaPedido DESC, pedidos.Id_Estado ASC';
 		$res = mysql_query( $cons);
 	}
 	// CONSULTAR PEDIDO PAGINADOS CON ID //
 	function ConsultaPedidosPag (&$res, $NroPag, $ID){
 		$pag = (10*$NroPag);
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado, pedidos.Nro_Pedido
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.Id_Usuario =' .$ID .'
 				AND usuario.DNI = cliente.DNI
 				AND cliente.DNI = pedidos.DNI
 				AND pedidos.Id_Estado = estado.Id_Estado
 				AND pedidos.ISBN = libro.ISBN
-				ORDER BY pedidos.FechaPedido DESC
+				ORDER BY pedidos.FechaPedido DESC, pedidos.Id_Estado ASC
 				LIMIT ' .$pag .',10';
 		$res = mysql_query( $cons);
 	}
 	// CONSULTAR PEDIDOS PENDIENTES //
 	function ConsultarPedidosPend (&$res){
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado, pedidos.Nro_Pedido
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.DNI = cliente.DNI
 				AND cliente.DNI = pedidos.DNI
@@ -384,7 +384,7 @@
 	}
 	// CONSULTAR PEDIDOS PENDIENTES CON ID //
 	function ConsultarPedidosPendId (&$res, $ID){
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado, pedidos.Nro_Pedido
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.Id_Usuario = ' .$ID .'
 				AND usuario.DNI = cliente.DNI
@@ -398,7 +398,7 @@
 	// CONSULTAR PEDIDOS PENDIENTES PAGINADO //
 	function ConsultarPedidosPendPag (&$res, $NroPag){
 		$pag = (10*$NroPag);
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado, pedidos.Nro_Pedido
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.DNI = cliente.DNI
 				AND cliente.DNI = pedidos.DNI
@@ -412,7 +412,7 @@
 	// CONSULTAR PEDIDOS PENDIENTES PAGINADO CON ID//
 	function ConsultarPedidosPendPagId (&$res, $NroPag, $ID){
 		$pag = (10*$NroPag);
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado, pedidos.Nro_Pedido
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.Id_Usuario = ' .$ID .'
 				AND usuario.DNI = cliente.DNI
@@ -426,7 +426,7 @@
 	}		
 	// CONSULTAR PEDIDOS ENVIDADOS //
 	function ConsultarPedidosEnv (&$res){
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado, pedidos.Nro_Pedido
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.DNI = cliente.DNI
 				AND cliente.DNI = pedidos.DNI
@@ -438,7 +438,7 @@
 	}
 	// CONSULTAR PEDIDOS ENVIDADOS CON ID //
 	function ConsultarPedidosEnvId (&$res, $ID){
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado, pedidos.Nro_Pedido
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.Id_Usuario = ' .$ID .' 
 				AND usuario.DNI = cliente.DNI
@@ -452,7 +452,7 @@
 	// CONSULTAR PEDIDOS ENVIDADOS PAGINADO //
 	function ConsultarPedidosEnvPag (&$res, $NroPag){
 		$pag = (10*$NroPag);
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado, pedidos.Nro_Pedido
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.DNI = cliente.DNI
 				AND cliente.DNI = pedidos.DNI
@@ -466,7 +466,7 @@
 	// CONSULTAR PEDIDOS ENVIDADOS PAGINADO CON ID //
 	function ConsultarPedidosEnvPagId (&$res, $NroPag, $ID){
 		$pag = (10*$NroPag);
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado, pedidos.Nro_Pedido
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.Id_Usuario = ' .$ID .'
 				AND usuario.DNI = cliente.DNI
@@ -480,7 +480,7 @@
 	}
 	// CONSULTAR PEDIDOS ENTREGADOS //
 	function ConsultarPedidosEnt (&$res){
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado, pedidos.Nro_Pedido
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.DNI = cliente.DNI
 				AND cliente.DNI = pedidos.DNI
@@ -492,7 +492,7 @@
 	}
 	// CONSULTAR PEDIDOS ENTREGADOS CON ID //
 	function ConsultarPedidosEntId (&$res, $ID){
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado, pedidos.Nro_Pedido
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.Id_Usuario = ' .$ID .'
 				AND usuario.DNI = cliente.DNI
@@ -506,7 +506,7 @@
 	// CONSULTAR PEDIDOS ENTREGADOS PAGINADO //
 	function ConsultarPedidosEntPag (&$res, $NroPag){
 		$pag = (10*$NroPag);
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado, pedidos.Nro_Pedido
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.DNI = cliente.DNI
 				AND cliente.DNI = pedidos.DNI
@@ -520,7 +520,7 @@
 	// CONSULTAR PEDIDOS ENTREGADOS PAGINADO CON ID//
 	function ConsultarPedidosEntPagId (&$res, $NroPag, $ID){
 		$pag = (10*$NroPag);
-		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado
+		$cons = 'SELECT pedidos.ISBN, libro.Titulo, pedidos.DNI, cliente.NombreApellido, pedidos.FechaPedido, estado.Descripcion as Estado, pedidos.Nro_Pedido
 				FROM usuario, cliente, pedidos, estado, libro
 				WHERE usuario.Id_Usuario = ' .$ID .'
 				AND usuario.DNI = cliente.DNI
@@ -533,7 +533,7 @@
 		$res = mysql_query( $cons);
 	}
 	// CAMBIAR PEDIDO A ENTREGADO //
- 	function PedidoEntregado ($Fec, $Est, $DNI, &$Msj, &$Comp){
+ 	function PedidoEntregado ($Fec, $Est, $DNI, $Num, &$Msj, &$Comp){
 		$Estado = 'SELECT Id_Estado
 					FROM estado
 					WHERE Descripcion = "' .$Est .'"';
@@ -543,7 +543,8 @@
 					SET Id_Estado = 3 
 					WHERE FechaPedido = "' .$Fec. '"
 					AND Id_Estado = ' .$row['Id_Estado'] .'
-					AND DNI = ' .$DNI;
+					AND DNI = ' .$DNI .'
+					AND Nro_Pedido = ' .$Num;
 		}			
 		$res = mysql_query( $cons);		
 		if (!$res){
@@ -555,7 +556,7 @@
 		}
 	}
 	// CAMBIAR PEDIDO A ENVIADO //
-	function PedidoEnviado($Fec, $Est, $DNI, &$Msj, &$Comp){
+	function PedidoEnviado($Fec, $Est, $DNI, $Num, &$Msj, &$Comp){
 		$Estado = 'SELECT Id_Estado
 					FROM estado
 					WHERE Descripcion = "' .$Est .'"';
@@ -565,7 +566,8 @@
 					SET Id_Estado = 2 
 					WHERE FechaPedido = "' .$Fec. '"
 					AND Id_Estado = ' .$row['Id_Estado'] .'
-					AND DNI = ' .$DNI;
+					AND DNI = ' .$DNI.'
+					AND Nro_Pedido = ' .$Num;
 		}			
 		$res = mysql_query( $cons);		
 		if (!$res){
@@ -700,20 +702,21 @@
 					WHERE usuario.ID_Usuario = ' .$ID;
 			$res1 = mysql_query( $cons1);
 			$today = getdate();
+			$NroPed = $today[hours] .$today[minutes] .$today[seconds]; 
 			$Fecha = $today[year]. '-' .$today[mon]. '-'. $today[mday];
 			$Msg = 'Libros comprados con exito: ';
 			$Msg2 = 'Operaciones Fallidas: ';
 			$entro = false;
 			while($row1 = mysql_fetch_assoc($res1)){
 				while($row = mysql_fetch_assoc($res)){
-					$cons2 = 'INSERT INTO `cookbook`.`pedidos` (`ISBN` ,`DNI` ,`FechaPedido` ,`Id_Estado`)VALUES (' .$row['ISBN']. ', ' .$row1['DNI'].', "' .$Fecha. '", 1)';
+					$cons2 = 'INSERT INTO `cookbook`.`pedidos` (`ISBN` ,`DNI` ,`FechaPedido` ,`Id_Estado`,`Nro_Pedido`)VALUES (' .$row['ISBN']. ', ' .$row1['DNI'].', "' .$Fecha. '", 1, ' .$NroPed .')';
 					$res2 = mysql_query( $cons2);
 					if ($res2) {
 						$Msg = $Msg .'' .$row['ISBN']. '; ';
 						RetirarCarrito($row['ID'], $ID, $Msj, $Comp);
 					}
 					else{
-						$Msg2 = $Msg2 .'' .$row['ISBN']. '; ';
+						$Msg2 = $Msg2 .'' .$row['ISBN']. 'con ' .$row1['DNI'].' y ' .$Fecha. ' y ' .$NroPed . '; ';
 						$entro = true;
 					}
 				}

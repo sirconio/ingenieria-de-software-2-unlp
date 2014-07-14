@@ -118,6 +118,7 @@ CREATE TABLE IF NOT EXISTS `CookBook`.`Pedidos` (
   `DNI` INT NOT NULL,
   `FechaPedido` DATE NOT NULL,
   `Id_Estado` INT NOT NULL,
+  `Nro_Pedido` INT NOT NULL,
   PRIMARY KEY (`Id_Pedido`),
   INDEX `DNI_idx` (`DNI` ASC),
   INDEX `Id_Estado_idx` (`Id_Estado` ASC))
@@ -278,13 +279,13 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `CookBook`;
-INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (1, 882894293, 11454789, '2013-03-31', 1);
-INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (2, 124356789, 10222333, '2013-08-25', 1);
-INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (3, 879548481, 30876961, '2013-07-24', 1);
-INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (4, 888444777, 2968741, '2013-06-06', 1);
-INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (5, 878987655, 3478987, '2013-05-03', 1);
-INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (6, 1478523698, 12547897, '2011-01-02', 3);
-INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`) VALUES (7, 8521479632, 14879564, '2012-01-01', 3);
+INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`, `Nro_Pedido`) VALUES (1, 882894293, 11454789, '2013-03-31', 1, 1);
+INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`, `Nro_Pedido`) VALUES (2, 124356789, 10222333, '2013-08-25', 1, 2);
+INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`, `Nro_Pedido`) VALUES (3, 879548481, 30876961, '2013-07-24', 1, 3);
+INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`, `Nro_Pedido`) VALUES (4, 888444777, 2968741, '2013-06-06', 1, 4);
+INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`, `Nro_Pedido`) VALUES (5, 878987655, 3478987, '2013-05-03', 1, 5);
+INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`, `Nro_Pedido`) VALUES (6, 1478523698, 12547897, '2011-01-02', 3, 6);
+INSERT INTO `CookBook`.`Pedidos` (`Id_Pedido`, `ISBN`, `DNI`, `FechaPedido`, `Id_Estado`, `Nro_Pedido`) VALUES (7, 8521479632, 14879564, '2012-01-01', 3, 7);
 
 COMMIT;
 
